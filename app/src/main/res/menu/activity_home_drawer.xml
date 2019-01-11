@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:iconTint="@color/black"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_categories"
+            android:iconTint="@color/black"
+            android:icon="@drawable/ic_view_module_black_24dp"
+            android:title="All Categories" />
+        <item
+            android:iconTint="@color/black"
+            android:id="@+id/nav_myorders"
+            android:icon="@drawable/ic_assignment_black_24dp"
+            android:title="My Orders" />
+        <item
+            android:id="@+id/nav_mycart"
+            android:iconTint="@color/black"
+            android:icon="@drawable/ic_shopping_cart_24dp"
+            android:title="My Cart" />
+        <item
+            android:iconTint="@color/black"
+            android:id="@+id/nav_wishlist"
+            android:icon="@drawable/heart_on"
+            android:title="Wish list" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:iconTint="@color/black"
+            android:icon="@drawable/ic_person"
+            android:title="My Account" />
+
+        <item
+            android:iconTint="@color/black"
+            android:id="@+id/nav_notifications"
+            android:icon="@drawable/ic_notifications_24dp"
+            android:title="Notifications" />
+        <item
+            android:iconTint="@color/black"
+            android:id="@+id/nav_helpfaq"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Help &amp; FAQ" />
+
+
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Log Out" />
+        <item
+            android:id="@+id/nav_version"
+            android:title="Version 1.9.2" />
+
+    </group>
+
+
+</menu>

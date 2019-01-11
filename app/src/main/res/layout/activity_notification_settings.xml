@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".activities.NotificationSettingsActivity">
+
+    <TextView
+        android:id="@+id/tv_offer_notification"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:text="Offers Notifications "/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#aae9e4e9"/>
+
+    <Switch
+        android:checked="true"
+        android:id="@+id/switch_notification_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="start"
+        android:padding="10dp"
+        android:maxLines="2"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Receive Offers via App \nNotifications"
+        android:textColor="@color/gray"
+        android:textSize="20sp" />
+
+</LinearLayout>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".activities.CartActivity">
+
+
+
+    <LinearLayout
+        android:id="@+id/LL_empty_cart"
+        android:visibility="gone"
+        android:layout_gravity="center|center_horizontal|center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_cart"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:src="@drawable/empty_cart" />
+
+    <TextView
+        android:layout_gravity="center"
+        android:id="@+id/tv_cart_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/roboto"
+        android:gravity="center"
+        android:text="Your Cart is empty!"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_gravity="center"
+        android:id="@+id/tv_cart_small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto"
+        android:gravity="center"
+        android:text="Add items to Cart now."
+        android:textColor="@color/forest_green"
+        android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_shopnow"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/shop_now_button"
+            android:fontFamily="@font/roboto"
+            android:padding="5dp"
+            android:text="Start Shopping"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_above="@id/LL_cart_total_price_continue"
+        android:id="@+id/rv_cart_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <View
+        android:id="@+id/cart_main_devider"
+        android:layout_above="@id/LL_cart_total_price_continue"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray"/>
+
+    <LinearLayout
+        android:elevation="8dp"
+        android:weightSum="10"
+        android:id="@+id/LL_cart_total_price_continue"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:backgroundTint="@color/white"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:layout_weight="5.5"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+
+            <org.fabiomsr.moneytextview.MoneyTextView
+                android:id="@+id/tv_cart_total_price"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLines="1"
+                app:amount="1123"
+                app:baseTextColor="@color/black"
+                app:baseTextSize="22sp"
+                app:decimalDigitsTextSize="22sp"
+                app:gravity="center"
+                app:decimalSeparator="."
+                app:format="##,###"
+                app:includeDecimalSeparator="true"
+                app:symbol="@string/rupee"
+                app:symbolGravity="start"
+                app:symbolTextSize="22sp" />
+
+            <TextView
+                android:id="@+id/tv_view_price_details"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLines="1"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:textColor="@color/blue_adv"
+                android:text="View Price Details"/>
+
+
+        </LinearLayout>
+
+
+        <Button
+            android:layout_weight="4.5"
+            android:id="@+id/btn_cart_continue"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/shop_now_button"
+            android:fontFamily="@font/roboto"
+            android:text="Continue"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.MyOrdersActivity">
+
+    <LinearLayout
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:id="@+id/LL_empty_cart"
+        android:visibility="gone"
+        android:layout_gravity="center|center_horizontal|center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_orders"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:tint="@color/gray"
+            android:src="@drawable/ic_assignment_black_24dp" />
+
+        <TextView
+            android:layout_gravity="center"
+            android:id="@+id/tv_empty_orders_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/roboto"
+            android:gravity="center"
+            android:text="You have not placed any order yet!"
+            android:textColor="@color/gray"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_shopnow"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/shop_now_button"
+            android:fontFamily="@font/roboto"
+            android:padding="5dp"
+            android:text="Start Shopping"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:id="@+id/rv_my_orders"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+</LinearLayout>

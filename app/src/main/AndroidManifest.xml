@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.appprocessors.ecomstore">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <meta-data
+            android:name="com.facebook.accountkit.ApplicationName"
+            android:value="@string/app_name" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/FACEBOOK_APP_ID" />
+        <meta-data
+            android:name="com.facebook.accountkit.ClientToken"
+            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+
+        <activity
+            android:name=".activities.SplashScreen"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.WelcomeActivity"
+            android:theme="@style/IntroTheme" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <activity
+            android:name=".activities.LoginSignUp"
+            android:theme="@style/IntroTheme" />
+        <activity
+            android:name=".activities.SignIn"
+            android:theme="@style/IntroTheme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activities.SignUp"
+            android:theme="@style/IntroTheme" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.CategoryProductsActivity" />
+        <activity android:name=".activities.ProductListActivity" />
+        <activity android:name=".activities.CartActivity" />
+        <activity android:name=".activities.NotificationActivity" />
+        <activity android:name=".activities.ProductDetailsActivity" />
+        <activity android:name=".utils.CommonOptionMenu" />
+        <activity android:name=".activities.FavouritesActivity" />
+        <activity
+            android:name=".activities.AddAddressActivity"
+            android:theme="@style/Theme.MyApp"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activities.MyAccountActivity" />
+        <activity
+            android:name=".activities.EditProfileActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activities.EmptyAddressActivity" />
+        <activity android:name=".activities.NotificationSettingsActivity" />
+        <activity android:name=".activities.MyOrdersActivity" />
+        <activity android:name=".activities.AllCategoriesActivity" />
+        <activity android:name=".activities.SubCategoryProductActivity" />
+        <activity
+            android:theme="@style/Theme.MyApp"
+            android:name=".activities.MyAddressActivity"/>
+    </application>
+
+</manifest>

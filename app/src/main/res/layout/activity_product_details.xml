@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ProductDetailsActivity">
+
+    <RelativeLayout
+        android:id="@+id/RL_ProductDetaiContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/LL_card_buy_button">
+
+            <LinearLayout
+                android:id="@+id/LLProductInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ss.com.bannerslider.Slider
+                        android:id="@+id/product_details_slider"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:background="@color/white"
+                        app:slider_animateIndicators="true"
+                        app:slider_emptyView="@layout/layout_slider_empty_view"
+                        app:slider_indicatorSize="6dp"
+                        app:slider_loopSlides="true"
+                        app:slider_selectedSlideIndicator="@drawable/selected_slide_indicator"
+                        app:slider_unselectedSlideIndicator="@drawable/unselected_slide_indicator" />
+
+
+                    <com.like.LikeButton
+                        android:id="@+id/star_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        app:anim_scale_factor="2"
+                        app:circle_end_color="@color/colorAccent"
+                        app:circle_start_color="@color/colorPrimary"
+                        app:dots_primary_color="@color/colorAccent"
+                        app:dots_secondary_color="@color/colorPrimary"
+                        app:icon_size="25dp"
+                        app:icon_type="heart"
+                        app:like_drawable="@drawable/heart_on"
+                        app:unlike_drawable="@drawable/heart_off" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cardCornerRadius="0dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/productName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLines="2"
+                                android:text="Amber Wood EDP 100ml Woody Perfume For Unisex"
+                                android:textColor="@color/black"
+                                android:textSize="20sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_rating_product_list"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_margin="5dp"
+                                    android:background="@drawable/rating_round_corner"
+                                    android:drawableEnd="@drawable/ic_star_black_24dp"
+                                    android:text="4.3"
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tv_total_rating_product_list"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_margin="5dp"
+                                    android:text="(455)"
+                                    android:textColor="@color/dark_gray"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/iv_assured"
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center|center_horizontal|center_vertical"
+                                    android:layout_marginStart="10dp"
+                                    android:src="@drawable/assured" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/LLMoney"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:orientation="horizontal">
+
+                                <org.fabiomsr.moneytextview.MoneyTextView
+                                    android:id="@+id/tv_price_product_list"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    app:amount="99002"
+                                    app:baseTextColor="@color/black"
+                                    app:baseTextSize="18sp"
+                                    app:decimalDigitsTextSize="18sp"
+                                    app:decimalSeparator="."
+                                    app:format="##,###"
+                                    app:includeDecimalSeparator="true"
+                                    app:symbol="@string/rupee"
+                                    app:symbolGravity="start"
+                                    app:symbolTextSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_mrp_product_list"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginStart="10dp"
+                                    android:background="@drawable/strike_line"
+                                    android:maxLines="1"
+                                    android:text="MRP 12345"
+                                    android:textColor="@color/dark_gray"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <org.fabiomsr.moneytextview.MoneyTextView
+                                    android:id="@+id/tv_discount_product_list"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginStart="10dp"
+                                    android:maxLines="1"
+                                    app:amount="10"
+                                    app:baseTextColor="@color/forest_green"
+                                    app:baseTextSize="16sp"
+                                    app:decimalDigitsTextSize="14sp"
+                                    app:decimalSeparator="."
+                                    app:format="##"
+                                    app:includeDecimalSeparator="true"
+                                    app:symbol="% OFF"
+                                    app:symbolGravity="end"
+                                    app:symbolTextSize="14sp" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_inc_of_all_taxes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="2"
+                                android:text="Inclusive of all taxes"
+                                android:textColor="@color/dark_green"
+                                android:textSize="12sp" />
+
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cardCornerRadius="0dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_delivery_by"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="start"
+                                android:text="Delivery by 29th Oct"
+                                android:textColor="@color/black"
+                                android:textSize="20sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:weightSum="10">
+
+                                <TextView
+                                    android:id="@+id/tv_delivery_pin_code"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="start"
+                                    android:layout_weight="8"
+                                    android:padding="5dp"
+                                    android:text="384001"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_pin_change"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="end|center_vertical"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_weight="2"
+                                    android:text="Change"
+                                    android:textColor="@color/blue_adv"
+                                    android:textSize="16sp" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cardCornerRadius="0dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:weightSum="12">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:id="@+id/iv_shipping_fee"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/truck" />
+
+                                <TextView
+                                    android:id="@+id/tv_shipping_fee"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:text="Shipping Fee"
+                                    android:textColor="@color/gray"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_shipping_price"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:text="Free"
+                                    android:textColor="@color/green"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:id="@+id/iv_replace"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="75dp"
+                                    android:padding="7.5dp"
+                                    android:src="@drawable/replace" />
+
+                                <TextView
+                                    android:id="@+id/tv_return"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:text="Return "
+                                    android:textColor="@color/gray"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_return_in_days"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:text="10 days*"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/tv_return_know_more"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:text="Know More"
+                                    android:textColor="@color/blue_adv"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:id="@+id/iv_cancellation"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="75dp"
+                                    android:padding="7.5dp"
+                                    android:src="@drawable/cancellation" />
+
+                                <TextView
+                                    android:id="@+id/tv_cancellation"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:text="Cancellation"
+                                    android:textColor="@color/gray"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_cancellation_allow"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="2"
+                                    android:text="Not Allowed"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:elevation="5dp"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:id="@+id/iv_installation"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="75dp"
+                                    android:padding="7.5dp"
+                                    android:src="@drawable/installation" />
+
+                                <TextView
+                                    android:id="@+id/tv_installation"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:text="Installation"
+                                    android:textColor="@color/gray"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_installation_available"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="2"
+                                    android:text="Not Available"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/tv_installation_more"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical|center|center_horizontal"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:text="Know More"
+                                    android:textColor="@color/blue_adv"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:visibility="visible" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cardCornerRadius="0dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center|clip_vertical|center_horizontal"
+                                    android:text="Seller"
+                                    android:textColor="@color/md_black_1000"
+                                    android:textSize="18sp" />
+
+                                <ImageView
+                                    android:id="@+id/iv_certified_seller"
+                                    android:layout_width="25dp"
+                                    android:layout_height="25dp"
+                                    android:layout_marginStart="5dp"
+                                    android:src="@drawable/ic_trusted_seller" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_seller_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="India Sales,Mumbai"
+                                android:textColor="@color/md_grey_600"
+                                android:textSize="16sp" />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cardCornerRadius="0dp"
+                        app:cardElevation="1dp">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto"
+                                android:padding="10dp"
+                                android:text="Product Details"
+                                android:textColor="@color/md_black_1000"
+                                android:textSize="18sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/dark_gray" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="5dp"
+                                    android:fontFamily="@font/roboto"
+                                    android:text="Highlights"
+                                    android:textColor="@color/md_grey_600"
+                                    android:textSize="16sp" />
+
+                                <com.appprocessors.ecomstore.helper.NonScrollListView
+                                    android:id="@+id/listView_highlights"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="5dp"
+                                    android:divider="@null"
+                                    android:listSelector="@android:color/transparent" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginTop="3dp"
+                                    android:background="@color/dark_gray" />
+
+                                <TextView
+                                    android:id="@+id/tv_product_all_details"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="5dp"
+                                    android:drawableEnd="@drawable/ic_navigate_next_black_24dp"
+                                    android:padding="5dp"
+                                    android:text="View More Details"
+                                    android:textColor="@color/blue_adv"
+                                    android:textSize="18sp" />
+
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/LL_card_buy_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/ripple_rounded_corder"
+            android:orientation="horizontal"
+            android:weightSum="10">
+
+            <Button
+                android:id="@+id/btn_add_to_cart"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:background="@color/md_orange_600"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="ADD TO CART"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_buy_now"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:background="@color/md_green_600"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="BUY NOW"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/PB_productDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+</FrameLayout>

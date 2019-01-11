@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <RadioButton
+            android:text="@null"
+            android:layout_gravity="center"
+            app:useMaterialThemeColors="false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_gravity="top"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:maxLines="2"
+                android:text="Patel Umang Ranchhodbhai"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edit_text_round_bg_white"
+                android:text="Home"
+                android:textSize="14sp" />
+
+            <TextView
+                android:textSize="14sp"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/black"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="1dp"
+                android:text="Room no :- 5, old uma hostel ,ganpatuniversity ,kherva,Mahesana District Gujarat - 384012" />
+
+            <TextView
+                android:textSize="14sp"
+               android:fontFamily="@font/roboto"
+                android:textColor="@color/black"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="+919824794773" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <ImageButton
+        android:elevation="5dp"
+        android:padding="10dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="8dp"
+        android:id="@+id/material_icon_button"
+        android:layout_gravity="end"
+        android:background="@drawable/edit_text_round_bg_white"
+        android:layout_width="wrap_content"
+        android:tint="@color/colorPrimary"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_mode_edit_black_24dp" />
+</FrameLayout>

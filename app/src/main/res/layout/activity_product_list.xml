@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ProductListActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/LL_product_list_sort_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="5dp"
+            android:orientation="horizontal"
+            android:weightSum="10.5">
+
+            <ImageView
+                android:id="@+id/iv_product_list_list_to_grid"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:padding="7dp"
+                android:src="@drawable/avd_list_to_grid"
+                android:tint="@color/black" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/white_gray_border_verticle" />
+
+            <com.omega_r.libs.OmegaCenterIconButton
+                android:id="@+id/bnt_product_list_sort"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="4.5"
+                android:background="@android:color/transparent"
+                android:drawableEnd="@drawable/ic_sort_black_24dp"
+                android:fontFamily="@font/roboto"
+                android:gravity="center"
+                android:text="Sort"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/white_gray_border_verticle" />
+
+            <com.omega_r.libs.OmegaCenterIconButton
+                android:id="@+id/btn_product_list_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4.5"
+                android:background="@android:color/transparent"
+                android:drawableEnd="@drawable/ic_sort_black_24dp"
+                android:fontFamily="@font/roboto"
+                android:gravity="center"
+                android:text="Filter"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+
+        </LinearLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_product_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#aac7c5c5"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL_Product_List_Error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/ivErrorIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_alert_black_24dp"
+            android:tint="#695757" />
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:textSize="20sp"
+            tools:text="@string/error_message_failed" />
+
+        <Button
+            android:id="@+id/btnTryAgain"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/click_effect"
+            android:text="Try Again"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

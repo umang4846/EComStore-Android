@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    app:cardElevation="16dp"
+    app:cardCornerRadius="8dp"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+       <LinearLayout
+           android:orientation="vertical"
+           android:layout_margin="16dp"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <com.rengwuxian.materialedittext.MaterialEditText
+               android:id="@+id/edt_name"
+               android:layout_height="wrap_content"
+               android:layout_width="match_parent"
+               android:hint="Name"
+               app:met_floatingLabel="highlight"
+               android:inputType="text"
+               android:textSize="18sp"
+               />
+
+           <com.rengwuxian.materialedittext.MaterialEditText
+               android:id="@+id/edt_address"
+               android:layout_height="wrap_content"
+               android:layout_width="match_parent"
+               android:hint="Address"
+               app:met_floatingLabel="highlight"
+               android:inputType="text"
+               android:textSize="18sp"
+               />
+
+           <com.rengwuxian.materialedittext.MaterialEditText
+               android:id="@+id/edt_birthdate"
+               android:layout_height="wrap_content"
+               android:layout_width="match_parent"
+               android:hint="Birthdate(yyyy-MM-dd)"
+               app:met_floatingLabel="highlight"
+               android:digits="1234567890-/ "
+               android:textSize="18sp"
+               />
+
+       </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_continue"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CONTINUE"
+            android:background="@color/blue_adv"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

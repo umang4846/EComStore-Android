@@ -1,0 +1,145 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.appprocessors.ecomstore"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    configurations.all {
+        resolutionStrategy.force 'com.android.support:support-v4:27.1.0'
+        // the lib is old dependencies version;
+
+    }
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
+    implementation 'com.google.android.material:material:1.1.0-alpha02'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.google.android.material:material:1.1.0-alpha02'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation files('libs/universal-image-loader-1.9.5.jar')
+    implementation 'com.github.paolorotolo:appintro:3.4.0'
+    implementation 'com.github.jd-alexander:android-flat-button:v1.1'
+    implementation 'com.google.android.gms:play-services-base:16.0.1'
+    implementation 'com.google.android.gms:play-services-identity:16.0.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:16.0.0'
+    implementation 'com.mcxiaoke.volley:library-aar:1.0.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+
+    //fb Account Kit
+    implementation 'com.facebook.android:account-kit-sdk:4.37.0'
+
+    //Alert Spots Dialog
+    implementation 'com.github.d-max:spots-dialog:1.1@aar'
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+    //Material Edittext
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+
+    //Pattern TextWatcher
+    implementation 'com.szagurskii:patternedtextwatcher:0.5.0'
+
+    //Slider Layout
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //RXJava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+
+    //Twitter's heart animation for Android
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+
+    //Butterknife
+    implementation 'com.jakewharton:butterknife:9.0.0-rc2'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc2'
+
+    //Imageview Badge
+    implementation 'com.nex3z:notification-badge:1.0.2'
+
+    //Multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    //Money Textview
+    implementation 'org.fabiomsr:moneytextview:1.1.0'
+
+    //Recyclerview Devider
+    implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+
+    //Paging Runtime
+    implementation 'androidx.paging:paging-runtime:2.1.0-rc01'
+
+    //View Model for Paging
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+
+    //Transitional ImageView
+    implementation 'com.github.mostafaaryan:transitional-imageview:v0.2.2'
+
+    //OmegaCenterIconButton
+    implementation 'com.github.Omega-R:OmegaCenterIconButton:0.0.4@aar'
+    implementation 'com.github.chathuralakmal:AndroidImagePopup:1.2.1'
+
+    //StickyScrollView
+    implementation 'com.github.didikk:sticky-nestedscrollview:1.0.1'
+
+    //Room Database
+    implementation 'androidx.room:room-runtime:2.1.0-alpha03'
+    implementation 'androidx.room:room-rxjava2:2.1.0-alpha03'
+    annotationProcessor "androidx.room:room-compiler:2.1.0-alpha03"
+
+    //Elegant Number Button
+    implementation 'com.cepheuen.elegant-number-button:lib:1.0.2'
+
+    //Recyclerview Grid Devider
+    implementation 'com.bignerdranch.android:simple-item-decoration:1.0.0'
+
+    //Fancy Alert Dialog
+    implementation 'com.github.Shashank02051997:FancyAlertDialog-Android:0.1'
+
+    //Calligraphy
+    implementation 'io.github.inflationx:calligraphy3:3.0.0'
+    implementation 'io.github.inflationx:viewpump:1.0.0'
+
+    //Avatar View And ImageView
+    implementation('me.fahmisdk6.avatarview:avatarview:1.0@aar') {
+        transitive = true
+    }
+
+    //Rate and Review
+    implementation 'com.stepstone.apprating:app-rating:2.3.0'
+
+    // OkHttp
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+
+    //Facebook Shimmer Loading
+    implementation 'com.facebook.shimmer:shimmer:0.3.0'
+    implementation project(':bannerslider')
+}

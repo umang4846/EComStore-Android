@@ -1,0 +1,67 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppLoginTheme" parent="Theme.AccountKit" />
+
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+    <style name="IntroTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#262938</item>
+        <item name="colorPrimaryDark">#181A24</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+    </style>
+    <!-- Dark Buttons -->
+    <style name="ThemeOverlay.MyDarkButton" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorButtonNormal">@android:color/holo_green_light</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+
+    <style name="EditScreenTextInputLayoutStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/green</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/gray</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorControlHighlight">@color/green</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="colorPrimaryVariant">#32c239</item>
+        <item name="colorOnBackground">#ffca28</item>
+    </style>
+
+
+    <style name="EditText_Flat_Grey" parent="Base.TextAppearance.AppCompat.Subhead">
+        <item name="android:textSize" tools:override="true" >16sp</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+    </style>
+    <style name="Theme.OutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:paddingLeft">1dp</item>
+        <item name="android:paddingRight">1dp</item>
+    </style>
+</resources>
