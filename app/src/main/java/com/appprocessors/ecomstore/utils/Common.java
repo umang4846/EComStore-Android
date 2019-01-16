@@ -24,7 +24,7 @@ public class Common {
     // For Tempoary Server link  is :  https://estorecom.000webhostapp.com/estore/
     //"http://10.0.3.2:8080/";
 
-   public static final String BASE_URL = "http://192.168.1.101:8080";
+   public static final String BASE_URL = "http://192.168.1.100:8080";
    // private static final String BASE_URL = "http://10.0.3.2:8080/";
    // private static final String BASE_URL = "https://estoreapp.herokuapp.com";
 

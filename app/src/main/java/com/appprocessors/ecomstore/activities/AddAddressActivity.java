@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.model.Address;
 import com.appprocessors.ecomstore.model.SubDistrict;
-import com.appprocessors.ecomstore.model.User;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.retrofit.RetrofitClient;
 import com.appprocessors.ecomstore.utils.Common;
@@ -36,8 +35,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -133,6 +130,18 @@ public class AddAddressActivity extends AppCompatActivity {
         inputLayoutAddressCityTown.setEnabled(false);
         inputAddressCityTown.setEnabled(false);
 
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey("editAddress")) {
+                Address editAddress = getIntent().getExtras().getParcelable("editAddress");
+                if (editAddress != null) {
+                    setAddressDataToEdit(editAddress);
+                    setTitle("Edit Address");
+                }
+            }
+        }
+
         //Pin Code Set on click listner and open Dialog
         loadAllPincodes();
         //Load All Sub Districts
@@ -155,18 +164,37 @@ public class AddAddressActivity extends AppCompatActivity {
             }
 
         });
-        inputAddressMobile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
         btnAddressSaveContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 validateData();
             }
         });
+    }
+
+    private void setAddressDataToEdit(Address editAddress) {
+
+        if (editAddress != null) {
+            inputAddressSubDistrict.setText(editAddress.getSubDistrict());
+            inputAddressCityTown.setText(editAddress.getCityTown());
+            inputAddressHomeNo.setText(editAddress.getHomeNoBuildingName());
+            inputAddressLocalityAreaStreet.setText(editAddress.getLocalityAreaStreet());
+            inputAddressPersonName.setText(editAddress.getFullName());
+            inputAddressMobile.setText(editAddress.getMobileNo());
+            inputAddressAlterMobile.setText(editAddress.getAlternateMobileNumber());
+            if (editAddress.getIsDefaultAddress()) {
+                switchDefaultAddress.setChecked(true);
+            } else {
+                switchDefaultAddress.setChecked(false);
+            }
+            if (editAddress.getAddressType().equalsIgnoreCase("home")) {
+                rgAddressType.check(R.id.rb_address_type_home);
+            } else {
+                rgAddressType.check(R.id.rb_address_type_work);
+            }
+        }
+
     }
 
 
@@ -294,9 +322,6 @@ public class AddAddressActivity extends AppCompatActivity {
 
     private void validateData() {
 
-        String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
-        Log.d(TAG, "submitAddress: Account Phone ::" +phone);
-
         if (!validateSubDistrict()) {
             return;
         }
@@ -332,10 +357,8 @@ public class AddAddressActivity extends AppCompatActivity {
         List<Address> addressList = new ArrayList<>();
         Address address = new Address();
         address.setSubDistrict(inputAddressSubDistrict.getText().toString());
-        String SubDistrict = inputAddressSubDistrict.getText().toString();
-        Log.d(TAG, "submitAddress: "+SubDistrict);
         address.setCityTown(inputAddressCityTown.getText().toString());
-        address.setHomeNoBuildingName(rbAddressTypeHome.getText().toString());
+        address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
         address.setLocalityAreaStreet(inputAddressLocalityAreaStreet.getText().toString());
         address.setFullName(inputAddressPersonName.getText().toString());
         address.setMobileNo(inputAddressMobile.getText().toString());
@@ -344,34 +367,21 @@ public class AddAddressActivity extends AppCompatActivity {
         address.setIsDefaultAddress(switchDefaultAddress.isChecked());
         addressList.add(address);
         String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
-        Log.d(TAG, "submitAddress: Account Phone ::" +phone);
-        Log.d(TAG, "submitAddress: Account Data ::" +address.toString());
-        Log.d(TAG, "submitAddress: Account Address List ::" +addressList.toString());
 
-       /* compositeDisposable.add(mService.addNewAddress(user.get(UserSessionManager.KEY_PHONE), Collections.singletonList(address))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Address>>() {
-                    @Override
-                    public void accept(List<Address> addresses) throws Exception {
-                        dialog.dismiss();
-                        Intent myAddressIntent = new Intent(AddAddressActivity.this, MyAddressActivity.class);
-                        myAddressIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(myAddressIntent);
-                        finish();
-                    }
-                }));*/
-
-        Call<List<Address>> call =RetrofitClient.getRestClient().addNewAddress(phone,Collections.singletonList(address));
+        Call<List<Address>> call = RetrofitClient.getRestClient().addNewAddress(phone, addressList);
         call.enqueue(new Callback<List<Address>>() {
             @Override
             public void onResponse(Call<List<Address>> call, Response<List<Address>> response) {
-                if(response.body()!=null && response.code()==RESULT_OK){
+                if (response.isSuccessful()) {
                     dialog.dismiss();
+                    Log.d(TAG, "onResponse: Address Added Successfully !");
                     Intent myAddressIntent = new Intent(AddAddressActivity.this, MyAddressActivity.class);
                     myAddressIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(myAddressIntent);
                     finish();
+                } else {
+                    Toast.makeText(AddAddressActivity.this, "Failed to Save Address !", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "onResponse: Failed to save address " + response.errorBody());
                 }
             }
 
@@ -379,7 +389,7 @@ public class AddAddressActivity extends AppCompatActivity {
             public void onFailure(Call<List<Address>> call, Throwable t) {
                 dialog.dismiss();
                 Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "onFailure:: "+t.getMessage());
+                Log.d(TAG, "onFailure:: " + t.getMessage());
             }
         });
     }
@@ -390,9 +400,9 @@ public class AddAddressActivity extends AppCompatActivity {
             rgAddressType.setFocusableInTouchMode(true);
             rgAddressType.requestFocus();
             Toast.makeText(AddAddressActivity.this, "Please Select Address Type", Toast.LENGTH_SHORT).show();
-            return true;
+            return false;    //This should be false to select address type of not selected
         } else {
-            return false;
+            return true;
         }
 
     }
@@ -468,7 +478,7 @@ public class AddAddressActivity extends AppCompatActivity {
             requestFocus(inputAddressHomeNo);
             return false;
         } else {
-            inputLayoutAddressHomeNo.setErrorEnabled(true);
+            inputLayoutAddressHomeNo.setErrorEnabled(false);
         }
 
         return true;

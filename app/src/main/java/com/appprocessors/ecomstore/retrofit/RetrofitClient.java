@@ -3,8 +3,6 @@ package com.appprocessors.ecomstore.retrofit;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.NullOnEmptyConverterFactory;
 
-import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;

@@ -74,8 +74,12 @@ public interface IEStoreAPI {
     Call<User> registerUser(@Body User user);
 
     //Insert Address
-    @POST("/user/{phone}/addAddress")
+    @POST("/user/{phone}/addaddress")
     Call<List<Address>> addNewAddress(@Path("phone") String phone,@Body List<Address> addresses);
+
+    //Get User's  List of saved Address
+    @GET("/user/{phone}/alladdresses")
+    Observable<List<Address>> getUserAddresses(@Path("phone")String phone);
 
     @POST("/orders")
     Call<OrderModel> addOrder(@Body OrderModel orderModel);

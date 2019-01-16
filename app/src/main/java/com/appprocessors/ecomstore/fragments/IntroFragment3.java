@@ -1,4 +1,4 @@
-package com.appprocessors.ecomstore.Fragments;
+package com.appprocessors.ecomstore.fragments;
 
 
 import android.os.Bundle;
@@ -13,10 +13,10 @@ import com.appprocessors.ecomstore.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class IntroFragment1 extends Fragment {
+public class IntroFragment3 extends Fragment {
 
 
-    public IntroFragment1() {
+    public IntroFragment3() {
         // Required empty public constructor
     }
 
@@ -25,7 +25,7 @@ public class IntroFragment1 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.intro_fragment1, container, false);
+        return inflater.inflate(R.layout.intro_fragment3, container, false);
     }
 
 }

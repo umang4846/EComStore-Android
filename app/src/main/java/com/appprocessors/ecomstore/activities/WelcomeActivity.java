@@ -7,9 +7,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.appprocessors.ecomstore.Fragments.IntroFragment1;
-import com.appprocessors.ecomstore.Fragments.IntroFragment2;
-import com.appprocessors.ecomstore.Fragments.IntroFragment3;
+import com.appprocessors.ecomstore.fragments.IntroFragment1;
+import com.appprocessors.ecomstore.fragments.IntroFragment2;
+import com.appprocessors.ecomstore.fragments.IntroFragment3;
 import com.appprocessors.ecomstore.R;
 import com.github.paolorotolo.appintro.AppIntro;
 

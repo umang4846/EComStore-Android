@@ -1,4 +1,4 @@
-package com.appprocessors.ecomstore.Fragments;
+package com.appprocessors.ecomstore.fragments;
 
 
 import android.os.Bundle;
