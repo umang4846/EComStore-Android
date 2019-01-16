@@ -153,6 +153,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
         compositeDisposable = new CompositeDisposable();
         //API Service
         mServices = Common.getAPI();
