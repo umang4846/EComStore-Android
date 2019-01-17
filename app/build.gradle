@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.jakewharton.butterknife'
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -78,8 +78,8 @@ dependencies {
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 
     //Butterknife
-    implementation 'com.jakewharton:butterknife:9.0.0-rc2'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc2'
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
 
     //Imageview Badge
     implementation 'com.nex3z:notification-badge:1.0.2'

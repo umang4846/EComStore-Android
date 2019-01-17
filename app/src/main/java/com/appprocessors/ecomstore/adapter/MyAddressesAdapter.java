@@ -28,6 +28,8 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
     Context context;
     List<Address> addressList;
 
+    private int lastSelectedPosition = -1;
+
     public MyAddressesAdapter(Context context, List<Address> addressList) {
         this.context = context;
         this.addressList = addressList;
@@ -46,8 +48,10 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
     public void onBindViewHolder(@NonNull MyAddressesViewHolder holder, int position) {
 
         if (addressList.get(position).getIsDefaultAddress()){
-            holder.rbSelectAddress.setChecked(true);
+            lastSelectedPosition = position;
         }
+
+        holder.rbSelectAddress.setChecked(lastSelectedPosition == position);
         holder.tvAddressFullName.setText(addressList.get(position).getFullName());
         holder.tvAddressType.setText(addressList.get(position).getAddressType());
         StringBuilder addressFullDetails = new StringBuilder();
@@ -68,6 +72,7 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
                 context.startActivity(editAddressIntent);
             }
         });
+
 
     }
 
@@ -91,9 +96,18 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
         @BindView(R.id.ib_edit_address)
         ImageButton ibEditAddress;
 
+
         public MyAddressesViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            rbSelectAddress.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lastSelectedPosition = getAdapterPosition();
+                    notifyDataSetChanged();
+                }
+            });
         }
 
 

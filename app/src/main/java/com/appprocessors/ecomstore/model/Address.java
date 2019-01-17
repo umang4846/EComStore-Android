@@ -8,6 +8,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Address implements Parcelable {
 
+    @SerializedName("id")
+    @Expose
+    private String id;
     @SerializedName("fullName")
     @Expose
     private String fullName;
@@ -36,6 +39,13 @@ public class Address implements Parcelable {
     @Expose
     private Boolean isDefaultAddress;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getFullName() {
         return fullName;
@@ -117,6 +127,7 @@ public class Address implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
         dest.writeString(this.fullName);
         dest.writeString(this.subDistrict);
         dest.writeString(this.cityTown);
@@ -132,7 +143,7 @@ public class Address implements Parcelable {
     }
 
     protected Address(Parcel in) {
-
+        this.id = in.readString();
         this.fullName = in.readString();
         this.subDistrict = in.readString();
         this.cityTown = in.readString();

@@ -35,6 +35,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -354,8 +355,11 @@ public class AddAddressActivity extends AppCompatActivity {
         dialog.setMessage("Saving Address");
         dialog.setCancelable(false);
         dialog.show();
+        Calendar calendar  = Calendar.getInstance();
         List<Address> addressList = new ArrayList<>();
         Address address = new Address();
+        address.setId("address"+calendar.getTimeInMillis());
+        Log.e(TAG, "submitAddress: MiliSeconds ::address"+calendar.getTimeInMillis());
         address.setSubDistrict(inputAddressSubDistrict.getText().toString());
         address.setCityTown(inputAddressCityTown.getText().toString());
         address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
