@@ -34,6 +34,8 @@ public class Common {
     //Current Sub Category Products
     public static SubCategoryProducts currentSubcategoryProducts = null;
 
+    public  static final  int tagAddAddress =20;
+    public  static final  int tagUpdateAddress =30;
 
     public static IEStoreAPI getAPI(){
         return RetrofitClient.getClient(BASE_URL).create(IEStoreAPI.class);

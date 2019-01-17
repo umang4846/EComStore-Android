@@ -109,6 +109,9 @@ public class AddAddressActivity extends AppCompatActivity {
     // User Session Manager Class
     UserSessionManager session;
 
+    //Address Globle & Final Object to Update and Add Address
+    Address address;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +140,7 @@ public class AddAddressActivity extends AppCompatActivity {
             if (extras.containsKey("editAddress")) {
                 Address editAddress = getIntent().getExtras().getParcelable("editAddress");
                 if (editAddress != null) {
+                    address = editAddress;
                     setAddressDataToEdit(editAddress);
                     setTitle("Edit Address");
                 }
@@ -355,11 +359,16 @@ public class AddAddressActivity extends AppCompatActivity {
         dialog.setMessage("Saving Address");
         dialog.setCancelable(false);
         dialog.show();
-        Calendar calendar  = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         List<Address> addressList = new ArrayList<>();
-        Address address = new Address();
-        address.setId("address"+calendar.getTimeInMillis());
-        Log.e(TAG, "submitAddress: MiliSeconds ::address"+calendar.getTimeInMillis());
+        address = new Address();
+        if (address.getId() != null) {
+            address.setId(address.getId());
+            Log.e(TAG, "Edit Address ID: " + address.getId());
+        } else {
+            address.setId("address" + calendar.getTimeInMillis());
+        }
+
         address.setSubDistrict(inputAddressSubDistrict.getText().toString());
         address.setCityTown(inputAddressCityTown.getText().toString());
         address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
@@ -379,10 +388,13 @@ public class AddAddressActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     dialog.dismiss();
                     Log.d(TAG, "onResponse: Address Added Successfully !");
-                    Intent myAddressIntent = new Intent(AddAddressActivity.this, MyAddressActivity.class);
+                   /* Intent myAddressIntent = new Intent(AddAddressActivity.this, MyAddressActivity.class);
                     myAddressIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(myAddressIntent);
+                    startActivity(myAddressIntent);*/
+                   Intent intent = new Intent();
+                    setResult(RESULT_OK, address);
                     finish();
+
                 } else {
                     Toast.makeText(AddAddressActivity.this, "Failed to Save Address !", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "onResponse: Failed to save address " + response.errorBody());

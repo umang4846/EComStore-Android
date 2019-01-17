@@ -37,7 +37,25 @@ public class Address implements Parcelable {
     private String addressType;
     @SerializedName("isDefaultAddress")
     @Expose
-    private Boolean isDefaultAddress;
+    private boolean isDefaultAddress;
+
+    private boolean ischecked;
+
+    public boolean isIschecked() {
+        return ischecked;
+    }
+
+    public void setIschecked(boolean ischecked) {
+        this.ischecked = ischecked;
+    }
+
+    public Boolean getIschecked() {
+        return ischecked;
+    }
+
+    public void setIschecked(Boolean ischecked) {
+        this.ischecked = ischecked;
+    }
 
     public String getId() {
         return id;
@@ -111,14 +129,13 @@ public class Address implements Parcelable {
         this.addressType = addressType;
     }
 
-    public Boolean getIsDefaultAddress() {
+    public boolean getIsDefaultAddress() {
         return isDefaultAddress;
     }
 
-    public void setIsDefaultAddress(Boolean isDefaultAddress) {
-        this.isDefaultAddress = isDefaultAddress;
+    public void setIsDefaultAddress(boolean defaultAddress) {
+        isDefaultAddress = defaultAddress;
     }
-
 
     @Override
     public int describeContents() {
@@ -137,6 +154,7 @@ public class Address implements Parcelable {
         dest.writeString(this.alternateMobileNumber);
         dest.writeString(this.addressType);
         dest.writeValue(this.isDefaultAddress);
+        dest.writeValue(this.ischecked);
     }
 
     public Address() {
@@ -153,6 +171,7 @@ public class Address implements Parcelable {
         this.alternateMobileNumber = in.readString();
         this.addressType = in.readString();
         this.isDefaultAddress = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.ischecked = (Boolean) in.readValue(Boolean.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Address> CREATOR = new Parcelable.Creator<Address>() {

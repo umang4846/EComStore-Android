@@ -3,6 +3,7 @@ package com.appprocessors.ecomstore.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,12 +21,14 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -45,6 +48,7 @@ public class MyAddressActivity extends AppCompatActivity {
     UserSessionManager session;
 
     //Butterknife Injections
+
     @BindView(R.id.iv_no_address)
     ImageView ivNoAddress;
     @BindView(R.id.tv_no_address)
@@ -55,12 +59,14 @@ public class MyAddressActivity extends AppCompatActivity {
     LinearLayout LLNoAddressIvTvBtn;
     @BindView(R.id.rv_addresses)
     RecyclerView rvAddresses;
-    @BindView(R.id.material_button)
-    MaterialButton materialButton;
-    @BindView(R.id.btn_add_new_address)
-    MaterialButton btnAddNewAddress;
+
     @BindView(R.id.RL_Addresslist)
     RelativeLayout RLAddresslist;
+    @BindView(R.id.btn_add_new_address)
+    MaterialButton btnAddNewAddress;
+    @BindView(R.id.material_button)
+    MaterialButton materialButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,13 +96,12 @@ public class MyAddressActivity extends AppCompatActivity {
         });
 
         //open Add Address Activity on Add Address Button which is in LL Empty Show
-        btnAddNewAddress.setOnClickListener(new View.OnClickListener() {
+      /*  btnAddNewAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MyAddressActivity.this, AddAddressActivity.class));
             }
-        });
-
+        });*/
 
     }
 
@@ -111,23 +116,23 @@ public class MyAddressActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Address>>() {
-                    @Override
-                    public void accept(List<Address> addresses) throws Exception {
+                               @Override
+                               public void accept(List<Address> addresses) throws Exception {
 
-                        if (addresses != null) {
-                            RLAddresslist.setVisibility(View.VISIBLE);
-                            LLNoAddressIvTvBtn.setVisibility(View.GONE);
-                            displayAddressList(addresses);
-                        } else {
-                            LLNoAddressIvTvBtn.setVisibility(View.VISIBLE);
-                            RLAddresslist.setVisibility(View.GONE);
-                        }
-                    }
-                }
+                                   if (addresses != null) {
+                                       RLAddresslist.setVisibility(View.VISIBLE);
+                                       LLNoAddressIvTvBtn.setVisibility(View.GONE);
+                                       displayAddressList(addresses);
+                                   } else {
+                                       LLNoAddressIvTvBtn.setVisibility(View.VISIBLE);
+                                       RLAddresslist.setVisibility(View.GONE);
+                                   }
+
+                               }
+                           }
                 ));
 
     }
-
 
 
     private void displayAddressList(List<Address> addresses) {
@@ -146,5 +151,36 @@ public class MyAddressActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home)
             finish();
         return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick(R.id.btn_add_new_address)
+    public void onViewClicked() {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Common.tagUpdateAddress:
+                break;
+
+            case Common.tagAddAddress:
+                break;
+        }
+    }
+
+    @OnClick({R.id.btn_add_new_address, R.id.material_button, R.id.ib_edit_address})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_add_new_address:
+
+                break;
+            case R.id.material_button:
+                break;
+            case R.id.ib_edit_address:
+                int position = (Integer) view.getTag();
+                Log.e(TAG, "onViewClicked: " + position);
+        }
     }
 }
