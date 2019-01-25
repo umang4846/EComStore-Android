@@ -142,4 +142,8 @@ dependencies {
     //Facebook Shimmer Loading
     implementation 'com.facebook.shimmer:shimmer:0.3.0'
     implementation project(':bannerslider')
+
+    //ZigZag View
+    implementation 'com.github.beigirad:ZigzagView:1.0.6'
+
 }

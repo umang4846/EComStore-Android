@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ActivityPayment">
+
+
+    <LinearLayout
+        android:id="@+id/LL_payment_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_payment_options"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:padding="10dp"
+                    android:text="PAYMENT OPTION" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey" />
+
+                <RadioButton
+                    android:id="@+id/rb_COD"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:checked="true"
+                    android:padding="10dp"
+                    android:text="Cash On Delivery"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_total_price_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:padding="10dp"
+                    android:text="TOTAL PRICE DETAILS" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/tv_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_weight="5"
+                        android:gravity="start"
+                        android:text="Price"
+                        android:textColor="@color/md_grey_600"
+                        android:textSize="18sp" />
+
+                    <org.fabiomsr.moneytextview.MoneyTextView
+                        android:id="@+id/tv_price_rs"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_weight="5"
+                        android:maxLines="1"
+                        app:amount="1000"
+                        app:baseTextColor="@color/black"
+                        app:baseTextSize="18sp"
+                        app:decimalDigitsTextSize="18sp"
+                        app:decimalSeparator="."
+                        app:format="##,###"
+                        app:gravity="right"
+                        app:includeDecimalSeparator="true"
+                        app:symbol="@string/rupee"
+                        app:symbolGravity="start"
+                        app:symbolTextSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/tv_shipping"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_weight="5"
+                        android:gravity="start"
+                        android:text="Shipping Fee"
+                        android:textColor="@color/md_grey_600"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tv_shipping_fee"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:gravity="end"
+                        android:text="FREE"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/tv_total_amount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_weight="5"
+                        android:gravity="start"
+                        android:text="Total Amount"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <org.fabiomsr.moneytextview.MoneyTextView
+                        android:id="@+id/tv_total_amount_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_weight="5"
+                        android:maxLines="1"
+                        app:amount="1000"
+                        app:baseTextColor="@color/black"
+                        app:baseTextSize="18sp"
+                        app:decimalDigitsTextSize="18sp"
+                        app:decimalSeparator="."
+                        app:format="##,###"
+                        app:gravity="right"
+                        app:includeDecimalSeparator="true"
+                        app:symbol="@string/rupee"
+                        app:symbolGravity="start"
+                        app:symbolTextSize="18sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_place_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_ripple_effect"
+        android:text="PLACE ORDER"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+    <FrameLayout
+        android:visibility="visible"
+        android:id="@+id/FL_ordered"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ir.beigirad.zigzagview.ZigzagView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:zigzagBackgroundColor="#8bc34a"
+            app:zigzagElevation="8dp"
+            app:zigzagHeight="10dp"
+            app:zigzagPaddingContent="16dp"
+            app:zigzagShadowAlpha="0.9"
+            app:zigzagSides="bottom">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_ordered_successfully"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center"
+                    android:text="Ordered Successfully"
+                    android:textColor="@color/green"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/tv_ordered_date"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center"
+                    android:text="Date"
+                    android:textColor="@color/md_grey_600"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:layout_marginTop="30dp"
+                    android:id="@+id/btn_continue_shopping"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Continue Shopping"
+                    android:textAllCaps="true"
+                    android:background="@drawable/button_ripple_effect"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </ir.beigirad.zigzagview.ZigzagView>
+
+
+    </FrameLayout>
+
+</RelativeLayout>

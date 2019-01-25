@@ -15,6 +15,7 @@ import com.appprocessors.ecomstore.model.TrendingSubCategory;
 import com.appprocessors.ecomstore.model.User;
 import java.util.List;
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -75,14 +76,14 @@ public interface IEStoreAPI {
 
     //Insert Address
     @POST("/user/{phone}/addaddress")
-    Call<List<Address>> addNewAddress(@Path("phone") String phone,@Body List<Address> addresses);
+    Call<Address> addNewAddress(@Path("phone") String phone,@Body Address addresses);
 
     //Get User's  List of saved Address
     @GET("/user/{phone}/alladdresses")
     Observable<List<Address>> getUserAddresses(@Path("phone")String phone);
 
-    @POST("/orders")
-    Call<OrderModel> addOrder(@Body OrderModel orderModel);
+    @POST("/orders/addorder")
+    Call<ResponseBody> addOrder(@Body OrderModel orderModel);
 
     @GET("/orders/allorders")
     Observable<List<OrderModel>> getAllOrders();

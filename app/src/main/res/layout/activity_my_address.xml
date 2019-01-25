@@ -85,7 +85,7 @@
                 app:strokeColor="@color/colorPrimary" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_above="@id/material_button"
+                android:layout_above="@id/btn_deliver_here"
                 android:layout_below="@id/btn_add_new_address"
                 android:id="@+id/rv_addresses"
                 android:layout_width="match_parent"
@@ -93,9 +93,8 @@
                 android:scrollbars="none"
                 />
 
-
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/material_button"
+                android:id="@+id/btn_deliver_here"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

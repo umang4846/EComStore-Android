@@ -1,17 +1,14 @@
 package com.appprocessors.ecomstore.database.local;
 
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
-import androidx.room.Database;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
 import android.content.Context;
-import androidx.annotation.NonNull;
 
 import com.appprocessors.ecomstore.database.modeldb.Cart;
 
-@Database(entities = {Cart.class},version = 1)
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+
+@Database(entities = {Cart.class},version = 1,exportSchema = false)
 public abstract class CartDatabase extends RoomDatabase {
 
     public abstract CartDAO cartDAO();

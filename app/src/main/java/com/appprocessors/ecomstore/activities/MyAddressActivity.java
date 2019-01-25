@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.MyAddressesAdapter;
+import com.appprocessors.ecomstore.interfaces.OnItemSelectedListener;
 import com.appprocessors.ecomstore.model.Address;
+import com.appprocessors.ecomstore.model.ProductDetails;
+import com.appprocessors.ecomstore.model.SelectableAddress;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.UserSessionManager;
@@ -34,7 +37,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class MyAddressActivity extends AppCompatActivity {
+public class MyAddressActivity extends AppCompatActivity implements OnItemSelectedListener {
 
     ProgressDialog loadingAddressdialog;
 
@@ -64,9 +67,16 @@ public class MyAddressActivity extends AppCompatActivity {
     RelativeLayout RLAddresslist;
     @BindView(R.id.btn_add_new_address)
     MaterialButton btnAddNewAddress;
-    @BindView(R.id.material_button)
-    MaterialButton materialButton;
+    @BindView(R.id.btn_deliver_here)
+    MaterialButton btnDeliverHere;
 
+    //Current Product Details
+    ProductDetails currentProductDetails;
+
+    //RecyclerView Adapter
+    MyAddressesAdapter myAddressesAdapter;
+
+     Address selectedItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,27 +91,30 @@ public class MyAddressActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        //get Product Details From Intent
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey("productDetails")) {
+                ProductDetails productDetails = getIntent().getExtras().getParcelable("productDetails");
+                if (productDetails != null) {
+                    currentProductDetails = productDetails;
+                }
+            }
+        }
         mService = Common.getAPI();
         // User Session Manager
         session = new UserSessionManager(getApplicationContext());
         //Load All Addreses of user
         loadUserAddresses();
 
-        //open Add Address Activity on Add Address Button Clicked
-        btnAddNewAddress.setOnClickListener(new View.OnClickListener() {
+        //open Add Address Activity on Add Address Button which is in LL Empty Show
+        btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MyAddressActivity.this, AddAddressActivity.class));
             }
         });
-
-        //open Add Address Activity on Add Address Button which is in LL Empty Show
-      /*  btnAddNewAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MyAddressActivity.this, AddAddressActivity.class));
-            }
-        });*/
 
     }
 
@@ -119,11 +132,13 @@ public class MyAddressActivity extends AppCompatActivity {
                                @Override
                                public void accept(List<Address> addresses) throws Exception {
 
-                                   if (addresses != null) {
+                                   if (addresses.size()>1) {
+                                       loadingAddressdialog.dismiss();
                                        RLAddresslist.setVisibility(View.VISIBLE);
                                        LLNoAddressIvTvBtn.setVisibility(View.GONE);
                                        displayAddressList(addresses);
                                    } else {
+                                       loadingAddressdialog.dismiss();
                                        LLNoAddressIvTvBtn.setVisibility(View.VISIBLE);
                                        RLAddresslist.setVisibility(View.GONE);
                                    }
@@ -134,13 +149,13 @@ public class MyAddressActivity extends AppCompatActivity {
 
     }
 
-
     private void displayAddressList(List<Address> addresses) {
         rvAddresses.setLayoutManager(new LinearLayoutManager(this));
         rvAddresses.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         rvAddresses.setHasFixedSize(true);
         rvAddresses.setNestedScrollingEnabled(false);
-        MyAddressesAdapter myAddressesAdapter = new MyAddressesAdapter(this, addresses);
+        myAddressesAdapter = new MyAddressesAdapter(this, addresses,this);
+        Log.e(TAG, "displayAddressList: List of Address ::"+addresses );
         rvAddresses.setAdapter(myAddressesAdapter);
         myAddressesAdapter.notifyDataSetChanged();
         loadingAddressdialog.dismiss();
@@ -153,34 +168,44 @@ public class MyAddressActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.btn_add_new_address)
-    public void onViewClicked() {
 
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case Common.tagUpdateAddress:
-                break;
+        if (resultCode == RESULT_OK) {
+            Address address = data.<Address>getParcelableExtra(Common.addUpdate);
+            switch (requestCode) {
+                case Common.tagUpdateAddress:
+                    break;
 
-            case Common.tagAddAddress:
-                break;
+                case Common.tagAddAddress:
+                    break;
+            }
         }
     }
 
-    @OnClick({R.id.btn_add_new_address, R.id.material_button, R.id.ib_edit_address})
+    @OnClick({R.id.btn_add_new_address, R.id.btn_deliver_here})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_add_new_address:
+                startActivity(new Intent(MyAddressActivity.this, AddAddressActivity.class));
+                break;
+            case R.id.btn_deliver_here:
 
+                Intent intentDeliverHere = new Intent(MyAddressActivity.this,ActivityPayment.class);
+                intentDeliverHere.putExtra("productDetails", currentProductDetails);
+                intentDeliverHere.putExtra("deliveryAddress",selectedItems);
+               // intentDeliverHere.putExtra("deliveryAddress",)
+                startActivity(intentDeliverHere);
                 break;
-            case R.id.material_button:
-                break;
-            case R.id.ib_edit_address:
-                int position = (Integer) view.getTag();
-                Log.e(TAG, "onViewClicked: " + position);
+
         }
     }
+
+    @Override
+    public void onItemSelected(SelectableAddress item) {
+        selectedItems = myAddressesAdapter.getSelectedAddress();
+    }
+
 }

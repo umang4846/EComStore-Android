@@ -1,9 +1,14 @@
 package com.appprocessors.ecomstore.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 import java.util.List;
-public class ProductDetails {
+public class ProductDetails implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -632,4 +637,146 @@ public class ProductDetails {
     public void setAvailable(Boolean available) {
         this.available = available;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.productName);
+        dest.writeString(this.mrp);
+        dest.writeString(this.price);
+        dest.writeString(this.imageMain);
+        dest.writeString(this.menuid);
+        dest.writeString(this.soldBy);
+        dest.writeString(this.productAverageRating);
+        dest.writeString(this.productNoOfRatings);
+        dest.writeString(this.sellerName);
+        dest.writeString(this.createdDate);
+        dest.writeString(this.productCode);
+        dest.writeString(this.productCategoryName);
+        dest.writeStringList(this.maincategory);
+        dest.writeString(this.subCategory);
+        dest.writeString(this.shippingFee);
+        dest.writeString(this.returnsInDays);
+        dest.writeValue(this.estoreAssured);
+        dest.writeValue(this.brandCertifiedSeller);
+        dest.writeValue(this.genuineProduct);
+        dest.writeString(this.productNoOfReviews);
+        dest.writeTypedList(this.categoryPath);
+        dest.writeStringList(this.productHighlight);
+        dest.writeStringList(this.productImages);
+        dest.writeString(this.description);
+        dest.writeString(this.brand);
+        dest.writeString(this.packageContet);
+        dest.writeString(this.disclaimer);
+        dest.writeString(this.quantity);
+        dest.writeString(this.idealFor);
+        dest.writeString(this.type);
+        dest.writeString(this.expiryDate);
+        dest.writeString(this.bestBefore);
+        dest.writeValue(this.inStock);
+        dest.writeString(this.totolItems);
+        dest.writeString(this.cartItems);
+        dest.writeString(this.leftItems);
+        dest.writeValue(this.codAvailable);
+        dest.writeValue(this.emiAvailable);
+        dest.writeValue(this.cashBack);
+        dest.writeList(this.offers);
+        dest.writeString(this.size);
+        dest.writeString(this.color);
+        dest.writeString(this.sizeUnit);
+        dest.writeParcelable(this.dimensions, flags);
+        dest.writeStringList(this.colorVariants);
+        dest.writeStringList(this.sizeVariants);
+        dest.writeString(this.sellerAverageRating);
+        dest.writeString(this.sellerNoOfRatings);
+        dest.writeString(this.sellerNoOfReviews);
+        dest.writeParcelable(this.lifeStyleInfo, flags);
+        dest.writeValue(this.replaceAvailable);
+        dest.writeValue(this.cancellationAvailable);
+        dest.writeValue(this.installationAvailable);
+        dest.writeValue(this.shippingFree);
+        dest.writeValue(this.returnAvailable);
+        dest.writeValue(this.available);
+    }
+
+    public ProductDetails() {
+    }
+
+    protected ProductDetails(Parcel in) {
+        this.id = in.readString();
+        this.productName = in.readString();
+        this.mrp = in.readString();
+        this.price = in.readString();
+        this.imageMain = in.readString();
+        this.menuid = in.readString();
+        this.soldBy = in.readString();
+        this.productAverageRating = in.readString();
+        this.productNoOfRatings = in.readString();
+        this.sellerName = in.readString();
+        this.createdDate = in.readString();
+        this.productCode = in.readString();
+        this.productCategoryName = in.readString();
+        this.maincategory = in.createStringArrayList();
+        this.subCategory = in.readString();
+        this.shippingFee = in.readString();
+        this.returnsInDays = in.readString();
+        this.estoreAssured = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.brandCertifiedSeller = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.genuineProduct = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.productNoOfReviews = in.readString();
+        this.categoryPath = in.createTypedArrayList(CategoryPath.CREATOR);
+        this.productHighlight = in.createStringArrayList();
+        this.productImages = in.createStringArrayList();
+        this.description = in.readString();
+        this.brand = in.readString();
+        this.packageContet = in.readString();
+        this.disclaimer = in.readString();
+        this.quantity = in.readString();
+        this.idealFor = in.readString();
+        this.type = in.readString();
+        this.expiryDate = in.readString();
+        this.bestBefore = in.readString();
+        this.inStock = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.totolItems = in.readString();
+        this.cartItems = in.readString();
+        this.leftItems = in.readString();
+        this.codAvailable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.emiAvailable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.cashBack = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.offers = new ArrayList<Object>();
+        in.readList(this.offers, Object.class.getClassLoader());
+        this.size = in.readString();
+        this.color = in.readString();
+        this.sizeUnit = in.readString();
+        this.dimensions = in.readParcelable(Dimensions.class.getClassLoader());
+        this.colorVariants = in.createStringArrayList();
+        this.sizeVariants = in.createStringArrayList();
+        this.sellerAverageRating = in.readString();
+        this.sellerNoOfRatings = in.readString();
+        this.sellerNoOfReviews = in.readString();
+        this.lifeStyleInfo = in.readParcelable(LifeStyleInfo.class.getClassLoader());
+        this.replaceAvailable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.cancellationAvailable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.installationAvailable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.shippingFree = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.returnAvailable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.available = (Boolean) in.readValue(Boolean.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<ProductDetails> CREATOR = new Parcelable.Creator<ProductDetails>() {
+        @Override
+        public ProductDetails createFromParcel(Parcel source) {
+            return new ProductDetails(source);
+        }
+
+        @Override
+        public ProductDetails[] newArray(int size) {
+            return new ProductDetails[size];
+        }
+    };
 }

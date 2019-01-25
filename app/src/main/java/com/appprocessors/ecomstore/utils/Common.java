@@ -36,7 +36,7 @@ public class Common {
 
     public  static final  int tagAddAddress =20;
     public  static final  int tagUpdateAddress =30;
-
+    public  static final  String addUpdate = "AddUpdate";
     public static IEStoreAPI getAPI(){
         return RetrofitClient.getClient(BASE_URL).create(IEStoreAPI.class);
     }

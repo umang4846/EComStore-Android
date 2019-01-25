@@ -17,6 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activities.ActivityPayment"></activity>
+
         <meta-data
             android:name="com.facebook.accountkit.ApplicationName"
             android:value="@string/app_name" />
@@ -79,8 +81,8 @@
         <activity android:name=".activities.AllCategoriesActivity" />
         <activity android:name=".activities.SubCategoryProductActivity" />
         <activity
-            android:theme="@style/Theme.MyApp"
-            android:name=".activities.MyAddressActivity"/>
+            android:name=".activities.MyAddressActivity"
+            android:theme="@style/Theme.MyApp" />
     </application>
 
 </manifest>

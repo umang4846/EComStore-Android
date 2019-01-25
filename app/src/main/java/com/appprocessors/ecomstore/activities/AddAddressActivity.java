@@ -112,6 +112,7 @@ public class AddAddressActivity extends AppCompatActivity {
     //Address Globle & Final Object to Update and Add Address
     Address address;
 
+    Address editAddress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,9 +139,9 @@ public class AddAddressActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             if (extras.containsKey("editAddress")) {
-                Address editAddress = getIntent().getExtras().getParcelable("editAddress");
+                editAddress = getIntent().getExtras().getParcelable("editAddress");
                 if (editAddress != null) {
-                    address = editAddress;
+                   // address = editAddress;
                     setAddressDataToEdit(editAddress);
                     setTitle("Edit Address");
                 }
@@ -198,6 +199,8 @@ public class AddAddressActivity extends AppCompatActivity {
             } else {
                 rgAddressType.check(R.id.rb_address_type_work);
             }
+
+            //validateEditedAddress();
         }
 
     }
@@ -360,12 +363,12 @@ public class AddAddressActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
         Calendar calendar = Calendar.getInstance();
-        List<Address> addressList = new ArrayList<>();
-        address = new Address();
-        if (address.getId() != null) {
-            address.setId(address.getId());
+
+        if (editAddress.getId() != null) {
+            editAddress.setId(editAddress.getId());
             Log.e(TAG, "Edit Address ID: " + address.getId());
         } else {
+            address = new Address();
             address.setId("address" + calendar.getTimeInMillis());
         }
 
@@ -378,13 +381,12 @@ public class AddAddressActivity extends AppCompatActivity {
         address.setAlternateMobileNumber(inputAddressAlterMobile.getText().toString());
         address.setAddressType(((RadioButton) findViewById(rgAddressType.getCheckedRadioButtonId())).getText().toString());
         address.setIsDefaultAddress(switchDefaultAddress.isChecked());
-        addressList.add(address);
         String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
 
-        Call<List<Address>> call = RetrofitClient.getRestClient().addNewAddress(phone, addressList);
-        call.enqueue(new Callback<List<Address>>() {
+        Call<Address> call = RetrofitClient.getRestClient().addNewAddress(phone,address);
+        call.enqueue(new Callback<Address>() {
             @Override
-            public void onResponse(Call<List<Address>> call, Response<List<Address>> response) {
+            public void onResponse(Call<Address> call, Response<Address> response) {
                 if (response.isSuccessful()) {
                     dialog.dismiss();
                     Log.d(TAG, "onResponse: Address Added Successfully !");
@@ -392,8 +394,9 @@ public class AddAddressActivity extends AppCompatActivity {
                     myAddressIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(myAddressIntent);*/
                    Intent intent = new Intent();
-                    setResult(RESULT_OK, address);
-                    finish();
+                   intent.putExtra(Common.addUpdate,response.body());
+                   setResult(RESULT_OK, intent);
+                   finish();
 
                 } else {
                     Toast.makeText(AddAddressActivity.this, "Failed to Save Address !", Toast.LENGTH_SHORT).show();
@@ -402,7 +405,7 @@ public class AddAddressActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Address>> call, Throwable t) {
+            public void onFailure(Call<Address> call, Throwable t) {
                 dialog.dismiss();
                 Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onFailure:: " + t.getMessage());

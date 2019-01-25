@@ -50,7 +50,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.CartViewHold
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder cartViewHolder, final int position) {
-        Picasso.get().load(orderModels.get(position).getImageUrl()).into(cartViewHolder.ivProductList);
+       // Picasso.get().load(orderModels.get(position).getImageUrl()).into(cartViewHolder.ivProductList);
 
         cartViewHolder.tvNameProductList.setText(orderModels.get(position).getProductName());
         cartViewHolder.tvColorProductList.setText(orderModels.get(position).getProductPrice());
@@ -63,7 +63,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.CartViewHold
                 orderModel.setProductPrice(Common.currentproductDetails.getMrp());
                 orderModel.setImageUrl(Common.currentproductDetails.getImageMain());*/
 
-                mServices.addOrder(orderModel).enqueue(new Callback<OrderModel>() {
+              /*  mServices.addOrder(orderModel).enqueue(new Callback<OrderModel>() {
                     @Override
                     public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
                         Toast.makeText(context, "Successfully Re-Ordered !", Toast.LENGTH_SHORT).show();
@@ -74,7 +74,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.CartViewHold
                     public void onFailure(Call<OrderModel> call, Throwable t) {
 
                     }
-                });
+                });*/
             }
         });
 

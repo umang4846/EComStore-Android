@@ -232,29 +232,12 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         btnBuyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent addressIntent = new Intent(ProductDetailsActivity.this, MyAddressActivity.class);
+                addressIntent.putExtra("productDetails", currentProductDetails);
                 startActivity(addressIntent);
-                /*OrderModel orderModel = new OrderModel();
-                orderModel.setMenuid(Common.currentproductDetails.getMenuid());
-                orderModel.setOrderDate(Common.currentproductDetails.getExpiryDate());
-                orderModel.setProductName(Common.currentproductDetails.getProductName());
-                orderModel.setProductPrice(Common.currentproductDetails.getMrp());
-                orderModel.setImageUrl(Common.currentproductDetails.getImageMain());
-                mServices.addOrder(orderModel).enqueue(new Callback<OrderModel>() {
-                    @Override
-                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
-                        Toast.makeText(ProductDetailsActivity.this, "Successfully Ordered !", Toast.LENGTH_SHORT).show();
-                        btnBuyNow.setText("See Orders");
-                        if (btnBuyNow.getText().equals("See Orders")) {
-                            startActivity(new Intent(ProductDetailsActivity.this, MyOrdersActivity.class));
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<OrderModel> call, Throwable t) {
 
-                    }
-                });*/
 
 
             }

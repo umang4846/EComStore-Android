@@ -1,5 +1,6 @@
 package com.appprocessors.ecomstore.model;
 
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -39,22 +40,21 @@ public class Address implements Parcelable {
     @Expose
     private boolean isDefaultAddress;
 
-    private boolean ischecked;
-
-    public boolean isIschecked() {
-        return ischecked;
+    public Address() {
     }
 
-    public void setIschecked(boolean ischecked) {
-        this.ischecked = ischecked;
-    }
 
-    public Boolean getIschecked() {
-        return ischecked;
-    }
-
-    public void setIschecked(Boolean ischecked) {
-        this.ischecked = ischecked;
+    public Address(String id, String fullName, String subDistrict, String cityTown, String homeNoBuildingName, String localityAreaStreet, String mobileNo, String alternateMobileNumber, String addressType, boolean isDefaultAddress) {
+        this.id = id;
+        this.fullName = fullName;
+        this.subDistrict = subDistrict;
+        this.cityTown = cityTown;
+        this.homeNoBuildingName = homeNoBuildingName;
+        this.localityAreaStreet = localityAreaStreet;
+        this.mobileNo = mobileNo;
+        this.alternateMobileNumber = alternateMobileNumber;
+        this.addressType = addressType;
+        this.isDefaultAddress = isDefaultAddress;
     }
 
     public String getId() {
@@ -137,6 +137,7 @@ public class Address implements Parcelable {
         isDefaultAddress = defaultAddress;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -153,11 +154,7 @@ public class Address implements Parcelable {
         dest.writeString(this.mobileNo);
         dest.writeString(this.alternateMobileNumber);
         dest.writeString(this.addressType);
-        dest.writeValue(this.isDefaultAddress);
-        dest.writeValue(this.ischecked);
-    }
-
-    public Address() {
+        dest.writeByte(this.isDefaultAddress ? (byte) 1 : (byte) 0);
     }
 
     protected Address(Parcel in) {
@@ -170,8 +167,7 @@ public class Address implements Parcelable {
         this.mobileNo = in.readString();
         this.alternateMobileNumber = in.readString();
         this.addressType = in.readString();
-        this.isDefaultAddress = (Boolean) in.readValue(Boolean.class.getClassLoader());
-        this.ischecked = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.isDefaultAddress = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<Address> CREATOR = new Parcelable.Creator<Address>() {

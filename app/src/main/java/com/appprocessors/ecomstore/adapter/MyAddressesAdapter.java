@@ -1,7 +1,6 @@
 package com.appprocessors.ecomstore.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -10,13 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.activities.AddAddressActivity;
 import com.appprocessors.ecomstore.interfaces.MyAddressItemClickListner;
+import com.appprocessors.ecomstore.interfaces.OnItemSelectedListener;
 import com.appprocessors.ecomstore.model.Address;
+import com.appprocessors.ecomstore.model.SelectableAddress;
 import com.appprocessors.ecomstore.utils.Common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -24,40 +27,59 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.MyAddressesViewHolder> {
+public class MyAddressesAdapter extends RecyclerView.Adapter implements OnItemSelectedListener, View.OnClickListener {
 
-
+    OnItemSelectedListener listener;
+    MyAddressItemClickListner myAddressItemClickListner;
     Activity activity;
-    List<Address> addressList;
-
+    List<SelectableAddress> addressList;
     private int lastSelectedPosition = 0;
 
-    public MyAddressesAdapter(Activity activity, List<Address> addressList) {
+    public MyAddressesAdapter(Activity activity, List<Address> address, OnItemSelectedListener listener) {
+        this.listener = listener;
         this.activity = activity;
-        this.addressList = addressList;
+        addressList = new ArrayList<>();
+        for (Address item : address) {
+            addressList.add(new SelectableAddress(item, false));
+        }
     }
 
     @NonNull
     @Override
     public MyAddressesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.address_list_item, viewGroup, false);
+        View view = LayoutInflater.from(activity).inflate(R.layout.item_address_list, viewGroup, false);
 
-
-        return new MyAddressesViewHolder(view);
+        return new MyAddressesViewHolder(view, this);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull MyAddressesViewHolder holder, int position) {
 
-        if (addressList.get(position).getIschecked()) {
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+
+
+        MyAddressesViewHolder holder = (MyAddressesViewHolder) viewHolder;
+        SelectableAddress selectableItem = addressList.get(position);
+
+        if (selectableItem.isSelected()) {
             holder.rbSelectAddress.setChecked(true);
             holder.ibEditAddress.setVisibility(View.VISIBLE);
 
         } else {
             holder.rbSelectAddress.setChecked(false);
             holder.ibEditAddress.setVisibility(View.GONE);
-
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               lastSelectedPosition  =  position;
+               notifyDataSetChanged();
+               holder.rbSelectAddress.setChecked(true);
+               holder.ibEditAddress.setVisibility(View.VISIBLE);
+                holder.itemView.setBackgroundColor(Color.LTGRAY);
+                listener.onItemSelected(selectableItem);
+            }
+        });
 
         holder.rbSelectAddress.setChecked(lastSelectedPosition == position);
         holder.tvAddressFullName.setText(addressList.get(position).getFullName());
@@ -86,6 +108,8 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
             public void onClick(View view, int position) {
                 lastSelectedPosition = position;
                 notifyDataSetChanged();
+
+                Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
         if (lastSelectedPosition == position) {
@@ -98,6 +122,7 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
             holder.ibEditAddress.setVisibility(View.GONE);
 
         }
+        holder.mItem = selectableItem;
     }
 
     @Override
@@ -105,8 +130,42 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
         return addressList.size();
     }
 
+    public Address getSelectedAddress() {
+        for (int i = 0; i < addressList.size(); i++) {
+            if (addressList.get(i).isSelected()) {
+                break;
+            }
+            return addressList.get(i);
+        }
+        return null;
+    }
 
-    public class MyAddressesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    @Override
+    public void onItemSelected(SelectableAddress item) {
+
+
+        for (SelectableAddress selectableItem : addressList) {
+            if (!selectableItem.equals(item)
+                    && selectableItem.isSelected()) {
+                selectableItem.setSelected(false);
+            } else if (selectableItem.equals(item)
+                    && item.isSelected()) {
+                selectableItem.setSelected(true);
+            }
+        }
+        notifyDataSetChanged();
+
+        listener.onItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+
+    }
+
+
+    public class MyAddressesViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.rb_select_address)
         RadioButton rbSelectAddress;
@@ -121,31 +180,38 @@ public class MyAddressesAdapter extends RecyclerView.Adapter<MyAddressesAdapter.
         @BindView(R.id.ib_edit_address)
         ImageButton ibEditAddress;
 
+        OnItemSelectedListener itemSelectedListener;
         MyAddressItemClickListner myAddressItemClickListner;
+        SelectableAddress mItem;
 
         public void setMyAddressItemClickListner(MyAddressItemClickListner myAddressItemClickListner) {
             this.myAddressItemClickListner = myAddressItemClickListner;
         }
 
-        public MyAddressesViewHolder(@NonNull View itemView) {
+        public MyAddressesViewHolder(@NonNull View itemView , OnItemSelectedListener listener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemSelectedListener = listener;
 
-            itemView.setOnClickListener(this);
             rbSelectAddress.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     lastSelectedPosition = getAdapterPosition();
                     notifyDataSetChanged();
+                    rbSelectAddress.setChecked(true);
+                    ibEditAddress.setVisibility(View.VISIBLE);
+                    itemView.setBackgroundColor(Color.parseColor("#F8F8FA"));
+
+                    itemSelectedListener.onItemSelected(mItem);
                 }
             });
-        }
 
 
-        @Override
-        public void onClick(View v) {
-            myAddressItemClickListner.onClick(v, getAdapterPosition());
+
+
         }
+
     }
+
 
 }

@@ -518,7 +518,7 @@
                                 android:fontFamily="@font/roboto"
                                 android:padding="10dp"
                                 android:text="Product Details"
-                                android:textColor="@color/md_black_1000"
+                                android:textColor="@color/md_grey_600"
                                 android:textSize="18sp" />
 
                             <LinearLayout
