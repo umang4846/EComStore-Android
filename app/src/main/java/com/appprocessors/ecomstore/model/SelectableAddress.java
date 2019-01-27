@@ -40,7 +40,7 @@ public class SelectableAddress extends Address {
         dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
     }
 
-    protected SelectableAddress(Parcel in) {
+    public SelectableAddress(Parcel in) {
         super(in);
         this.isSelected = in.readByte() != 0;
     }

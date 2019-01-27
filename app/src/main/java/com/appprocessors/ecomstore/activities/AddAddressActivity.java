@@ -33,7 +33,6 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -109,10 +108,10 @@ public class AddAddressActivity extends AppCompatActivity {
     // User Session Manager Class
     UserSessionManager session;
 
-    //Address Globle & Final Object to Update and Add Address
-    Address address;
-
     Address editAddress;
+
+    boolean isEditAddress = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +140,8 @@ public class AddAddressActivity extends AppCompatActivity {
             if (extras.containsKey("editAddress")) {
                 editAddress = getIntent().getExtras().getParcelable("editAddress");
                 if (editAddress != null) {
-                   // address = editAddress;
+                    // address = editAddress;
+                    isEditAddress = true;
                     setAddressDataToEdit(editAddress);
                     setTitle("Edit Address");
                 }
@@ -200,7 +200,6 @@ public class AddAddressActivity extends AppCompatActivity {
                 rgAddressType.check(R.id.rb_address_type_work);
             }
 
-            //validateEditedAddress();
         }
 
     }
@@ -213,12 +212,6 @@ public class AddAddressActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    private void requestFocus(View view) {
-        if (view.requestFocus()) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
-    }
 
     private void loadAllPincodes() {
         final ProgressDialog dialog = new ProgressDialog(this);
@@ -354,24 +347,20 @@ public class AddAddressActivity extends AppCompatActivity {
         if (!validateAddressType()) {
             return;
         }
-        submitAddress();
+        if (isEditAddress)
+            submiEditedAddress();
+        else
+            submitAddress();
     }
 
-    private void submitAddress() {
+    private void submiEditedAddress() {
         final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Saving Address");
+        dialog.setMessage("Updating Address");
         dialog.setCancelable(false);
         dialog.show();
-        Calendar calendar = Calendar.getInstance();
 
-        if (editAddress.getId() != null) {
-            editAddress.setId(editAddress.getId());
-            Log.e(TAG, "Edit Address ID: " + address.getId());
-        } else {
-            address = new Address();
-            address.setId("address" + calendar.getTimeInMillis());
-        }
-
+        Address address = new Address();
+        address.setId(editAddress.getId());
         address.setSubDistrict(inputAddressSubDistrict.getText().toString());
         address.setCityTown(inputAddressCityTown.getText().toString());
         address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
@@ -383,7 +372,7 @@ public class AddAddressActivity extends AppCompatActivity {
         address.setIsDefaultAddress(switchDefaultAddress.isChecked());
         String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
 
-        Call<Address> call = RetrofitClient.getRestClient().addNewAddress(phone,address);
+        Call<Address> call = RetrofitClient.getRestClient().addNewAddress(phone, address);
         call.enqueue(new Callback<Address>() {
             @Override
             public void onResponse(Call<Address> call, Response<Address> response) {
@@ -393,10 +382,61 @@ public class AddAddressActivity extends AppCompatActivity {
                    /* Intent myAddressIntent = new Intent(AddAddressActivity.this, MyAddressActivity.class);
                     myAddressIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(myAddressIntent);*/
-                   Intent intent = new Intent();
-                   intent.putExtra(Common.addUpdate,response.body());
-                   setResult(RESULT_OK, intent);
-                   finish();
+                    Intent intent = new Intent();
+                    intent.putExtra(Common.addUpdatedAddress, response.body());
+                    setResult(RESULT_OK, intent);
+                    finish();
+
+                } else {
+                    dialog.dismiss();
+                    Toast.makeText(AddAddressActivity.this, "Failed to Save Address !", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "onResponse: Failed to save address " + response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Address> call, Throwable t) {
+                dialog.dismiss();
+                Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onFailure:: " + t.getMessage());
+            }
+        });
+    }
+
+    private void submitAddress() {
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Saving Address");
+        dialog.setCancelable(false);
+        dialog.show();
+        Calendar calendar = Calendar.getInstance();
+
+        Address address = new Address();
+        address.setId("address" + calendar.getTimeInMillis());
+        address.setSubDistrict(inputAddressSubDistrict.getText().toString());
+        address.setCityTown(inputAddressCityTown.getText().toString());
+        address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
+        address.setLocalityAreaStreet(inputAddressLocalityAreaStreet.getText().toString());
+        address.setFullName(inputAddressPersonName.getText().toString());
+        address.setMobileNo(inputAddressMobile.getText().toString());
+        address.setAlternateMobileNumber(inputAddressAlterMobile.getText().toString());
+        address.setAddressType(((RadioButton) findViewById(rgAddressType.getCheckedRadioButtonId())).getText().toString());
+        address.setIsDefaultAddress(switchDefaultAddress.isChecked());
+        String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
+
+        Call<Address> call = RetrofitClient.getRestClient().addNewAddress(phone, address);
+        call.enqueue(new Callback<Address>() {
+            @Override
+            public void onResponse(Call<Address> call, Response<Address> response) {
+                if (response.isSuccessful()) {
+                    dialog.dismiss();
+                    Log.d(TAG, "onResponse: Address Added Successfully !");
+                   /* Intent myAddressIntent = new Intent(AddAddressActivity.this, MyAddressActivity.class);
+                    myAddressIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(myAddressIntent);*/
+                    Intent intent = new Intent();
+                    intent.putExtra(Common.addNewAddress, response.body());
+                    setResult(RESULT_OK, intent);
+                    finish();
 
                 } else {
                     Toast.makeText(AddAddressActivity.this, "Failed to Save Address !", Toast.LENGTH_SHORT).show();
@@ -529,6 +569,11 @@ public class AddAddressActivity extends AppCompatActivity {
         return true;
     }
 
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
 
     @Override
     protected void attachBaseContext(Context newBase) {

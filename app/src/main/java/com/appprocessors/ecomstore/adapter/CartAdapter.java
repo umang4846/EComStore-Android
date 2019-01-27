@@ -3,8 +3,6 @@ package com.appprocessors.ecomstore.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +25,8 @@ import org.fabiomsr.moneytextview.MoneyTextView;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -53,7 +53,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder cartViewHolder, final int position) {
-         Picasso.get().load(carts.get(position).imageMain).into(cartViewHolder.ivCartImage);
+        Picasso.get().load(carts.get(position).imageMain).into(cartViewHolder.ivCartImage);
 
         cartViewHolder.tvNameProductList.setText(carts.get(position).productName);
         cartViewHolder.tvMrpProductList.setText(carts.get(position).mrp);
@@ -82,7 +82,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                         .setPositiveBtnText("REMOVE")
                         .setAnimation(Animation.POP)
                         .isCancellable(false)
-                        .setIcon(R.drawable.ic_shopping_cart_24dp,Icon.Visible)
+                        .setIcon(R.drawable.ic_shopping_cart_24dp, Icon.Visible)
                         .OnPositiveClicked(new FancyAlertDialogListener() {
                             @Override
                             public void OnClick() {
@@ -119,24 +119,28 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         TextView tvNameProductList;
         @BindView(R.id.tv_color_product_list)
         TextView tvColorProductList;
-        @BindView(R.id.iv_certified_seller)
-        ImageView ivCertifiedSeller;
+        @BindView(R.id.tv_Seller)
+        TextView tvSeller;
         @BindView(R.id.tv_seller_name)
         TextView tvSellerName;
+        @BindView(R.id.iv_certified_seller)
+        ImageView ivCertifiedSeller;
         @BindView(R.id.tv_price_product_list)
         MoneyTextView tvPriceProductList;
         @BindView(R.id.tv_mrp_product_list)
         TextView tvMrpProductList;
         @BindView(R.id.tv_discount_product_list)
         MoneyTextView tvDiscountProductList;
-        @BindView(R.id.btn_add_to_wish)
-        OmegaCenterIconButton btnAddToWish;
+        @BindView(R.id.btn_save_for_later)
+        OmegaCenterIconButton btnSaveForLater;
         @BindView(R.id.btn_remove_item)
         OmegaCenterIconButton btnRemoveItem;
 
-       public CartViewHolder(View view) {
-           super(view);
-           ButterKnife.bind(this, view);
+
+        public CartViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
         }
     }
+
 }

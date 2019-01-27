@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.MyAddressesAdapter;
+import com.appprocessors.ecomstore.interfaces.MyAddressItemClickListner;
 import com.appprocessors.ecomstore.interfaces.OnItemSelectedListener;
 import com.appprocessors.ecomstore.model.Address;
 import com.appprocessors.ecomstore.model.ProductDetails;
@@ -37,7 +38,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class MyAddressActivity extends AppCompatActivity implements OnItemSelectedListener {
+public class MyAddressActivity extends AppCompatActivity implements OnItemSelectedListener,MyAddressItemClickListner  , View.OnClickListener{
 
     ProgressDialog loadingAddressdialog;
 
@@ -74,9 +75,14 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     ProductDetails currentProductDetails;
 
     //RecyclerView Adapter
-    MyAddressesAdapter myAddressesAdapter;
+   public MyAddressesAdapter myAddressesAdapter;
 
-     Address selectedItems;
+    Address selectedItems;
+
+    List<Address> addressesList;
+
+    int position = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,11 +118,14 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MyAddressActivity.this, AddAddressActivity.class));
+                startActivityForResult(new Intent(MyAddressActivity.this, AddAddressActivity.class),Common.tagAddAddress);
             }
         });
 
+
+
     }
+
 
     private void loadUserAddresses() {
 
@@ -132,7 +141,7 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
                                @Override
                                public void accept(List<Address> addresses) throws Exception {
 
-                                   if (addresses.size()>1) {
+                                   if (addresses.size()!=0) {
                                        loadingAddressdialog.dismiss();
                                        RLAddresslist.setVisibility(View.VISIBLE);
                                        LLNoAddressIvTvBtn.setVisibility(View.GONE);
@@ -150,12 +159,13 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     }
 
     private void displayAddressList(List<Address> addresses) {
+        addressesList = addresses;
         rvAddresses.setLayoutManager(new LinearLayoutManager(this));
         rvAddresses.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         rvAddresses.setHasFixedSize(true);
         rvAddresses.setNestedScrollingEnabled(false);
-        myAddressesAdapter = new MyAddressesAdapter(this, addresses,this);
-        Log.e(TAG, "displayAddressList: List of Address ::"+addresses );
+        myAddressesAdapter = new MyAddressesAdapter(this, addressesList, this,this);
+        Log.e(TAG, "displayAddressList: List of Address ::" + addresses);
         rvAddresses.setAdapter(myAddressesAdapter);
         myAddressesAdapter.notifyDataSetChanged();
         loadingAddressdialog.dismiss();
@@ -169,17 +179,29 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            Address address = data.<Address>getParcelableExtra(Common.addUpdate);
+            //Address address = data.<Address>getParcelableExtra(Common.addUpdatedAddress);
             switch (requestCode) {
                 case Common.tagUpdateAddress:
+                    Log.e(TAG, "onActivityResult: Update Address ::"+data.<Address>getParcelableExtra(Common.addUpdatedAddress) );
+                    addressesList.set(position, data.<Address>getParcelableExtra(Common.addUpdatedAddress));
+                    myAddressesAdapter.notifyItemChanged(position);
+                    myAddressesAdapter.UpdateData(position,addressesList.get(position));
+                    rvAddresses.scrollToPosition(position);
+
                     break;
 
                 case Common.tagAddAddress:
+                    Log.e(TAG, "onActivityResult: ADD Address ::"+data.<Address>getParcelableExtra(Common.addNewAddress) );
+                    if (addressesList.size() == 0) {
+                        LLNoAddressIvTvBtn.setVisibility(View.GONE);
+                        RLAddresslist.setVisibility(View.VISIBLE);
+                    }
+                    addressesList.add(data.<Address>getParcelableExtra(Common.addNewAddress));
+                    myAddressesAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -189,23 +211,33 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_add_new_address:
-                startActivity(new Intent(MyAddressActivity.this, AddAddressActivity.class));
+                startActivityForResult(new Intent(MyAddressActivity.this, AddAddressActivity.class),Common.tagAddAddress);
                 break;
             case R.id.btn_deliver_here:
 
-                Intent intentDeliverHere = new Intent(MyAddressActivity.this,ActivityPayment.class);
+                Intent intentDeliverHere = new Intent(MyAddressActivity.this, ActivityPayment.class);
                 intentDeliverHere.putExtra("productDetails", currentProductDetails);
-                intentDeliverHere.putExtra("deliveryAddress",selectedItems);
-               // intentDeliverHere.putExtra("deliveryAddress",)
+                intentDeliverHere.putExtra("deliveryAddress", selectedItems);
+                // intentDeliverHere.putExtra("deliveryAddress",)
                 startActivity(intentDeliverHere);
                 break;
 
         }
     }
 
+
     @Override
     public void onItemSelected(SelectableAddress item) {
         selectedItems = myAddressesAdapter.getSelectedAddress();
     }
 
+    @Override
+    public void onClick(View view, int positions, Address address) {
+        position = positions;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
 }

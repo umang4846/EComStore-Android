@@ -138,9 +138,15 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
 
         public void bindTo(Content content, int position) {
             if (content != null) {
-                intent = new Intent(context, ProductDetailsActivity.class);
-                intent.putExtra("productCode",content.getProductCode());
 
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        intent = new Intent(context, ProductDetailsActivity.class);
+                        intent.putExtra("productCode",content.getProductCode());
+                        context.startActivity(intent);
+                    }
+                });
                 product_name.setText(content.getProductName());
                 price.setAmount(Float.parseFloat(content.getPrice()));
                 mrp.setText(getIndianRupee(content.getMrp()));
@@ -221,12 +227,6 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                 price = itemView.findViewById(R.id.tv_price_product_list);
                 discount = itemView.findViewById(R.id.tv_discount_product_list);
             }
-
-
-            itemView.setOnClickListener(v -> {
-                //Start Product Details Activity
-                context.startActivity(intent);
-            });
 
 
         }

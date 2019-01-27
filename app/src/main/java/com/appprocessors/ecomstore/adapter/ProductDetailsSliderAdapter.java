@@ -23,7 +23,7 @@ public class ProductDetailsSliderAdapter extends SliderAdapter {
     @Override
     public void onBindImageSlide(int position, ImageSlideViewHolder viewHolder) {
             viewHolder.bindImageSlide(Imageslist.get(position));
-            viewHolder.imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+           viewHolder.imageView.setScaleType(ImageView.ScaleType.CENTER);
 
 
     }

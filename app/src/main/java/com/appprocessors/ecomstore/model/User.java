@@ -32,11 +32,11 @@ public class User implements Parcelable {
     private String gender;
     @SerializedName("addresses")
     @Expose
-    private List<Address> addresses = null;
+    private List<Address> addresses = new ArrayList<>();
 
     @SerializedName("orders")
     @Expose
-    private List<OrderModel> orderModels = null;
+    private List<OrderModel> orderModels = new ArrayList<>();
 
     public List<OrderModel> getOrderModels() {
         return orderModels;
