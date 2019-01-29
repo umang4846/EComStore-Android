@@ -69,7 +69,4 @@ public class Common {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
-
-
 }

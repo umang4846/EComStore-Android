@@ -23,6 +23,7 @@ import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.UserSessionManager;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -38,7 +39,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class MyAddressActivity extends AppCompatActivity implements OnItemSelectedListener,MyAddressItemClickListner  , View.OnClickListener{
+public class MyAddressActivity extends AppCompatActivity implements OnItemSelectedListener, MyAddressItemClickListner, View.OnClickListener {
 
     ProgressDialog loadingAddressdialog;
 
@@ -53,6 +54,18 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
 
     //Butterknife Injections
 
+
+    //Current Product Details
+    ProductDetails currentProductDetails;
+
+    Address selectedItems;
+
+    List<Address> addressesList = new ArrayList<>();
+
+    //RecyclerView Adapter
+    public MyAddressesAdapter myAddressesAdapter = new MyAddressesAdapter(this);
+
+    int position = 0;
     @BindView(R.id.iv_no_address)
     ImageView ivNoAddress;
     @BindView(R.id.tv_no_address)
@@ -61,27 +74,14 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     MaterialButton btnAddAddress;
     @BindView(R.id.LL_no_address_iv_tv_btn)
     LinearLayout LLNoAddressIvTvBtn;
-    @BindView(R.id.rv_addresses)
-    RecyclerView rvAddresses;
-
-    @BindView(R.id.RL_Addresslist)
-    RelativeLayout RLAddresslist;
     @BindView(R.id.btn_add_new_address)
     MaterialButton btnAddNewAddress;
+    @BindView(R.id.rv_addresses)
+    RecyclerView rvAddresses;
     @BindView(R.id.btn_deliver_here)
     MaterialButton btnDeliverHere;
-
-    //Current Product Details
-    ProductDetails currentProductDetails;
-
-    //RecyclerView Adapter
-   public MyAddressesAdapter myAddressesAdapter;
-
-    Address selectedItems;
-
-    List<Address> addressesList;
-
-    int position = 0;
+    @BindView(R.id.RL_Addresslist)
+    RelativeLayout RLAddresslist;
 
 
     @Override
@@ -111,6 +111,12 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
         mService = Common.getAPI();
         // User Session Manager
         session = new UserSessionManager(getApplicationContext());
+
+        rvAddresses.setLayoutManager(new LinearLayoutManager(this));
+        rvAddresses.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rvAddresses.setHasFixedSize(true);
+        rvAddresses.setNestedScrollingEnabled(false);
+
         //Load All Addreses of user
         loadUserAddresses();
 
@@ -118,10 +124,9 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MyAddressActivity.this, AddAddressActivity.class),Common.tagAddAddress);
+                startActivityForResult(new Intent(MyAddressActivity.this, AddAddressActivity.class), Common.tagAddAddress);
             }
         });
-
 
 
     }
@@ -141,8 +146,7 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
                                @Override
                                public void accept(List<Address> addresses) throws Exception {
 
-                                   if (addresses.size()!=0) {
-                                       loadingAddressdialog.dismiss();
+                                   if (addresses.size() != 0) {
                                        RLAddresslist.setVisibility(View.VISIBLE);
                                        LLNoAddressIvTvBtn.setVisibility(View.GONE);
                                        displayAddressList(addresses);
@@ -160,11 +164,7 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
 
     private void displayAddressList(List<Address> addresses) {
         addressesList = addresses;
-        rvAddresses.setLayoutManager(new LinearLayoutManager(this));
-        rvAddresses.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        rvAddresses.setHasFixedSize(true);
-        rvAddresses.setNestedScrollingEnabled(false);
-        myAddressesAdapter = new MyAddressesAdapter(this, addressesList, this,this);
+        myAddressesAdapter = new MyAddressesAdapter(this, addressesList, this, this);
         Log.e(TAG, "displayAddressList: List of Address ::" + addresses);
         rvAddresses.setAdapter(myAddressesAdapter);
         myAddressesAdapter.notifyDataSetChanged();
@@ -183,25 +183,29 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            //Address address = data.<Address>getParcelableExtra(Common.addUpdatedAddress);
             switch (requestCode) {
                 case Common.tagUpdateAddress:
-                    Log.e(TAG, "onActivityResult: Update Address ::"+data.<Address>getParcelableExtra(Common.addUpdatedAddress) );
                     addressesList.set(position, data.<Address>getParcelableExtra(Common.addUpdatedAddress));
+                    myAddressesAdapter.UpdateData(position, addressesList.get(position));
                     myAddressesAdapter.notifyItemChanged(position);
-                    myAddressesAdapter.UpdateData(position,addressesList.get(position));
-                    rvAddresses.scrollToPosition(position);
-
+                    rvAddresses.smoothScrollToPosition(position);
                     break;
 
                 case Common.tagAddAddress:
-                    Log.e(TAG, "onActivityResult: ADD Address ::"+data.<Address>getParcelableExtra(Common.addNewAddress) );
                     if (addressesList.size() == 0) {
                         LLNoAddressIvTvBtn.setVisibility(View.GONE);
                         RLAddresslist.setVisibility(View.VISIBLE);
+                        addressesList.add(data.<Address>getParcelableExtra(Common.addNewAddress));
                     }
-                    addressesList.add(data.<Address>getParcelableExtra(Common.addNewAddress));
+                    else {
+                        LLNoAddressIvTvBtn.setVisibility(View.GONE);
+                        RLAddresslist.setVisibility(View.VISIBLE);
+                        addressesList.add(data.<Address>getParcelableExtra(Common.addNewAddress));
+                    }
+                    myAddressesAdapter = new MyAddressesAdapter(this, addressesList, this, this);
+                    rvAddresses.setAdapter(myAddressesAdapter);
                     myAddressesAdapter.notifyDataSetChanged();
+                    rvAddresses.smoothScrollToPosition(myAddressesAdapter.getItemCount()-1);
                     break;
             }
         }
@@ -211,7 +215,7 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_add_new_address:
-                startActivityForResult(new Intent(MyAddressActivity.this, AddAddressActivity.class),Common.tagAddAddress);
+                startActivityForResult(new Intent(MyAddressActivity.this, AddAddressActivity.class), Common.tagAddAddress);
                 break;
             case R.id.btn_deliver_here:
 
@@ -233,6 +237,7 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
 
     @Override
     public void onClick(View view, int positions, Address address) {
+        Log.e(TAG, "onClick: Postion" + positions);
         position = positions;
     }
 

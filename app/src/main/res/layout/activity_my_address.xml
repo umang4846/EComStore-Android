@@ -61,51 +61,50 @@
 
     <RelativeLayout
         android:id="@+id/RL_Addresslist"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_new_address"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:padding="8dp"
-                android:text="Add New Address"
-                android:textSize="18sp"
-                app:cornerRadius="0dp"
-                app:icon="@drawable/ic_add_black_24dp"
-                app:iconGravity="start"
-                app:iconPadding="8dp"
-                app:iconSize="20dp"
-                app:iconTintMode="src_in"
-                app:rippleColor="@color/md_grey_300"
-                app:strokeColor="@color/colorPrimary" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_new_address"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:padding="8dp"
+            android:text="Add New Address"
+            android:textSize="18sp"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_add_black_24dp"
+            app:iconGravity="start"
+            app:iconPadding="8dp"
+            app:iconSize="20dp"
+            app:iconTintMode="src_in"
+            app:rippleColor="@color/md_grey_300"
+            app:strokeColor="@color/colorPrimary" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_above="@id/btn_deliver_here"
-                android:layout_below="@id/btn_add_new_address"
-                android:id="@+id/rv_addresses"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none"
-                />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_addresses"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/btn_deliver_here"
+            android:layout_below="@id/btn_add_new_address"
+            android:scrollbars="none" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_deliver_here"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="bottom"
-                android:padding="10dp"
-                android:text="DELIVER HERE"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                app:cornerRadius="0dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_deliver_here"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:padding="10dp"
+            android:text="DELIVER HERE"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:cornerRadius="0dp" />
 
 
     </RelativeLayout>

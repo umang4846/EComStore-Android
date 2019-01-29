@@ -140,7 +140,6 @@ public class AddAddressActivity extends AppCompatActivity {
             if (extras.containsKey("editAddress")) {
                 editAddress = getIntent().getExtras().getParcelable("editAddress");
                 if (editAddress != null) {
-                    // address = editAddress;
                     isEditAddress = true;
                     setAddressDataToEdit(editAddress);
                     setTitle("Edit Address");
@@ -439,6 +438,7 @@ public class AddAddressActivity extends AppCompatActivity {
                     finish();
 
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(AddAddressActivity.this, "Failed to Save Address !", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "onResponse: Failed to save address " + response.errorBody());
                 }
