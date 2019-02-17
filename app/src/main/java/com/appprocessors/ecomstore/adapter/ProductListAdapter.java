@@ -152,6 +152,8 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                 mrp.setText(getIndianRupee(content.getMrp()));
                 mrp.setPaintFlags(mrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 discount.setAmount((float) Common.DiscountInPercentage(content.getMrp(), content.getPrice()));
+
+
                 if (Common.DiscountInPercentage(content.getMrp(), content.getPrice()) <= 0) {
                     mrp.setVisibility(View.GONE);
                     discount.setVisibility(View.GONE);
@@ -167,8 +169,8 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                     discount.setVisibility(View.VISIBLE);
                 }
 
+
                 Picasso.get().load(content.getImageMain()).into(img);
-                product_name.setText(content.getProductName());
 
                 if (getItemViewType() == VIEW_TYPE_BIG) {
 
@@ -185,8 +187,10 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                     imagePopup.setFullScreen(false);
                     imagePopup.setBackgroundColor(context.getResources().getColor(R.color.white_smoke));
                     imagePopup.setImageOnClickClose(true);
-                    product_color.setText(content.getSoldBy());
+                    product_color.setText(content.getSellerName());
                     rating.setText(content.getProductAverageRating());
+                    rating.setVisibility(View.GONE);
+                    total_rating.setVisibility(View.GONE);
                    /* imagePopup.initiatePopupWithPicasso(content.getImageMain());
                     img.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -220,6 +224,7 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                 price = itemView.findViewById(R.id.tv_price_product_list);
                 discount = itemView.findViewById(R.id.tv_discount_product_list);
                 product_color = itemView.findViewById(R.id.tv_color_product_list);
+
             } else {
                 product_name = itemView.findViewById(R.id.tv_name_product_list);
                 img = itemView.findViewById(R.id.iv_product_list);

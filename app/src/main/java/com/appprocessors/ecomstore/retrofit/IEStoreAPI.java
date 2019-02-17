@@ -5,7 +5,7 @@ import com.appprocessors.ecomstore.model.Banner;
 import com.appprocessors.ecomstore.model.Category;
 import com.appprocessors.ecomstore.model.CategoryBanner;
 import com.appprocessors.ecomstore.model.CategoryProducts;
-import com.appprocessors.ecomstore.model.OrderModel;
+import com.appprocessors.ecomstore.model.Order;
 import com.appprocessors.ecomstore.model.ProductDetails;
 import com.appprocessors.ecomstore.model.ProductList;
 import com.appprocessors.ecomstore.model.SubCategoryProducts;
@@ -83,10 +83,10 @@ public interface IEStoreAPI {
     Observable<List<Address>> getUserAddresses(@Path("phone")String phone);
 
     @POST("/orders/addorder")
-    Call<ResponseBody> addOrder(@Body OrderModel orderModel);
+    Call<ResponseBody> addOrder(@Body Order order);
 
     @GET("/orders/allorders")
-    Observable<List<OrderModel>> getAllOrders();
+    Observable<List<Order>> getAllOrders();
 
     //Get Product from  menuid
     @GET(value = "fragrances/{menuid}")

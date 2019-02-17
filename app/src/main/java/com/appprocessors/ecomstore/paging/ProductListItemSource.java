@@ -27,7 +27,6 @@ public class ProductListItemSource extends PageKeyedDataSource<Integer, Content>
     public static final int SIZE = 10;
     public static final int PAGE = 0;
     public static String SORT_BY = "productAverageRating";
-    public static String ORDER_BY = "DESC";
 
     public MutableLiveData<Resource> networkState = new MutableLiveData<>();
     private final IEStoreAPI mService;

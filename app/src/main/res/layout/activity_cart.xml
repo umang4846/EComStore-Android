@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_gravity="center"
-        android:src="@drawable/empty_cart" />
+        android:src="@drawable/no_item" />
 
     <TextView
         android:layout_gravity="center"

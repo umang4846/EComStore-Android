@@ -42,7 +42,7 @@ public class SubCategoryProductAdapter extends RecyclerView.Adapter<SubCategoryP
         holder.setItemClickListner(new IItemClickListner() {
             @Override
             public void onClick(View v) {
-                Common.currentSubcategoryProducts = subcategoryProducts.get(position);
+              //  Common.currentSubcategoryProducts = subcategoryProducts.get(position);
                 //Start New Activity
                 Intent intent = new Intent(context,ProductListActivity.class);
                 intent.putExtra("subcategory",subcategoryProducts.get(position));

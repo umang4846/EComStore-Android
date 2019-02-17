@@ -130,6 +130,7 @@
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
                     android:maxLines="1"
+                    app:symbolTextColor="@color/green"
                     app:amount="99002"
                     app:baseTextColor="@color/black"
                     app:baseTextSize="18sp"

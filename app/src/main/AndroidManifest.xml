@@ -77,7 +77,9 @@
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activities.EmptyAddressActivity" />
         <activity android:name=".activities.NotificationSettingsActivity" />
-        <activity android:name=".activities.MyOrdersActivity" />
+        <activity
+            android:label="My Orders"
+            android:name=".activities.MyOrdersActivity" />
         <activity android:name=".activities.AllCategoriesActivity" />
         <activity android:name=".activities.SubCategoryProductActivity" />
         <activity

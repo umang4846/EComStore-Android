@@ -7,7 +7,7 @@ public class SelectableAddress extends Address {
     private boolean isSelected = false;
 
     public SelectableAddress(Address address,boolean isSelected) {
-        super(address.getId(),
+        super(address.get_id(),
                 address.getFullName(),
                 address.getSubDistrict(),
                 address.getCityTown(),

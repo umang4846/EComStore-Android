@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.appprocessors.ecomstore.adapter.ProductListAdapter;
 import com.appprocessors.ecomstore.R;
+import com.appprocessors.ecomstore.model.CategoryProducts;
 import com.appprocessors.ecomstore.model.Content;
 import com.appprocessors.ecomstore.model.SubCategoryProducts;
 import com.appprocessors.ecomstore.paging.Injection;
@@ -91,7 +92,7 @@ public class ProductListActivity extends CommonOptionMenu {
         });
 
         if (getIntent() != null) {
-            SubCategoryProducts subCategoryProducts = getIntent().getParcelableExtra("subcategory");
+            CategoryProducts subCategoryProducts = getIntent().getParcelableExtra("subcategory");
             if (subCategoryProducts != null) {
                 setTitle(subCategoryProducts.name);
                 viewModel = obtainViewModel(this);

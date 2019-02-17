@@ -71,7 +71,7 @@
     <string name="err_msg_match_password">Password and Confirm Password Doesn\'t Match</string>
     <string name="err_msg_lenth_password">Length must be atleast 6 Characters</string>
     <string name="err_msg_lenth_phone">Enter a Valid Number</string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_home">ESTORE</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>

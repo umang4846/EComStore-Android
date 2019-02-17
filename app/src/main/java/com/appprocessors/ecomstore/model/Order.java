@@ -1,22 +1,29 @@
 package com.appprocessors.ecomstore.model;
 
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class OrderModel {
+public class Order {
 
     @SerializedName("_id")
     @Expose
-    private String id;
+    private String _id;
     @SerializedName("productName")
     @Expose
     private String productName;
+    @SerializedName("productCode")
+    @Expose
+    private String productCode;
     @SerializedName("productPrice")
     @Expose
     private String productPrice;
     @SerializedName("shippingFee")
     @Expose
     private String shippingFee;
+    @SerializedName("sellerName")
+    @Expose
+    private String sellerName;
     @SerializedName("productQuanity")
     @Expose
     private String productQuanity;
@@ -26,25 +33,25 @@ public class OrderModel {
     @SerializedName("paymentMode")
     @Expose
     private String paymentMode;
-    @SerializedName("productDetails")
+    @SerializedName("address")
     @Expose
-    private Object productDetails;
-    @SerializedName("deliveryAddress")
-    @Expose
-    private Object deliveryAddress;
+    private Address address;
     @SerializedName("orderedAccountMobileNo")
     @Expose
     private String orderedAccountMobileNo;
     @SerializedName("orderDateTime")
     @Expose
     private String orderDateTime;
+    @SerializedName("orderStatus")
+    @Expose
+    private String orderStatus;
 
-    public String getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getProductName() {
@@ -53,6 +60,14 @@ public class OrderModel {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     public String getProductPrice() {
@@ -69,6 +84,14 @@ public class OrderModel {
 
     public void setShippingFee(String shippingFee) {
         this.shippingFee = shippingFee;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
     }
 
     public String getProductQuanity() {
@@ -95,20 +118,12 @@ public class OrderModel {
         this.paymentMode = paymentMode;
     }
 
-    public Object getProductDetails() {
-        return productDetails;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setProductDetails(Object productDetails) {
-        this.productDetails = productDetails;
-    }
-
-    public Object getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(Object deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public String getOrderedAccountMobileNo() {
@@ -125,5 +140,13 @@ public class OrderModel {
 
     public void setOrderDateTime(String orderDateTime) {
         this.orderDateTime = orderDateTime;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }

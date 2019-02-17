@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.appprocessors.ecomstore.activities.ProductListActivity;
 import com.appprocessors.ecomstore.activities.SubCategoryProductActivity;
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.interfaces.IItemClickListner;
 import com.appprocessors.ecomstore.model.CategoryProducts;
+import com.appprocessors.ecomstore.utils.Common;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -42,8 +44,13 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
             @Override
             public void onClick(View v) {
                 //Start New Activity
-                Intent intent = new Intent(context,SubCategoryProductActivity.class);
+                /*Intent intent = new Intent(context,SubCategoryProductActivity.class);
                 intent.putExtra("categoryProducts",categoryProducts.get(position));
+                context.startActivity(intent);*/
+                Common.currentSubcategoryProducts = categoryProducts.get(position);
+
+                Intent intent = new Intent(context, ProductListActivity.class);
+                intent.putExtra("subcategory",categoryProducts.get(position));
                 context.startActivity(intent);
 
             }

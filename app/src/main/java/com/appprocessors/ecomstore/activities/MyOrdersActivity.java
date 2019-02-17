@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import com.appprocessors.ecomstore.adapter.OrderAdapter;
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.OrderModel;
+import com.appprocessors.ecomstore.model.Order;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 
@@ -53,16 +53,16 @@ public class MyOrdersActivity extends AppCompatActivity {
         compositeDisposable.add(mServices.getAllOrders()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<OrderModel>>() {
+                .subscribe(new Consumer<List<Order>>() {
                     @Override
-                    public void accept(List<OrderModel> orderModels) throws Exception {
-                        displayCategory(orderModels);
+                    public void accept(List<Order> orders) throws Exception {
+                        displayCategory(orders);
                     }
                 }));
     }
 
-    private void displayCategory(List<OrderModel> orderModels) {
-        OrderAdapter categoryAdapter = new OrderAdapter(this, orderModels);
+    private void displayCategory(List<Order> orders) {
+        OrderAdapter categoryAdapter = new OrderAdapter(this, orders);
         rvMyOrders.setAdapter(categoryAdapter);
     }
 

@@ -344,7 +344,9 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         tvRatingProductList.setText((CharSequence) productDetails.getProductAverageRating());
         String totalRatings = String.valueOf(new StringBuilder("(").append(productDetails.getProductNoOfRatings()).append(")"));
         tvTotalRatingProductList.setText(totalRatings);
-
+        tvRatingProductList.setVisibility(View.GONE);
+        tvTotalRatingProductList.setVisibility(View.GONE);
+        ivAssured.setVisibility(View.GONE);
         //Setup for all Shipping, Return,Cancellation,Intsallation,COD
 
         //Shipping Fee

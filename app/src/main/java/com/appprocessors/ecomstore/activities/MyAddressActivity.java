@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.MyAddressesAdapter;
@@ -196,8 +197,7 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
                         LLNoAddressIvTvBtn.setVisibility(View.GONE);
                         RLAddresslist.setVisibility(View.VISIBLE);
                         addressesList.add(data.<Address>getParcelableExtra(Common.addNewAddress));
-                    }
-                    else {
+                    } else {
                         LLNoAddressIvTvBtn.setVisibility(View.GONE);
                         RLAddresslist.setVisibility(View.VISIBLE);
                         addressesList.add(data.<Address>getParcelableExtra(Common.addNewAddress));
@@ -205,7 +205,7 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
                     myAddressesAdapter = new MyAddressesAdapter(this, addressesList, this, this);
                     rvAddresses.setAdapter(myAddressesAdapter);
                     myAddressesAdapter.notifyDataSetChanged();
-                    rvAddresses.smoothScrollToPosition(myAddressesAdapter.getItemCount()-1);
+                    rvAddresses.smoothScrollToPosition(myAddressesAdapter.getItemCount() - 1);
                     break;
             }
         }
@@ -223,7 +223,13 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
                 intentDeliverHere.putExtra("productDetails", currentProductDetails);
                 intentDeliverHere.putExtra("deliveryAddress", selectedItems);
                 // intentDeliverHere.putExtra("deliveryAddress",)
-                startActivity(intentDeliverHere);
+                if (currentProductDetails != null && selectedItems != null) {
+                    startActivity(intentDeliverHere);
+                }
+                else {
+                    Toast.makeText(this, "Please Select Delivery Address", Toast.LENGTH_SHORT).show();
+
+                }
                 break;
 
         }
@@ -233,6 +239,14 @@ public class MyAddressActivity extends AppCompatActivity implements OnItemSelect
     @Override
     public void onItemSelected(SelectableAddress item) {
         selectedItems = myAddressesAdapter.getSelectedAddress();
+        if (selectedItems != null) {
+            Log.e(TAG, "onItemSelected: Address " + selectedItems.get_id());
+            Log.e(TAG, "onItemSelected: Address " + selectedItems.getFullName());
+            Log.e(TAG, "onItemSelected: Address " + selectedItems.getHomeNoBuildingName());
+            Log.e(TAG, "onItemSelected: Address " + selectedItems.getLocalityAreaStreet());
+        } else {
+            Toast.makeText(this, "Please Select Delivery Address", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

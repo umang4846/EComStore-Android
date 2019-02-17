@@ -36,14 +36,14 @@ public class User implements Parcelable {
 
     @SerializedName("orders")
     @Expose
-    private List<OrderModel> orderModels = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
 
-    public List<OrderModel> getOrderModels() {
-        return orderModels;
+    public List<Order> getOrders() {
+        return orders;
     }
 
-    public void setOrderModels(List<OrderModel> orderModels) {
-        this.orderModels = orderModels;
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
     public String getId() {
@@ -118,7 +118,7 @@ public class User implements Parcelable {
         dest.writeString(this.password);
         dest.writeString(this.gender);
         dest.writeTypedList(this.addresses);
-        dest.writeList(this.orderModels);
+        dest.writeList(this.orders);
     }
 
     public User() {
@@ -132,8 +132,8 @@ public class User implements Parcelable {
         this.password = in.readString();
         this.gender = in.readString();
         this.addresses = in.createTypedArrayList(Address.CREATOR);
-        this.orderModels = new ArrayList<OrderModel>();
-        in.readList(this.orderModels, OrderModel.class.getClassLoader());
+        this.orders = new ArrayList<Order>();
+        in.readList(this.orders, Order.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {

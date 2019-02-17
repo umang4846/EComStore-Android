@@ -359,7 +359,7 @@ public class AddAddressActivity extends AppCompatActivity {
         dialog.show();
 
         Address address = new Address();
-        address.setId(editAddress.getId());
+        address.set_id(editAddress.get_id());
         address.setSubDistrict(inputAddressSubDistrict.getText().toString());
         address.setCityTown(inputAddressCityTown.getText().toString());
         address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
@@ -410,7 +410,7 @@ public class AddAddressActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
 
         Address address = new Address();
-        address.setId("address" + calendar.getTimeInMillis());
+        address.set_id("address" + calendar.getTimeInMillis());
         address.setSubDistrict(inputAddressSubDistrict.getText().toString());
         address.setCityTown(inputAddressCityTown.getText().toString());
         address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());

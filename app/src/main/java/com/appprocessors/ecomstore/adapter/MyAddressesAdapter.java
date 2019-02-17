@@ -69,6 +69,8 @@ public class MyAddressesAdapter extends RecyclerView.Adapter implements OnItemSe
         if (selectableItem.isSelected()) {
             holder.rbSelectAddress.setChecked(true);
             holder.ibEditAddress.setVisibility(View.VISIBLE);
+            listener.onItemSelected(selectableItem);
+            myAddressItemClickListner.onClick(viewHolder.itemView, position, addressList.get(position));
 
         } else {
             holder.rbSelectAddress.setChecked(false);
@@ -160,7 +162,7 @@ public class MyAddressesAdapter extends RecyclerView.Adapter implements OnItemSe
         for (SelectableAddress selectableItem : addressList) {
             if (!selectableItem.equals(item)
                     && selectableItem.isSelected()) {
-                selectableItem.setSelected(false);
+                selectableItem.setSelected(true);
             } else if (selectableItem.equals(item)
                     && item.isSelected()) {
                 selectableItem.setSelected(true);

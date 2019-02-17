@@ -81,9 +81,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:maxLines="2"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/roboto"
                                 android:text="Amber Wood EDP 100ml Woody Perfume For Unisex"
                                 android:textColor="@color/black"
-                                android:textSize="20sp" />
+                                android:textSize="18sp" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -122,7 +124,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center|center_horizontal|center_vertical"
                                     android:layout_marginStart="10dp"
-                                    android:src="@drawable/assured" />
+                                    android:visibility="gone" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -138,6 +140,8 @@
                                     android:layout_height="wrap_content"
                                     android:maxLines="1"
                                     app:amount="99002"
+                                    android:padding="5dp"
+                                    android:layout_marginStart="5dp"
                                     app:baseTextColor="@color/black"
                                     app:baseTextSize="18sp"
                                     app:decimalDigitsTextSize="18sp"
@@ -169,6 +173,7 @@
                                     android:layout_marginStart="10dp"
                                     android:maxLines="1"
                                     app:amount="10"
+                                    android:padding="2dp"
                                     app:baseTextColor="@color/forest_green"
                                     app:baseTextSize="16sp"
                                     app:decimalDigitsTextSize="14sp"
@@ -186,6 +191,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="2"
+                                android:padding="5dp"
                                 android:text="Inclusive of all taxes"
                                 android:textColor="@color/dark_green"
                                 android:textSize="12sp" />

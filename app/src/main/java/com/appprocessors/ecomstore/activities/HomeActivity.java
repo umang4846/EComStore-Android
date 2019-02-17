@@ -435,7 +435,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void showError(String errMessage) {
         int iconResource = R.drawable.ic_alert_black_24dp;
         if (errMessage.equals(getString(R.string.error_message_internet))) {
-            iconResource = R.drawable.ic_signal_wifi_off_black_24dp;
+            iconResource = R.drawable.no_internet;
         }
         loadingIndicator.setVisibility(View.INVISIBLE);
         LLHomeContent.setVisibility(View.INVISIBLE);

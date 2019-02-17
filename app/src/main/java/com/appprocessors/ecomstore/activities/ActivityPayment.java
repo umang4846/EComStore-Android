@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.model.Address;
-import com.appprocessors.ecomstore.model.OrderModel;
+import com.appprocessors.ecomstore.model.Order;
 import com.appprocessors.ecomstore.model.ProductDetails;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
@@ -130,6 +130,7 @@ public class ActivityPayment extends AppCompatActivity {
             if (extras.containsKey("deliveryAddress")) {
                 Address address = getIntent().getExtras().getParcelable("deliveryAddress");
                 if (address != null) {
+                    deliveryAddress =null;
                     deliveryAddress = address;
 
                 }
@@ -174,18 +175,19 @@ public class ActivityPayment extends AppCompatActivity {
 
     private void placeOrderToServer() {
 
-        OrderModel orderModel = new OrderModel();
-        orderModel.setProductName(currentProductDetails.getProductName());
-        orderModel.setProductPrice(currentProductDetails.getPrice());
-        orderModel.setShippingFee(currentProductDetails.getShippingFee());
-        orderModel.setProductQuanity("");
-        orderModel.setTotalAmount(String.valueOf(tvTotalAmountPrice.getAmount()));
-        orderModel.setProductDetails(currentProductDetails);
+        Order order = new Order();
+        order.setProductName(currentProductDetails.getProductName());
+        order.setProductCode(currentProductDetails.getProductCode());
+        order.setProductPrice(currentProductDetails.getPrice());
+        order.setShippingFee(currentProductDetails.getShippingFee());
+        order.setSellerName(currentProductDetails.getSellerName());
+        order.setProductQuanity("1");
+        order.setTotalAmount(String.valueOf(tvTotalAmountPrice.getAmount()));
         if (rbCOD.isChecked()) {
-            orderModel.setPaymentMode(rbCOD.getText().toString());
+            order.setPaymentMode(rbCOD.getText().toString());
         }
-        orderModel.setDeliveryAddress(deliveryAddress);
-        orderModel.setOrderedAccountMobileNo(session.getUserDetails().get(UserSessionManager.KEY_PHONE));
+        order.setAddress(deliveryAddress);
+        order.setOrderedAccountMobileNo(session.getUserDetails().get(UserSessionManager.KEY_PHONE));
         //Date and Time
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
@@ -199,18 +201,18 @@ public class ActivityPayment extends AppCompatActivity {
         String monthNumber = (String) DateFormat.format("MM", date); // 06
         String year = (String) DateFormat.format("yyyy", date); // 2013
         String orderDatetime = dayOfTheWeek + " " + day + " " + monthNumber + " " + year + " " + hour + " " + minute + " " + second + " " + milliSeconds;
-        orderModel.setOrderDateTime(orderDatetime);
-        orderModel.setId(session.getUserDetails().get(UserSessionManager.KEY_PHONE) + orderDatetime.replace(" ", "-"));
+        order.setOrderDateTime(orderDatetime);
+        order.setOrderStatus("Ordered");
+        order.set_id(session.getUserDetails().get(UserSessionManager.KEY_PHONE) +"-"+ orderDatetime.replace(" ", "-"));
 
-        Log.d(TAG, "placeOrderToServer: " + orderModel.toString());
+        Log.d(TAG, "placeOrderToServer: " + order.toString());
 
-        mService.addOrder(orderModel).enqueue(new Callback<ResponseBody>() {
+        mService.addOrder(order).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     placingOrderDialog.dismiss();
                     Toast.makeText(ActivityPayment.this, "Successfully Ordered !", Toast.LENGTH_SHORT).show();
-                    //startActivity(new Intent(ActivityPayment.this, MyOrdersActivity.class));
                     FLOrdered.setVisibility(View.VISIBLE);
                     btnContinueShopping.setVisibility(View.VISIBLE);
                     btnPlaceOrder.setVisibility(View.GONE);
@@ -222,6 +224,7 @@ public class ActivityPayment extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                placingOrderDialog.dismiss();
                 Log.e(TAG, "onFailure: Adding Order Failed " + t.getMessage());
                 Toast.makeText(ActivityPayment.this, "Placing Order Failed !! " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }

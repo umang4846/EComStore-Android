@@ -9,9 +9,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Address implements Parcelable {
 
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    private String id;
+    private String _id;
     @SerializedName("fullName")
     @Expose
     private String fullName;
@@ -38,14 +38,13 @@ public class Address implements Parcelable {
     private String addressType;
     @SerializedName("isDefaultAddress")
     @Expose
-    private boolean isDefaultAddress;
+    private Boolean isDefaultAddress;
 
     public Address() {
     }
 
-
-    public Address(String id, String fullName, String subDistrict, String cityTown, String homeNoBuildingName, String localityAreaStreet, String mobileNo, String alternateMobileNumber, String addressType, boolean isDefaultAddress) {
-        this.id = id;
+    public Address(String _id, String fullName, String subDistrict, String cityTown, String homeNoBuildingName, String localityAreaStreet, String mobileNo, String alternateMobileNumber, String addressType, boolean isDefaultAddress) {
+        this._id = _id;
         this.fullName = fullName;
         this.subDistrict = subDistrict;
         this.cityTown = cityTown;
@@ -57,12 +56,38 @@ public class Address implements Parcelable {
         this.isDefaultAddress = isDefaultAddress;
     }
 
-    public String getId() {
-        return id;
+    protected Address(Parcel in) {
+        _id = in.readString();
+        fullName = in.readString();
+        subDistrict = in.readString();
+        cityTown = in.readString();
+        homeNoBuildingName = in.readString();
+        localityAreaStreet = in.readString();
+        mobileNo = in.readString();
+        alternateMobileNumber = in.readString();
+        addressType = in.readString();
+        byte tmpIsDefaultAddress = in.readByte();
+        isDefaultAddress = tmpIsDefaultAddress == 0 ? null : tmpIsDefaultAddress == 1;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public static final Creator<Address> CREATOR = new Creator<Address>() {
+        @Override
+        public Address createFromParcel(Parcel in) {
+            return new Address(in);
+        }
+
+        @Override
+        public Address[] newArray(int size) {
+            return new Address[size];
+        }
+    };
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getFullName() {
@@ -129,14 +154,13 @@ public class Address implements Parcelable {
         this.addressType = addressType;
     }
 
-    public boolean getIsDefaultAddress() {
+    public Boolean getIsDefaultAddress() {
         return isDefaultAddress;
     }
 
-    public void setIsDefaultAddress(boolean defaultAddress) {
+    public void setIsDefaultAddress(Boolean defaultAddress) {
         isDefaultAddress = defaultAddress;
     }
-
 
     @Override
     public int describeContents() {
@@ -145,40 +169,15 @@ public class Address implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.fullName);
-        dest.writeString(this.subDistrict);
-        dest.writeString(this.cityTown);
-        dest.writeString(this.homeNoBuildingName);
-        dest.writeString(this.localityAreaStreet);
-        dest.writeString(this.mobileNo);
-        dest.writeString(this.alternateMobileNumber);
-        dest.writeString(this.addressType);
-        dest.writeByte(this.isDefaultAddress ? (byte) 1 : (byte) 0);
+        dest.writeString(_id);
+        dest.writeString(fullName);
+        dest.writeString(subDistrict);
+        dest.writeString(cityTown);
+        dest.writeString(homeNoBuildingName);
+        dest.writeString(localityAreaStreet);
+        dest.writeString(mobileNo);
+        dest.writeString(alternateMobileNumber);
+        dest.writeString(addressType);
+        dest.writeByte((byte) (isDefaultAddress == null ? 0 : isDefaultAddress ? 1 : 2));
     }
-
-    protected Address(Parcel in) {
-        this.id = in.readString();
-        this.fullName = in.readString();
-        this.subDistrict = in.readString();
-        this.cityTown = in.readString();
-        this.homeNoBuildingName = in.readString();
-        this.localityAreaStreet = in.readString();
-        this.mobileNo = in.readString();
-        this.alternateMobileNumber = in.readString();
-        this.addressType = in.readString();
-        this.isDefaultAddress = in.readByte() != 0;
-    }
-
-    public static final Parcelable.Creator<Address> CREATOR = new Parcelable.Creator<Address>() {
-        @Override
-        public Address createFromParcel(Parcel source) {
-            return new Address(source);
-        }
-
-        @Override
-        public Address[] newArray(int size) {
-            return new Address[size];
-        }
-    };
 }
