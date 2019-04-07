@@ -23,13 +23,16 @@ public class WelcomeActivity extends AppIntro {
         addSlide(new IntroFragment1());
         addSlide(new IntroFragment2());
         addSlide(new IntroFragment3());
-        setCustomTransformer(new ZoomOutPageTransformer());
         setDepthAnimation();
         TextView textView = findViewById(R.id.bottom_separator);
         textView.setVisibility(View.GONE);
         LinearLayout linearLayout = findViewById(R.id.bottom);
-        linearLayout.setBackgroundColor(getResources().getColor(R.color.blue_adv));
-
+        linearLayout.setBackgroundColor(getResources().getColor(R.color.white));
+        setIndicatorColor(getResources().getColor(R.color.black), getResources().getColor(R.color.md_blue_grey_600));
+        setColorSkipButton(getResources().getColor(R.color.black));
+        setImageNextButton(getResources().getDrawable(R.drawable.ic_navigate_next_black_24dp));
+        setNavBarColor(R.color.black);
+        setColorDoneText(getResources().getColor(R.color.black));
     }
 
 
@@ -94,7 +97,10 @@ public class WelcomeActivity extends AppIntro {
     }
     private void loadMainActivity(){
         Intent intent = new Intent(this, LoginSignUp.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        // Add new Flag to start new Activity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }

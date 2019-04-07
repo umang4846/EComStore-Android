@@ -5,16 +5,16 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.util.Base64;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.User;
+import com.appprocessors.ecomstore.model.customer.Customer;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.UserSessionManager;
@@ -33,12 +33,14 @@ import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.auth.api.credentials.HintRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,16 +54,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class SignIn extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class SignIn extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    Button signin;
-    @BindView(R.id.tv_sign_up)
-    TextView tvSignUp;
-    private AppCompatEditText inputPhone, inputPassword;
-    private TextInputLayout inputLayoutPhone, inputLayoutPassword;
+
     public static final String TAG = SignUp.class.getSimpleName();
     IEStoreAPI mServices;
-    String decPass;
     GoogleApiClient googleApiClient;
     private final static int RESOLVE_HINT = 1011;
     Boolean isPhoneAPILoaded = false;
@@ -70,6 +67,20 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
     public static int REQUEST_CODE = 1000;
     UIManager uiManager;
+    @BindView(R.id.input_phone)
+    AppCompatEditText inputPhone;
+    @BindView(R.id.input_layout_phone)
+    TextInputLayout inputLayoutPhone;
+    @BindView(R.id.input_password)
+    AppCompatEditText inputPassword;
+    @BindView(R.id.input_layout_password)
+    TextInputLayout inputLayoutPassword;
+    @BindView(R.id.tv_sign_up)
+    TextView tvSignUp;
+    @BindView(R.id.layout3)
+    LinearLayout layout3;
+    @BindView(R.id.btn_login)
+    MaterialButton btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +89,6 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
         ButterKnife.bind(this);
 
         mServices = Common.getAPI();
-
-        inputPhone = (AppCompatEditText) findViewById(R.id.input_mobile);
-        inputLayoutPhone = (TextInputLayout) findViewById(R.id.input_layout_phone);
-        inputLayoutPassword = (TextInputLayout) findViewById(R.id.input_layout_password);
-        inputPassword = findViewById(R.id.input_password);
-        signin = findViewById(R.id.btn_signin);
 
         // User Session Manager
         session = new UserSessionManager(getApplicationContext());
@@ -115,7 +120,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
         });
 
 
-        signin.setOnClickListener(new View.OnClickListener() {
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SubmitData();
@@ -181,10 +186,9 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
     private void StartLogin(String phone) {
         StringBuilder PhoneNumberWithCC = new StringBuilder();
-        if (phone.length()==10){
+        if (phone.length() == 10) {
             PhoneNumberWithCC = PhoneNumberWithCC.append("+91").append(phone);
-        }
-        else {
+        } else {
             PhoneNumberWithCC = PhoneNumberWithCC.append(phone);
         }
         final AlertDialog alertDialog = new SpotsDialog.Builder().setContext(SignIn.this).build();
@@ -194,45 +198,59 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
 
         mServices.checkUserExists(String.valueOf(PhoneNumberWithCC))
-                .enqueue(new Callback<User>() {
+                .enqueue(new Callback<Customer>() {
                     @Override
-                    public void onResponse(Call<User> call, @NonNull Response<User> response) {
-                        User userResponse = response.body();
+                    public void onResponse(Call<Customer> call, @NonNull Response<Customer> response) {
 
-                        if (userResponse != null) {
+                        if (response.isSuccessful()) {
+                            Customer customerResponse = response.body();
 
-                            try {
-                                decPass = decrypt(userResponse.getPassword(), "password");
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            if (customerResponse != null) {
+                                if (inputPassword != null && !TextUtils.isEmpty(inputPassword.getText())) {
+                                    //Perform Password matching
+                                    if (customerResponse.getPassword().equals(CreatePasswordHash(Objects.requireNonNull(inputPassword.getText()).toString().trim(), customerResponse.getPasswordSalt().trim(), "SHA1"))) {
+                                        alertDialog.dismiss();
+                                        String phone = null, firstName = null, lastName = null, gender = null;
+                                        for (int i = 0; i < customerResponse.getGenericAttributes().size(); i++) {
+                                            if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
+                                                firstName = customerResponse.getGenericAttributes().get(i).getValue();
+                                            }
+                                            if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("LastName")) {
+                                                lastName = customerResponse.getGenericAttributes().get(i).getValue();
+                                            }
+                                            if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("phone")) {
+                                                phone = customerResponse.getGenericAttributes().get(i).getValue();
+                                            }
+                                            if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("Gender")) {
+                                                gender = customerResponse.getGenericAttributes().get(i).getValue();
+                                            }
+                                        }
+                                        if (phone != null && firstName != null && lastName != null && gender != null) {
+                                            //Save user Credentials in Shared Preference
+                                            session.createUserLoginSession(phone,
+                                                    firstName,
+                                                    lastName,
+                                                    customerResponse.getEmail(),
+                                                    customerResponse.getPassword(),
+                                                    gender
+                                            );
+                                            Toast.makeText(SignIn.this, "Successfully Logged in", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(SignIn.this, HomeActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            // Add new Flag to start new Activity
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            Toast.makeText(SignIn.this, "Unable to store Customer Details", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (!customerResponse.getPassword().equals(CreatePasswordHash(inputPassword.getText().toString().trim(), customerResponse.getPasswordSalt().trim(), "SHA1"))) {
+                                        alertDialog.dismiss();
+                                        Toast.makeText(SignIn.this, "Incorrect Password !", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
                             }
-
-
-                            //Perform Password matching
-                            if (inputPassword.getText().toString().equals(decPass)) {
-                                alertDialog.dismiss();
-                                Common.currentUser = response.body();
-
-                                //Save user Credentials in Shared Preference
-                                session.createUserLoginSession(userResponse.getPhone(),
-                                        userResponse.getName(),
-                                        userResponse.getEmail(),
-                                        userResponse.getPassword(),
-                                        userResponse.getGender()
-                                );
-                                Toast.makeText(SignIn.this, "Successfully Logged in", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SignIn.this, HomeActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                // Add new Flag to start new Activity
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                finish();
-                            } else if (!(inputPassword.getText().toString().equals(decPass))) {
-                                alertDialog.dismiss();
-                                Toast.makeText(SignIn.this, "Incorrect Password !", Toast.LENGTH_SHORT).show();
-                            }
-
-
                         } else {
                             //User not exists
                             alertDialog.dismiss();
@@ -244,9 +262,9 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(Call<Customer> call, Throwable t) {
                         alertDialog.dismiss();
-                        Toast.makeText(SignIn.this, "Something went wrong !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignIn.this, "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d("checkUserExists :", t.getMessage() + "\n");
 
                     }
@@ -254,6 +272,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -289,63 +308,69 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
                         @Override
                         public void onSuccess(final Account account) {
                             StringBuilder PhoneNumberWithCC = new StringBuilder();
-                            if (account.getPhoneNumber().toString().length()==10){
+                            if (account.getPhoneNumber().toString().length() == 10) {
                                 PhoneNumberWithCC = PhoneNumberWithCC.append("+91").append(account.getPhoneNumber().toString());
-                            }
-                            else {
+                            } else {
                                 PhoneNumberWithCC = PhoneNumberWithCC.append(account.getPhoneNumber().toString());
                             }
                             mServices.checkUserExists(String.valueOf(PhoneNumberWithCC))
-                                    .enqueue(new Callback<User>() {
+                                    .enqueue(new Callback<Customer>() {
                                         @Override
-                                        public void onResponse(Call<User> call, @NonNull Response<User> response) {
-                                            User userResponse = response.body();
+                                        public void onResponse(Call<Customer> call, @NonNull Response<Customer> response) {
+                                            Customer customerResponce = response.body();
 
-                                            if (userResponse!=null) {
+                                            if (customerResponce != null) {
+                                                String phone = null;
+                                                for (int i = 0; i < customerResponce.getGenericAttributes().size(); i++) {
+                                                    if (customerResponce.getGenericAttributes().get(i).getKey().equalsIgnoreCase("phone")) {
+                                                        phone = customerResponce.getGenericAttributes().get(i).getValue();
+                                                    }
+                                                }
+                                                if (phone != null) {
+                                                    alertDialog.dismiss();
+                                                    //User Already registered
+                                                    Toast.makeText(SignIn.this, "Already registered on entered Phone !", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    //User not exists
+                                                    alertDialog.dismiss();
+                                                    StartRegister(account.getPhoneNumber().toString());
+                                                }
 
-                                                Common.currentUser = response.body();
-                                                alertDialog.dismiss();
-                                                //User Already registered
-                                                Toast.makeText(SignIn.this, "Phone number is already exist !", Toast.LENGTH_SHORT).show();
-                                            }
-                                            else{
-                                                //User not exists
-                                                alertDialog.dismiss();
-                                                StartRegister(account.getPhoneNumber().toString());
+
                                             }
 
                                         }
 
-
                                         @Override
-                                        public void onFailure(Call<User> call, Throwable t) {
+                                        public void onFailure(Call<Customer> call, Throwable t) {
                                             alertDialog.dismiss();
-                                            Toast.makeText(SignIn.this, "Something went wrong !", Toast.LENGTH_SHORT).show();
-                                            Log.d("checkUserExists :", t.getMessage()+"\n");
+                                            Toast.makeText(SignIn.this, "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                            Log.d("checkUserExists :", t.getMessage() + "\n");
 
                                         }
+
                                     });
                         }
 
                         @Override
                         public void onError(AccountKitError accountKitError) {
+                            Toast.makeText(SignIn.this, "Error :" + accountKitError.getErrorType().toString(), Toast.LENGTH_SHORT).show();
                             Log.d("ERROR :", accountKitError.getErrorType().getMessage());
                         }
                     });
 
                 }
+
+
             }
-
-
         }
     }
 
     public void StartRegister(final String phone) {
         StringBuilder PhoneNumberWithCC = new StringBuilder();
-        if (phone.length()==10){
+        if (phone.length() == 10) {
             PhoneNumberWithCC = PhoneNumberWithCC.append("+91").append(phone);
-        }
-        else {
+        } else {
             PhoneNumberWithCC = PhoneNumberWithCC.append(phone);
         }
         String phoneNew = String.valueOf(PhoneNumberWithCC);
@@ -353,6 +378,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
         intent.putExtra("phone", phoneNew);
         startActivity(intent);
     }
+
     private boolean validatePhone() {
         if (inputPhone.getText().toString().trim().isEmpty()) {
             inputLayoutPhone.setError(getString(R.string.err_msg_phone));
@@ -394,37 +420,35 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
         }
     }
 
-    //Password Encryption Decryption Start
-    String AES = "AES";
+    public String CreatePasswordHash(String password, String saltkey, String sha11) {
 
-    String encrypt(String data, String passKey) throws Exception {
-        SecretKeySpec key = generateKey(passKey);
-        Cipher c = Cipher.getInstance(AES);
-        c.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encVal = c.doFinal(data.getBytes());
-        String encryptedValue = Base64.encodeToString(encVal, Base64.DEFAULT);
-        return encryptedValue;
+        if (sha11.isEmpty())
+            sha11 = "SHA1";
+        String saltAndPassword = password.concat(saltkey);
+        String sha1 = "";
+
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(saltAndPassword.getBytes(StandardCharsets.UTF_8));
+            sha1 = byteToHex(crypt.digest());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return sha1.toUpperCase();
+
     }
 
-
-    public SecretKeySpec generateKey(String password) throws Exception {
-        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] bytes = password.getBytes("UTF-8");
-        digest.update(bytes, 0, bytes.length);
-        byte[] key = digest.digest();
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-        return secretKeySpec;
+    private static String byteToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 
-    public String decrypt(String data, String passKey) throws Exception {
-        SecretKeySpec key = generateKey(passKey);
-        Cipher c = Cipher.getInstance(AES);
-        c.init(Cipher.DECRYPT_MODE, key);
-        byte[] decodedValue = Base64.decode(data, Base64.DEFAULT);
-        byte[] encVal = c.doFinal(decodedValue);
-        String encryptedValue = new String(encVal);
-        return encryptedValue;
-    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

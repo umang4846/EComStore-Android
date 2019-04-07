@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,21 +18,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.CategoryAdapter;
 import com.appprocessors.ecomstore.adapter.HomeSliderAdapter;
 import com.appprocessors.ecomstore.adapter.TrendingAdapter;
-import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.database.datasource.CartRepository;
-import com.appprocessors.ecomstore.database.local.CartDataSource;
-import com.appprocessors.ecomstore.database.local.CartDatabase;
 import com.appprocessors.ecomstore.interfaces.UiUpdaterListener;
-import com.appprocessors.ecomstore.model.Banner;
-import com.appprocessors.ecomstore.model.Category;
-import com.appprocessors.ecomstore.model.Trending;
+import com.appprocessors.ecomstore.model.categoryhome.CategoryHome;
+import com.appprocessors.ecomstore.model.pictureslider.PictureSlider;
+import com.appprocessors.ecomstore.model.product.ProductList;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.PicassoImageLoadingService;
 import com.appprocessors.ecomstore.utils.SimpleDividerItemDecoration;
+import com.appprocessors.ecomstore.utils.UserSessionManager;
 import com.appprocessors.ecomstore.utils.Utility;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.navigation.NavigationView;
@@ -71,6 +70,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.NS_Home)
     NestedScrollView NSHome;
 
+    // User Session Manager Class
+    UserSessionManager session;
+
     private Toast mToast;
     private NetworkReceiver mNetworkReceiver;
     private IntentFilter mNetworkIntentFilter;
@@ -98,27 +100,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
+
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-        mShimmerViewContainer.startShimmer();
-        NSHome.setVisibility(View.GONE);
-        Slider.init(new PicassoImageLoadingService(this));
         mService = Common.getAPI();
 
-        mNetworkReceiver = new NetworkReceiver();
-        mNetworkIntentFilter = new IntentFilter();
-        mNetworkIntentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        btnTryAgain.setVisibility(View.VISIBLE);
-        btnTryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Common.isNetworkAvailable(HomeActivity.this)) {
-                    Toast.makeText(HomeActivity.this, "Network ComeBack !!!", Toast.LENGTH_SHORT).show();
-                } else {
-                    showToast(getString(R.string.error_message_internet));
-                }
-            }
-        });
+        // Session class instance
+        session = new UserSessionManager(getApplicationContext());
 
         //Categoty
         lst_category = findViewById(R.id.lst_category);
@@ -130,15 +119,33 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         lst_category.setHasFixedSize(true);
         lst_category.setNestedScrollingEnabled(false);
         //Set Horizontal and Vertical Devider
-   /*     Drawable horizontalDivider = ContextCompat.getDrawable(this, R.drawable.gridview_devider);
-        Drawable verticalDivider = ContextCompat.getDrawable(this, R.drawable.gridview_devider);*/
+           /* Drawable horizontalDivider = ContextCompat.getDrawable(this, R.drawable.gridview_devider);
+            Drawable verticalDivider = ContextCompat.getDrawable(this, R.drawable.gridview_devider);*/
         lst_category.addItemDecoration(new SimpleDividerItemDecoration(1, 3));
-
+        Slider.init(new PicassoImageLoadingService(this));
 
         //Trending Products
         lst_trending = findViewById(R.id.lst_trending);
         lst_trending.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         lst_trending.setHasFixedSize(true);
+
+        mNetworkReceiver = new NetworkReceiver();
+        mNetworkIntentFilter = new IntentFilter();
+        mNetworkIntentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        btnTryAgain.setVisibility(View.VISIBLE);
+        btnTryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Common.isNetworkAvailable(HomeActivity.this)) {
+                    startLoadingData();
+                    Toast.makeText(HomeActivity.this, "Network ComeBack !!!", Toast.LENGTH_SHORT).show();
+                } else {
+                    showError(getString(R.string.error_message_internet));
+                    showToast(getString(R.string.error_message_internet));
+                }
+            }
+        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -149,6 +156,68 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().findItem(R.id.nav_home).setCheckable(true);
+
+        setCustomerDetails();
+
+
+        //Init Database
+        //initDB();
+
+
+    }
+
+    private void setCustomerDetails() {
+
+        View header = navigationView.getHeaderView(0);
+        TextView tvFullName = (TextView) header.findViewById(R.id.tvFullName);
+        TextView tvPhone = (TextView) header.findViewById(R.id.tvPhone);
+
+        if (session.isUserLoggedIn()) {
+
+            if (session.getUserDetails().get(UserSessionManager.KEY_PHONE) != null && session.getUserDetails().get(UserSessionManager.KEY_FIRST_NAME) != null && session.getUserDetails().get(UserSessionManager.KEY_LAST_NAME) != null) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Hi ! ").append(session.getUserDetails().get(UserSessionManager.KEY_FIRST_NAME)).append(" ").append(session.getUserDetails().get(UserSessionManager.KEY_LAST_NAME));
+                tvFullName.setText(stringBuilder.toString());
+                tvPhone.setText(session.getUserDetails().get(UserSessionManager.KEY_PHONE));
+            } else {
+                // user is not logged in redirect him to Login Activity
+                Intent i = new Intent(this, LoginSignUp.class);
+
+                // Closing all the Activities from stack
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                // Add new Flag to start new Activity
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                finish();
+                // Staring Login Activity
+                startActivity(i);
+
+            }
+        } else {
+            // user is not logged in redirect him to Login Activity
+            Intent i = new Intent(this, LoginSignUp.class);
+
+            // Closing all the Activities from stack
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            // Add new Flag to start new Activity
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            finish();
+            // Staring Login Activity
+            startActivity(i);
+
+        }
+    }
+
+
+    private void startLoadingData() {
+
+        mShimmerViewContainer.setVisibility(View.VISIBLE);
+        NSHome.setVisibility(View.GONE);
+        LLHomeError.setVisibility(View.GONE);
+        mShimmerViewContainer.startShimmer();
+
+
         //Fetch Banner Images
         getBannerImage();
 
@@ -158,49 +227,43 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         //Get Trending Products
         getTrending();
 
-        //Init Database
-        initDB();
-
-
     }
 
 
-    private void initDB() {
+/*    private void initDB() {
 
         Common.cartDatabase = CartDatabase.getInstance(this);
         Common.cartRepository = CartRepository.getInstance(CartDataSource.getInstance(Common.cartDatabase.cartDAO()));
-    }
+    }*/
 
     private void getCategory() {
-
         compositeDisposable.add(mService.getCategory()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Category>>() {
+                .subscribe(new Consumer<List<CategoryHome>>() {
                     @Override
-                    public void accept(List<Category> categories) throws Exception {
-                        displayCategory(categories);
+                    public void accept(List<CategoryHome> categoryHomes) throws Exception {
+                        displayCategory(categoryHomes);
                     }
                 }));
 
     }
 
-    private void displayCategory(List<Category> categories) {
+    private void displayCategory(List<CategoryHome> categories) {
 
         CategoryAdapter categoryAdapter = new CategoryAdapter(this, categories);
         lst_category.setAdapter(categoryAdapter);
-
 
     }
 
 
     private void getTrending() {
-        compositeDisposable.add(mService.getTrending()
+        compositeDisposable.add(mService.getTrending(6)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Trending>>() {
+                .subscribe(new Consumer<List<ProductList>>() {
                     @Override
-                    public void accept(List<Trending> trendings) throws Exception {
+                    public void accept(List<ProductList> trendings) throws Exception {
                         displayTrending(trendings);
                     }
                 }));
@@ -208,10 +271,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private void displayTrending(List<Trending> trendings) {
+    private void displayTrending(List<ProductList> trendings) {
 
         TrendingAdapter trendingAdapter = new TrendingAdapter(this, trendings);
         lst_trending.setAdapter(trendingAdapter);
+        stopShimmerAnimation();
 
     }
 
@@ -219,15 +283,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         compositeDisposable.add(mService.getBanners()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Banner>>() {
+                .subscribe(new Consumer<List<PictureSlider>>() {
                                @Override
-                               public void accept(List<Banner> banners) throws Exception {
-                                   displayImage(banners);
+                               public void accept(List<PictureSlider> pictureSliderList) throws Exception {
+                                   displayImage(pictureSliderList);
                                }
-
                            }
                 ));
-
     }
 
     @Override
@@ -236,25 +298,40 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
     }
 
-    private void displayImage(List<Banner> banners) {
+    private void displayImage(List<PictureSlider> pictureSliders) {
 
-        bannerSlider.setAdapter(new HomeSliderAdapter(banners));
+        bannerSlider.setAdapter(new HomeSliderAdapter(pictureSliders));
         bannerSlider.setInterval(2500);
         bannerSlider.setOnSlideClickListener(new OnSlideClickListener() {
             @Override
             public void onSlideClick(int position) {
-                Banner banner = banners.get(position);
-                Log.d(TAG, "banner Clicked: at " + position + " for " + banner.getProductCode());
-                Intent bannerIntent = new Intent(HomeActivity.this, ProductDetailsActivity.class);
-                bannerIntent.putExtra("productCode", banner.getProductCode());
-                startActivity(bannerIntent);
+                String productId = "";
+                for (int i = 0; i < pictureSliders.get(position).getGenericAttributes().size(); i++) {
+                    if (pictureSliders.get(position).getGenericAttributes().get(i).getKey().equalsIgnoreCase("ProductId")) {
+                        productId = pictureSliders.get(position).getGenericAttributes().get(i).getValue();
+                        break;
+                    }
+                }
+                if (productId != null) {
+                    Log.e(TAG, "banner Clicked: at " + position + " for " + productId);
+                    Intent bannerIntent = new Intent(HomeActivity.this, ProductDetailsActivity.class);
+                    bannerIntent.putExtra("productCode", productId);
+                    startActivity(bannerIntent);
+                } else {
+                    Toast.makeText(HomeActivity.this, "Product Id is Null !", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+
+    }
+
+    public void stopShimmerAnimation() {
         // stop animating Shimmer and show the layout
         mShimmerViewContainer.stopShimmer();
         NSHome.setVisibility(View.VISIBLE);
+        LLHomeError.setVisibility(View.GONE);
         mShimmerViewContainer.setVisibility(View.GONE);
-
     }
 
     @Override
@@ -280,14 +357,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 onOptionsItemSelected(menu.findItem(R.id.menu_cart));
             }
         });
-        updateCartCount();
+        // updateCartCount();
         return true;
     }
 
     private void updateCartCount() {
 
         if (badge == null) return;
-        runOnUiThread(new Runnable() {
+       /* runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (Common.cartRepository.countCartItems() == 0) {
@@ -301,7 +378,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     //badge.setText(String.valueOf(Common.cartRepository.countCartItems()));
                 }
             }
-        });
+        });*/
 
     }
 
@@ -363,7 +440,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -373,7 +449,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         navigationView.setCheckedItem(R.id.nav_home);
-        updateCartCount();
+        // updateCartCount();
         registerReceiver(mNetworkReceiver, mNetworkIntentFilter);
         mShimmerViewContainer.startShimmer();
 
@@ -420,26 +496,32 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         public void onReceive(Context context, Intent intent) {
 
             if (Common.isNetworkAvailable(context)) {
-                if (LLHomeContent.getVisibility() != View.VISIBLE) {
-                    LLHomeContent.setVisibility(View.VISIBLE);
-                }
-                LLHomeError.setVisibility(View.GONE);
-
-
+                startLoadingData();
             } else {
                 showError(getString(R.string.error_message_internet));
             }
         }
+
     }
 
     private void showError(String errMessage) {
         int iconResource = R.drawable.ic_alert_black_24dp;
         if (errMessage.equals(getString(R.string.error_message_internet))) {
             iconResource = R.drawable.no_internet;
+            errMessage = "No Internet Connection !";
         }
-        loadingIndicator.setVisibility(View.INVISIBLE);
-        LLHomeContent.setVisibility(View.INVISIBLE);
+        loadingIndicator.setVisibility(View.GONE);
+        NSHome.setVisibility(View.GONE);
+        mShimmerViewContainer.setVisibility(View.GONE);
         LLHomeError.setVisibility(View.VISIBLE);
+   /*     FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER | Gravity.CENTER_VERTICAL;*/
+
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        params.weight = 1.0f;
+        params.gravity = Gravity.CENTER;
+        LLHomeError.setLayoutParams(params);
 
         tvError.setText(errMessage);
         ivErrorIcon.setImageResource(iconResource);

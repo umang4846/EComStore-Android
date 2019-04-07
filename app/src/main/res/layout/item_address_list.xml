@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -30,43 +31,37 @@
 
             <TextView
                 android:id="@+id/tv_address_full_name"
-                android:layout_gravity="top"
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
+                android:layout_gravity="top"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/montserrat"
                 android:maxLines="2"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
-
-
-            <TextView
-                android:id="@+id/tv_address_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/edit_text_round_bg_white"
-                android:textSize="14sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_address_full_details"
-                android:textSize="14sp"
-                android:fontFamily="@font/roboto"
+                android:textSize="16sp"
+                android:fontFamily="@font/montserrat"
                 android:textColor="@color/black"
                 android:layout_marginTop="5dp"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:lineSpacingExtra="1dp"
-                android:maxLines="3"
+                android:maxLines="2"
                 android:ellipsize="end"
   />
             <TextView
                 android:id="@+id/tv_address_phone_number"
-                android:textSize="14sp"
-               android:fontFamily="@font/roboto"
+                android:textSize="16sp"
+               android:fontFamily="@font/montserrat"
                 android:textColor="@color/black"
                 android:layout_marginTop="5dp"
-                android:layout_width="match_parent"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                />
 
@@ -77,14 +72,14 @@
 
     <ImageButton
         android:elevation="3dp"
-        android:padding="5dp"
+        android:padding="6dp"
         android:layout_marginEnd="5dp"
         android:layout_marginTop="8dp"
         android:id="@+id/ib_edit_address"
         android:layout_gravity="end"
         android:background="@drawable/edit_text_round_bg_white"
         android:layout_width="wrap_content"
-        android:tint="@color/colorPrimary"
+        android:tint="@color/black"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_mode_edit_black_24dp" />
 </FrameLayout>

@@ -7,25 +7,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.Address;
 import com.appprocessors.ecomstore.model.SubDistrict;
+import com.appprocessors.ecomstore.model.customer.Addresses;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.retrofit.RetrofitClient;
 import com.appprocessors.ecomstore.utils.Common;
+import com.appprocessors.ecomstore.utils.CommonOptionMenu;
 import com.appprocessors.ecomstore.utils.UserSessionManager;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
@@ -34,10 +33,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
-import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
@@ -49,7 +46,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddAddressActivity extends AppCompatActivity {
+public class AddAddressActivity extends CommonOptionMenu {
 
 
     String TAG = "AddAddressActivity";
@@ -63,14 +60,22 @@ public class AddAddressActivity extends AppCompatActivity {
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     //Buterknife Injections
-    @BindView(R.id.input_address_sub_district)
-    TextInputEditText inputAddressSubDistrict;
-    @BindView(R.id.input_layout_address_sub_district)
-    TextInputLayout inputLayoutAddressSubDistrict;
-    @BindView(R.id.input_address_city_town)
-    TextInputEditText inputAddressCityTown;
-    @BindView(R.id.input_layout_address_city_town)
-    TextInputLayout inputLayoutAddressCityTown;
+
+
+    // User Session Manager Class
+    UserSessionManager session;
+
+    Addresses editAddress;
+
+    boolean isEditAddress = false;
+    @BindView(R.id.input_fname)
+    TextInputEditText inputFname;
+    @BindView(R.id.input_layout_fname)
+    TextInputLayout inputLayoutFname;
+    @BindView(R.id.input_lname)
+    TextInputEditText inputLname;
+    @BindView(R.id.input_layout_lname)
+    TextInputLayout inputLayoutLname;
     @BindView(R.id.input_address_home_no)
     TextInputEditText inputAddressHomeNo;
     @BindView(R.id.input_layout_address_home_no)
@@ -79,38 +84,27 @@ public class AddAddressActivity extends AppCompatActivity {
     TextInputEditText inputAddressLocalityAreaStreet;
     @BindView(R.id.input_layout_address_locality_area_street)
     TextInputLayout inputLayoutAddressLocalityAreaStreet;
-    @BindView(R.id.input_address_person_name)
-    TextInputEditText inputAddressPersonName;
-    @BindView(R.id.input_layout_address_person_name)
-    TextInputLayout inputLayoutAddressPersonName;
+    @BindView(R.id.input_address_sub_district)
+    TextInputEditText inputAddressSubDistrict;
+    @BindView(R.id.input_layout_address_sub_district)
+    TextInputLayout inputLayoutAddressSubDistrict;
+    @BindView(R.id.input_address_city_town)
+    TextInputEditText inputAddressCityTown;
+    @BindView(R.id.input_layout_address_city_town)
+    TextInputLayout inputLayoutAddressCityTown;
     @BindView(R.id.input_address_mobile)
     TextInputEditText inputAddressMobile;
     @BindView(R.id.input_layout_address_mobile)
     TextInputLayout inputLayoutAddressMobile;
-    @BindView(R.id.input_address_alter_mobile)
-    TextInputEditText inputAddressAlterMobile;
-    @BindView(R.id.input_layout_address_alter_mobile)
-    TextInputLayout inputLayoutAddressAlterMobile;
-    @BindView(R.id.tv_address_type)
-    TextView tvAddressType;
-    @BindView(R.id.rb_address_type_home)
-    RadioButton rbAddressTypeHome;
-    @BindView(R.id.rb_address_type_work)
-    RadioButton rbAddressTypeWork;
-    @BindView(R.id.rg_address_type)
-    RadioGroup rgAddressType;
-    @BindView(R.id.switch_default_address)
-    MaterialCheckBox switchDefaultAddress;
+    @BindView(R.id.input_address_email)
+    TextInputEditText inputAddressEmail;
+    @BindView(R.id.input_layout_address_email)
+    TextInputLayout inputLayoutAddressEmail;
     @BindView(R.id.btn_address_save_continue)
     MaterialButton btnAddressSaveContinue;
+    @BindView(R.id.SV_Register_child)
+    ScrollView SVRegisterChild;
 
-
-    // User Session Manager Class
-    UserSessionManager session;
-
-    Address editAddress;
-
-    boolean isEditAddress = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +112,7 @@ public class AddAddressActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_address);
         setTitle("Add new Address");
         ButterKnife.bind(this);
+
 
         //Set Back Button to Toolbar
         if (getSupportActionBar() != null) {
@@ -178,26 +173,26 @@ public class AddAddressActivity extends AppCompatActivity {
         });
     }
 
-    private void setAddressDataToEdit(Address editAddress) {
+    private void setAddressDataToEdit(Addresses editAddress) {
 
         if (editAddress != null) {
-            inputAddressSubDistrict.setText(editAddress.getSubDistrict());
-            inputAddressCityTown.setText(editAddress.getCityTown());
-            inputAddressHomeNo.setText(editAddress.getHomeNoBuildingName());
-            inputAddressLocalityAreaStreet.setText(editAddress.getLocalityAreaStreet());
-            inputAddressPersonName.setText(editAddress.getFullName());
-            inputAddressMobile.setText(editAddress.getMobileNo());
-            inputAddressAlterMobile.setText(editAddress.getAlternateMobileNumber());
-            if (editAddress.getIsDefaultAddress()) {
-                switchDefaultAddress.setChecked(true);
+            String[] output = editAddress.getCity().split("-");
+            if (output.length == 2 && editAddress.getZipPostalCode() != null) {
+                inputAddressSubDistrict.setText(output[0]);
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(output[1]).append(" ").append("(").append(editAddress.getZipPostalCode()).append(")");
+                inputAddressCityTown.setText(stringBuilder.toString());
             } else {
-                switchDefaultAddress.setChecked(false);
+                inputAddressSubDistrict.setText(editAddress.getCity());
+                inputAddressCityTown.setText(editAddress.getCity());
             }
-            if (editAddress.getAddressType().equalsIgnoreCase("home")) {
-                rgAddressType.check(R.id.rb_address_type_home);
-            } else {
-                rgAddressType.check(R.id.rb_address_type_work);
-            }
+
+            inputAddressHomeNo.setText(editAddress.getAddress1());
+            inputAddressLocalityAreaStreet.setText(editAddress.getAddress2());
+            inputFname.setText(editAddress.getFirstName());
+            inputLname.setText(editAddress.getLastName());
+            inputAddressMobile.setText(editAddress.getPhoneNumber());
+            inputAddressEmail.setText(editAddress.getEmail().isEmpty()?"":editAddress.getEmail());
 
         }
 
@@ -246,7 +241,7 @@ public class AddAddressActivity extends AppCompatActivity {
 
         final String sub[] = new String[Arrays.asList(subDistricts).size()];
         for (int i = 0; i < Arrays.asList(subDistricts).size(); i++) {
-            sub[i] = Arrays.asList(subDistricts).get(i).subDistrict;
+            sub[i] = Arrays.asList(subDistricts).get(i).getSubDistrict();
         }
         Log.d(TAG, "onClick: SubDist ::" + Arrays.asList(sub));
 
@@ -285,9 +280,9 @@ public class AddAddressActivity extends AppCompatActivity {
                 String Json = String.valueOf(new JSONArray(new Gson().toJson(subDistrictList)).get(subDistrictFinalposition));
                 Gson gson = new Gson();
                 SubDistrict subDistrict = gson.fromJson(Json, SubDistrict.class);
-                final String arr[] = new String[subDistrict.villages.size()];
-                for (int i = 0; i < subDistrict.villages.size(); i++) {
-                    arr[i] = subDistrict.villages.get(i).villageName;
+                final String arr[] = new String[subDistrict.getVillages().size()];
+                for (int i = 0; i < subDistrict.getVillages().size(); i++) {
+                    arr[i] = subDistrict.getVillages().get(i).villageName;
                 }
 
                 AlertDialog.Builder vBuilder = new AlertDialog.Builder(AddAddressActivity.this);
@@ -322,10 +317,10 @@ public class AddAddressActivity extends AppCompatActivity {
 
     private void validateData() {
 
-        if (!validateSubDistrict()) {
+        if (!validateFirstName()) {
             return;
         }
-        if (!validateCityOrTown()) {
+        if (!validateLastName()) {
             return;
         }
         if (!validateHomenoOrBuildingName()) {
@@ -334,16 +329,16 @@ public class AddAddressActivity extends AppCompatActivity {
         if (!validateStreetOrArea()) {
             return;
         }
-        if (!validateFullName()) {
+        if (!validateSubDistrict()) {
+            return;
+        }
+        if (!validateCityOrTown()) {
             return;
         }
         if (!validatePhone()) {
             return;
         }
-        if (!validateAlterPhone()) {
-            return;
-        }
-        if (!validateAddressType()) {
+        if (!validateEmailIfEntered()) {
             return;
         }
         if (isEditAddress)
@@ -358,23 +353,26 @@ public class AddAddressActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
 
-        Address address = new Address();
+        Addresses address = new Addresses();
         address.set_id(editAddress.get_id());
-        address.setSubDistrict(inputAddressSubDistrict.getText().toString());
-        address.setCityTown(inputAddressCityTown.getText().toString());
-        address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
-        address.setLocalityAreaStreet(inputAddressLocalityAreaStreet.getText().toString());
-        address.setFullName(inputAddressPersonName.getText().toString());
-        address.setMobileNo(inputAddressMobile.getText().toString());
-        address.setAlternateMobileNumber(inputAddressAlterMobile.getText().toString());
-        address.setAddressType(((RadioButton) findViewById(rgAddressType.getCheckedRadioButtonId())).getText().toString());
-        address.setIsDefaultAddress(switchDefaultAddress.isChecked());
+        String city = inputAddressSubDistrict.getText().toString() + " - " + inputAddressCityTown.getText().toString().replaceAll(inputAddressCityTown.getText().toString().substring(inputAddressCityTown.getText().toString().indexOf("(") + 1, inputAddressCityTown.getText().toString().indexOf(")")), "");
+        address.setCity(city.replace("()", ""));
+        address.setAddress1(inputAddressHomeNo.getText().toString());
+        address.setAddress2(inputAddressLocalityAreaStreet.getText().toString());
+        address.setZipPostalCode(inputAddressCityTown.getText().toString().substring(inputAddressCityTown.getText().toString().indexOf("(") + 1, inputAddressCityTown.getText().toString().indexOf(")")));
+        address.setFirstName(inputFname.getText().toString());
+        address.setLastName(inputLname.getText().toString());
+        address.setPhoneNumber(inputAddressMobile.getText().toString());
+        address.setEmail(inputAddressEmail.getText().toString());
+        address.setCreatedOnUtc("");
+        address.setCountryId("");
+        address.setStateProvinceId("");
         String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
 
-        Call<Address> call = RetrofitClient.getRestClient().addNewAddress(phone, address);
-        call.enqueue(new Callback<Address>() {
+        Call<Addresses> call = RetrofitClient.getRestClient().addNewAddress(phone.replace("+", ""), address);
+        call.enqueue(new Callback<Addresses>() {
             @Override
-            public void onResponse(Call<Address> call, Response<Address> response) {
+            public void onResponse(Call<Addresses> call, Response<Addresses> response) {
                 if (response.isSuccessful()) {
                     dialog.dismiss();
                     Log.d(TAG, "onResponse: Address Added Successfully !");
@@ -394,7 +392,7 @@ public class AddAddressActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Address> call, Throwable t) {
+            public void onFailure(Call<Addresses> call, Throwable t) {
                 dialog.dismiss();
                 Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onFailure:: " + t.getMessage());
@@ -407,25 +405,26 @@ public class AddAddressActivity extends AppCompatActivity {
         dialog.setMessage("Saving Address");
         dialog.setCancelable(false);
         dialog.show();
-        Calendar calendar = Calendar.getInstance();
-
-        Address address = new Address();
-        address.set_id("address" + calendar.getTimeInMillis());
-        address.setSubDistrict(inputAddressSubDistrict.getText().toString());
-        address.setCityTown(inputAddressCityTown.getText().toString());
-        address.setHomeNoBuildingName(inputAddressHomeNo.getText().toString());
-        address.setLocalityAreaStreet(inputAddressLocalityAreaStreet.getText().toString());
-        address.setFullName(inputAddressPersonName.getText().toString());
-        address.setMobileNo(inputAddressMobile.getText().toString());
-        address.setAlternateMobileNumber(inputAddressAlterMobile.getText().toString());
-        address.setAddressType(((RadioButton) findViewById(rgAddressType.getCheckedRadioButtonId())).getText().toString());
-        address.setIsDefaultAddress(switchDefaultAddress.isChecked());
+        Addresses address = new Addresses();
+        address.set_id("");
+        String city = inputAddressSubDistrict.getText().toString() + " - " + inputAddressCityTown.getText().toString().replaceAll(inputAddressCityTown.getText().toString().substring(inputAddressCityTown.getText().toString().indexOf("(") + 1, inputAddressCityTown.getText().toString().indexOf(")")), "");
+        address.setCity(city.replace("()", ""));
+        address.setAddress1(inputAddressHomeNo.getText().toString());
+        address.setAddress2(inputAddressLocalityAreaStreet.getText().toString());
+        address.setZipPostalCode(inputAddressCityTown.getText().toString().substring(inputAddressCityTown.getText().toString().indexOf("(") + 1, inputAddressCityTown.getText().toString().indexOf(")")));
+        address.setFirstName(inputFname.getText().toString());
+        address.setLastName(inputLname.getText().toString());
+        address.setPhoneNumber(inputAddressMobile.getText().toString());
+        address.setEmail(inputAddressEmail.getText().toString());
+        address.setCreatedOnUtc("");
+        address.setCountryId("");
+        address.setStateProvinceId("");
         String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
 
-        Call<Address> call = RetrofitClient.getRestClient().addNewAddress(phone, address);
-        call.enqueue(new Callback<Address>() {
+        Call<Addresses> call = RetrofitClient.getRestClient().addNewAddress(phone.replace("+", ""), address);
+        call.enqueue(new Callback<Addresses>() {
             @Override
-            public void onResponse(Call<Address> call, Response<Address> response) {
+            public void onResponse(Call<Addresses> call, Response<Addresses> response) {
                 if (response.isSuccessful()) {
                     dialog.dismiss();
                     Log.d(TAG, "onResponse: Address Added Successfully !");
@@ -445,7 +444,7 @@ public class AddAddressActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Address> call, Throwable t) {
+            public void onFailure(Call<Addresses> call, Throwable t) {
                 dialog.dismiss();
                 Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onFailure:: " + t.getMessage());
@@ -453,35 +452,6 @@ public class AddAddressActivity extends AppCompatActivity {
         });
     }
 
-    private boolean validateAddressType() {
-        if (rgAddressType.getCheckedRadioButtonId() == -1) {
-            rgAddressType.setFocusable(true);
-            rgAddressType.setFocusableInTouchMode(true);
-            rgAddressType.requestFocus();
-            Toast.makeText(AddAddressActivity.this, "Please Select Address Type", Toast.LENGTH_SHORT).show();
-            return false;    //This should be false to select address type of not selected
-        } else {
-            return true;
-        }
-
-    }
-
-    private boolean validateAlterPhone() {
-        if (inputAddressAlterMobile.getText().length() < 10) {
-            inputLayoutAddressAlterMobile.setError(getString(R.string.err_msg_address_valid_mobile_number));
-            requestFocus(inputAddressAlterMobile);
-            return false;
-        } else if (!(Patterns.PHONE.matcher(inputAddressAlterMobile.getText().toString()).matches())) {
-            inputLayoutAddressAlterMobile.setError(getString(R.string.err_msg_address_valid_mobile_number));
-            requestFocus(inputAddressAlterMobile);
-            return false;
-        } else {
-            inputLayoutAddressAlterMobile.setErrorEnabled(false);
-        }
-
-        return true;
-
-    }
 
     private boolean validatePhone() {
         if (inputAddressMobile.getText().toString().trim().isEmpty()) {
@@ -497,20 +467,48 @@ public class AddAddressActivity extends AppCompatActivity {
             requestFocus(inputAddressMobile);
             return false;
         } else {
-            inputLayoutAddressMobile.setErrorEnabled(false);
+            inputLayoutAddressMobile.setError(null);
         }
 
         return true;
     }
 
-    private boolean validateFullName() {
+    private boolean validateEmailIfEntered() {
+        String email = inputAddressEmail.getText().toString().trim();
 
-        if (inputAddressPersonName.getText().toString().trim().isEmpty()) {
-            inputLayoutAddressPersonName.setError(getString(R.string.err_msg_address_full_name));
-            requestFocus(inputAddressPersonName);
+        if (!email.isEmpty() &&  !isValidEmail(email)) {
+            inputLayoutAddressEmail.setError(getString(R.string.err_msg_email));
+            requestFocus(inputAddressEmail);
             return false;
         } else {
-            inputLayoutAddressPersonName.setErrorEnabled(false);
+            inputLayoutAddressEmail.setError(null);
+        }
+
+        return true;
+    }
+
+    private boolean validateFirstName() {
+
+        if (inputFname.getText().toString().trim().isEmpty()) {
+            inputLayoutFname.setError(getString(R.string.err_msg_first_name));
+            requestFocus(inputFname);
+            return false;
+        } else {
+            inputLayoutFname.setError(null);
+        }
+
+        return true;
+
+    }
+
+    private boolean validateLastName() {
+
+        if (inputLname.getText().toString().trim().isEmpty()) {
+            inputLayoutLname.setError(getString(R.string.err_msg_last_name));
+            requestFocus(inputLname);
+            return false;
+        } else {
+            inputLayoutLname.setError(null);
         }
 
         return true;
@@ -524,7 +522,7 @@ public class AddAddressActivity extends AppCompatActivity {
             requestFocus(inputAddressLocalityAreaStreet);
             return false;
         } else {
-            inputLayoutAddressLocalityAreaStreet.setErrorEnabled(false);
+            inputLayoutAddressLocalityAreaStreet.setError(null);
         }
 
         return true;
@@ -537,7 +535,7 @@ public class AddAddressActivity extends AppCompatActivity {
             requestFocus(inputAddressHomeNo);
             return false;
         } else {
-            inputLayoutAddressHomeNo.setErrorEnabled(false);
+            inputLayoutAddressHomeNo.setError(null);
         }
 
         return true;
@@ -549,7 +547,7 @@ public class AddAddressActivity extends AppCompatActivity {
             requestFocus(inputAddressCityTown);
             return false;
         } else {
-            inputLayoutAddressCityTown.setErrorEnabled(false);
+            inputLayoutAddressCityTown.setError(null);
         }
 
         return true;
@@ -562,7 +560,6 @@ public class AddAddressActivity extends AppCompatActivity {
             requestFocus(inputAddressSubDistrict);
             return false;
         } else {
-            inputLayoutAddressSubDistrict.setErrorEnabled(false);
             inputLayoutAddressSubDistrict.setError(null);
         }
 
@@ -580,6 +577,9 @@ public class AddAddressActivity extends AppCompatActivity {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
 
+    private static boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
 
     @Override
     protected void onDestroy() {

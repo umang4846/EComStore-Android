@@ -3,7 +3,7 @@
 
 
     <string name="verify_phone_auth">Verify</string>
-
+    <string name="textbold">"<b>"+Have an Account ?+ "</b>" + Sign In</string>;
     <string name="sign_up_btn">Sign Up</string>
     <string name="phone_label">Phone</string>
     <string name="submit_sign_up">Submit</string>
@@ -62,7 +62,8 @@
     <string name="ACCOUNT_KIT_CLIENT_TOKEN">333e89cdbf82b740c773a96d321fad45</string>
 
     //Sign up profile
-    <string name="err_msg_name">Enter your full name</string>
+    <string name="err_msg_first_name">Enter first name</string>
+    <string name="err_msg_last_name">Enter last name</string>
     <string name="err_msg_email">Enter valid email address</string>
     <string name="err_msg_password">Enter the password</string>
     <string name="err_msg_password_weak">Password must contain atleast 1 digit,\n1 character and no whitespace</string>
@@ -92,13 +93,15 @@
     //Add new Address
     <string name="sup_address_person_name">Full Name </string>
     <string name="sup_address_mobile">Mobile Number </string>
+    <string name="sup_address_email">Email Address (Optional) </string>
     <string name="sup_address_alter_mobile">Alternate Mobile No.</string>
     <string name="sup_address_type">Address Type</string>
     <string name="err_msg_address_sub_district">Select Sub District</string>
     <string name="err_msg_address_city_or_town">Select City or Town</string>
     <string name="err_msg_address_home_no">Please Enter Home No. or Building Name</string>
     <string name="err_msg_address_area">Please Enter Locality, area or street</string>
-    <string name="err_msg_address_full_name">Please Enter Full Name</string>
+    <string name="err_msg_address_first_name">Enter First Name</string>
+    <string name="err_msg_address_last_name">Enter Last Name</string>
     <string name="err_msg_address_mobile_number">Please Enter Mobile Number</string>
     <string name="err_msg_address_valid_mobile_number">Invalid Mobile Number</string>
     <string name="rate_review"><![CDATA[Rate & Review]]></string>
@@ -110,5 +113,12 @@
     <string name="action_new_arrival">NEW_ARRIVAL</string>
     <string name="action_price_low_to_high">PRICE_LOW_TO_HIGH</string>
     <string name="action_price_high_to_low">PRICE_HIGH_TO_LOW</string>
+
+    <string name="filled_bullet">\u25CF</string>
+    <string name="linear_bullet">\u25CB</string>
+    <string name="rect_bullet">\u25A0</string>
+    <string name="blank_rect">\u25A1</string>
+    <string name="true_tick">\u2713</string>
+    <string name="star">\u2605</string>
 
 </resources>

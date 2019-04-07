@@ -2,7 +2,6 @@ package com.appprocessors.ecomstore.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,16 +16,15 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appprocessors.ecomstore.adapter.ProductDetailsSliderAdapter;
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.database.modeldb.Cart;
+import com.appprocessors.ecomstore.adapter.ProductDetailsSliderAdapter;
 import com.appprocessors.ecomstore.helper.NonScrollListView;
-import com.appprocessors.ecomstore.model.ProductDetails;
+import com.appprocessors.ecomstore.model.order.OrderItem;
+import com.appprocessors.ecomstore.model.product.Product;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.CommonOptionMenu;
 import com.appprocessors.ecomstore.utils.PicassoImageLoadingService;
-import com.google.gson.Gson;
 import com.like.LikeButton;
 import com.nex3z.notificationbadge.NotificationBadge;
 
@@ -36,6 +34,7 @@ import java.math.BigDecimal;
 import java.text.Format;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,6 +54,8 @@ public class ProductDetailsActivity extends CommonOptionMenu {
 
     IEStoreAPI mServices;
     CompositeDisposable compositeDisposable;
+    @BindView(R.id.product_details_slider)
+    Slider productDetailsSlider;
     @BindView(R.id.star_button)
     LikeButton starButton;
     @BindView(R.id.productName)
@@ -79,40 +80,14 @@ public class ProductDetailsActivity extends CommonOptionMenu {
     TextView tvDeliveryBy;
     @BindView(R.id.tv_delivery_pin_code)
     TextView tvDeliveryPinCode;
-    @BindView(R.id.tv_pin_change)
-    TextView tvPinChange;
-    @BindView(R.id.iv_shipping_fee)
-    ImageView ivShippingFee;
-    @BindView(R.id.tv_shipping_fee)
-    TextView tvShippingFee;
-    @BindView(R.id.tv_shipping_price)
-    TextView tvShippingPrice;
-    @BindView(R.id.iv_replace)
-    ImageView ivReplace;
-    @BindView(R.id.tv_return)
-    TextView tvReturn;
-    @BindView(R.id.tv_return_in_days)
-    TextView tvReturnInDays;
-    @BindView(R.id.tv_return_know_more)
-    TextView tvReturnKnowMore;
-    @BindView(R.id.iv_cancellation)
-    ImageView ivCancellation;
-    @BindView(R.id.tv_cancellation)
-    TextView tvCancellation;
-    @BindView(R.id.tv_cancellation_allow)
-    TextView tvCancellationAllow;
-    @BindView(R.id.iv_installation)
-    ImageView ivInstallation;
-    @BindView(R.id.tv_installation)
-    TextView tvInstallation;
-    @BindView(R.id.tv_installation_available)
-    TextView tvInstallationAvailable;
-    @BindView(R.id.tv_installation_more)
-    TextView tvInstallationMore;
-    @BindView(R.id.iv_certified_seller)
-    ImageView ivCertifiedSeller;
-    @BindView(R.id.tv_seller_name)
-    TextView tvSellerName;
+    @BindView(R.id.tv_freeSheeping)
+    TextView tvFreeSheeping;
+    @BindView(R.id.tv_cod)
+    TextView tvCod;
+    @BindView(R.id.tv_easyReturn)
+    TextView tvEasyReturn;
+    @BindView(R.id.LL_fs_cod_easyReturn)
+    LinearLayout LLFsCodEasyReturn;
     @BindView(R.id.listView_highlights)
     NonScrollListView listViewHighlights;
     @BindView(R.id.tv_product_all_details)
@@ -131,8 +106,6 @@ public class ProductDetailsActivity extends CommonOptionMenu {
     RelativeLayout RLProductDetaiContent;
     @BindView(R.id.PB_productDetails)
     ProgressBar PBProductDetails;
-    @BindView(R.id.product_details_slider)
-    Slider productDetailsSlider;
 
 
     private int lay_height = 0;
@@ -140,7 +113,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
     String productCode;
     List<String> listProductDesc = new ArrayList<>();
 
-    ProductDetails currentProductDetails;
+    Product currentProductDetails;
 
 
     @Override
@@ -169,7 +142,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         }
 
         //Check Item Already exist in cart or not
-        if (Common.cartRepository.isAlreadyInCart(productCode) == 1) {
+      /*  if (Common.cartRepository.isAlreadyInCart(productCode) == 1) {
             btnAddToCart.setText("GO TO CART");
 
             btnAddToCart.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +152,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                     startActivity(intentCart);
                 }
             });
-        }
+        }*/
 
 
         //Add to cart
@@ -191,7 +164,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                     //Add Item to Room Database(SQLite)
                     //Create new Cart Item
                     try {
-                        Cart cart = new Cart();
+                      /*  Cart cart = new Cart();
                         cart.productId = currentProductDetails.getId();
                         cart.productName = currentProductDetails.getProductName();
                         cart.brand = currentProductDetails.getBrand();
@@ -210,7 +183,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                         cart.type = currentProductDetails.getType();
 
                         Common.cartRepository.insertToCart(cart);
-                        Log.d(TAG, new Gson().toJson(cart));
+                        Log.d(TAG, new Gson().toJson(cart));*/
                         Toast.makeText(ProductDetailsActivity.this, "Item Added to Cart", Toast.LENGTH_SHORT).show();
                         btnAddToCart.setText("GO TO CART");
                         btnAddToCart.setOnClickListener(new View.OnClickListener() {
@@ -232,14 +205,20 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         btnBuyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ArrayList<OrderItem> orderItemArrayList = new ArrayList<OrderItem>();
+                OrderItem orderItem = new OrderItem();
+                orderItem.setProductId(currentProductDetails.get_id());
+                orderItem.setPriceExclTax(currentProductDetails.getPrice());
+                orderItem.setPriceInclTax(currentProductDetails.getPrice());
+                orderItem.setUnitPriceExclTax(currentProductDetails.getPrice());
+                orderItem.setUnitPriceInclTax(currentProductDetails.getPrice());
+                orderItem.setUnitPriceWithoutDiscExclTax(currentProductDetails.getPrice());
+                orderItem.setUnitPriceWithoutDiscInclTax(currentProductDetails.getPrice());
+                orderItem.setQuantity(1);
+                orderItemArrayList.add(orderItem);
                 Intent addressIntent = new Intent(ProductDetailsActivity.this, MyAddressActivity.class);
-                addressIntent.putExtra("productDetails", currentProductDetails);
+                addressIntent.putParcelableArrayListExtra("OrderItems",orderItemArrayList );
                 startActivity(addressIntent);
-
-
-
-
             }
         });
 
@@ -247,12 +226,12 @@ public class ProductDetailsActivity extends CommonOptionMenu {
 
     private void getProductDetails(String productCode) {
 
-        compositeDisposable.add(mServices.getProductDetailsByProductCode(productCode)
+        compositeDisposable.add(mServices.getProductById(productCode)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ProductDetails>() {
+                .subscribe(new Consumer<Product>() {
                                @Override
-                               public void accept(ProductDetails productDetails) throws Exception {
+                               public void accept(Product productDetails) throws Exception {
                                    if (productDetails != null) {
                                        currentProductDetails = productDetails;
                                        SetImageSliderAndHighlights(productDetails);
@@ -316,55 +295,51 @@ public class ProductDetailsActivity extends CommonOptionMenu {
     }
 
 
-    private void SetProductDetails(ProductDetails productDetails) {
+    private void SetProductDetails(Product product) {
 
-        if (productDetails.getEstoreAssured()) {
-            ivAssured.setVisibility(View.VISIBLE);
-        } else {
-            ivAssured.setVisibility(View.GONE);
-        }
-        productName.setText(productDetails.getProductName());
-        tvMrpProductList.setText(getIndianRupee(productDetails.getMrp()));
 
-        tvPriceProductList.setAmount(Float.parseFloat(productDetails.getPrice()));
-        tvDiscountProductList.setAmount((float) Common.DiscountInPercentage(productDetails.getMrp(), productDetails.getPrice()));
-        if (Common.DiscountInPercentage(productDetails.getMrp(), productDetails.getPrice()) <= 0) {
+        productName.setText(product.getName());
+        tvMrpProductList.setText(getIndianRupee(String.valueOf(product.getOldPrice())));
+
+        tvPriceProductList.setAmount(Float.parseFloat(String.valueOf(product.getPrice())));
+        tvDiscountProductList.setAmount((float) Common.DiscountInPercentage(product.getOldPrice(), product.getPrice()));
+        if (Common.DiscountInPercentage(product.getOldPrice(), product.getPrice()) <= 0) {
             tvDiscountProductList.setVisibility(View.GONE);
             tvMrpProductList.setVisibility(View.GONE);
         } else {
             tvDiscountProductList.setVisibility(View.VISIBLE);
             tvMrpProductList.setVisibility(View.VISIBLE);
         }
-        tvSellerName.setText(productDetails.getSoldBy());
-        if (productDetails.getBrandCertifiedSeller()) {
+       /* tvSellerName.setText(product.ven());
+        if (product.getBrandCertifiedSeller()) {
             ivCertifiedSeller.setVisibility(View.VISIBLE);
         } else {
             ivCertifiedSeller.setVisibility(View.GONE);
-        }
-        tvRatingProductList.setText((CharSequence) productDetails.getProductAverageRating());
-        String totalRatings = String.valueOf(new StringBuilder("(").append(productDetails.getProductNoOfRatings()).append(")"));
+        }*/
+     //   tvRatingProductList.setText(String.valueOf(Integer.parseInt(String.valueOf(product.getApprovedRatingSum() / product.getApprovedTotalReviews()))));
+        String totalRatings = String.valueOf(new StringBuilder("(").append(product.getApprovedTotalReviews()).append(")"));
         tvTotalRatingProductList.setText(totalRatings);
         tvRatingProductList.setVisibility(View.GONE);
         tvTotalRatingProductList.setVisibility(View.GONE);
         ivAssured.setVisibility(View.GONE);
         //Setup for all Shipping, Return,Cancellation,Intsallation,COD
 
-        //Shipping Fee
-        if (productDetails.getShippingFree()) {
+       /* //Shipping Fee
+        if (product.isFreeShipping()) {
             tvShippingPrice.setText("FREE");
             tvShippingPrice.setTextColor(getResources().getColor(R.color.green));
 
         } else {
-            String shippingFee = String.valueOf(new StringBuilder(getResources().getString(R.string.rupee)).append(" ").append(productDetails.getShippingFee()));
+            String shippingFee = String.valueOf(new StringBuilder(getResources().getString(R.string.rupee)).append(" ").append(product.getAdditionalShippingCharge()));
             tvShippingPrice.setText(shippingFee);
             tvShippingPrice.setTextColor(getResources().getColor(R.color.black));
         }
 
         //Retun
-        if (productDetails.getReplaceAvailable()) {
+        if (!product.isNotReturnable()) {
             ivReplace.setImageDrawable(getResources().getDrawable(R.drawable.replace));
-            String returnInDays = String.valueOf(new StringBuilder().append(productDetails.getReturnsInDays()).append(" ").append(Html.fromHtml("Days<sup>*</sup>")));
-            tvReturnInDays.setText(returnInDays);
+            // String returnInDays = String.valueOf(new StringBuilder().append(product.getReturnsInDays()).append(" ").append(Html.fromHtml("Days<sup>*</sup>")));
+            //  tvReturnInDays.setText(returnInDays);
             tvReturnKnowMore.setText("More");
             tvReturnKnowMore.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -384,7 +359,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             });
         }
         //Cancellation
-        if (productDetails.getCancellationAvailable()) {
+        if (product.isNotReturnable()) {
             ivCancellation.setVisibility(View.VISIBLE);
             tvCancellation.setVisibility(View.VISIBLE);
             tvCancellationAllow.setVisibility(View.VISIBLE);
@@ -400,7 +375,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             tvCancellationAllow.setText("Not Allowed");
         }
         //Installation & COD
-        if (productDetails.getInstallationAvailable()) {
+        if (product.isTelecommunicationsOrBroadcastingOrElectronicServices()) {
             ivInstallation.setVisibility(View.VISIBLE);
             tvInstallation.setVisibility(View.VISIBLE);
             tvInstallationAvailable.setVisibility(View.VISIBLE);
@@ -422,7 +397,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             tvInstallationMore.setVisibility(View.VISIBLE);
             ivInstallation.setImageDrawable(getResources().getDrawable(R.drawable.replace));
             tvInstallation.setText("Return");
-            String returnInDaysnew = String.valueOf(new StringBuilder().append(productDetails.getReturnsInDays()).append(" ").append(Html.fromHtml("Days<sup>*</sup>")));
+            String returnInDaysnew = String.valueOf(new StringBuilder().append(product.isNotReturnable()).append(" ").append(Html.fromHtml("Days<sup>*</sup>")));
             tvInstallationAvailable.setText(returnInDaysnew);
             tvInstallationMore.setText("More");
 
@@ -435,24 +410,34 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             });
             ivReplace.setImageDrawable(getResources().getDrawable(R.drawable.cod));
             tvReturn.setText("COD");
-            if (currentProductDetails.getCodAvailable()) {
+            if (currentProductDetails.isFreeShipping()) {
                 tvReturnInDays.setText("Available");
             } else {
                 tvReturnInDays.setText("N/A");
             }
-            tvReturnKnowMore.setVisibility(View.GONE);
+            tvReturnKnowMore.setVisibility(View.GONE);*/
 
-        }
+
     }
 
-    private void SetImageSliderAndHighlights(ProductDetails productDetails) {
+    private void SetImageSliderAndHighlights(Product product) {
         //set Product Images in Slider
-        List<String> Imageslist = new ArrayList<>(productDetails.getProductImages());
-        Log.d(TAG,  "SetImageSliderAndHighlights: "+Imageslist);
-        productDetailsSlider.setAdapter(new ProductDetailsSliderAdapter(Imageslist));
+        List<String> imagesList = new ArrayList<String>();
+        for (int i=0;i<product.getPictureDetails().size();i++){
+            String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
+            String imageID = product.getPictureDetails().get(i).get_id();
+            String imageNmae =product.getPictureDetails().get(i).getSeoFilename();
+            String imageMimeType =product.getPictureDetails().get(i).getMimeType().replace("image/","").trim();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(baseUrl).append(imageID).append("_").append(imageNmae).append(".").append(imageMimeType);
+            imagesList.add(stringBuilder.toString());
+        }
+
+        Log.d(TAG, "SetImageSliderAndHighlights: " + imagesList);
+        productDetailsSlider.setAdapter(new ProductDetailsSliderAdapter(imagesList));
         productDetailsSlider.setInterval(0);
         //Product Highligh in Listview
-        listProductDesc.addAll(productDetails.getProductHighlight());
+        listProductDesc.addAll(Collections.singleton(product.getFullDescription()));
         NonScrollListView listView = findViewById(R.id.listView_highlights);
         listView.setAdapter(new ArrayAdapter<String>(this, R.layout.item_list_bullet, listProductDesc));
         //Set Visibility of Progressbar and Relative Layout
@@ -463,7 +448,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
     private void updateCartCount() {
 
         if (badge == null) return;
-        runOnUiThread(new Runnable() {
+        /*runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (Common.cartRepository.countCartItems() == 0) {
@@ -477,7 +462,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                     //badge.setText(String.valueOf(Common.cartRepository.countCartItems()));
                 }
             }
-        });
+        });*/
 
     }
 
@@ -489,7 +474,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
 
     @Override
     protected void onResume() {
-        if (Common.cartRepository.isAlreadyInCart(productCode) == 1) {
+        /*f (Common.cartRepository.isAlreadyInCart(productCode) == 1) {
             btnAddToCart.setText("GO TO CART");
             updateCartCount();
             btnAddToCart.setOnClickListener(new View.OnClickListener() {
@@ -511,8 +496,8 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                 public void onClick(View v) {
                     if (btnAddToCart.getText().equals("ADD TO CART")) {
                         try {
-                            Cart cart = new Cart();
-                            cart.productId = currentProductDetails.getId();
+                           *//* Cart cart = new Cart();
+                            cart.productId = currentProductDetails.get();
                             cart.productName = currentProductDetails.getProductName();
                             cart.brand = currentProductDetails.getBrand();
                             cart.brandCertifiedSeller = currentProductDetails.getBrandCertifiedSeller();
@@ -527,10 +512,10 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                             cart.productCode = currentProductDetails.getProductCode();
                             cart.shippingFee = currentProductDetails.getShippingFee();
                             cart.soldBy = currentProductDetails.getSoldBy();
-                            cart.type = currentProductDetails.getType();
+                            cart.type = currentProductDetails.getType();*//*
 
-                            Common.cartRepository.insertToCart(cart);
-                            Log.d(TAG, new Gson().toJson(cart));
+                            // Common.cartRepository.insertToCart(cart);
+                            //   Log.d(TAG, new Gson().toJson(cart));
                             Toast.makeText(ProductDetailsActivity.this, "Item Added to Cart", Toast.LENGTH_SHORT).show();
                             updateCartCount();
                             btnAddToCart.setText("GO TO CART");
@@ -549,7 +534,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                     }
                 }
             });
-        }
+        }   */
         super.onResume();
     }
 

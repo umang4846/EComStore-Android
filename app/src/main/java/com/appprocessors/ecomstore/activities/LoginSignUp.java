@@ -1,14 +1,17 @@
 package com.appprocessors.ecomstore.activities;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.User;
+import com.appprocessors.ecomstore.model.customer.Customer;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.facebook.accountkit.Account;
@@ -21,46 +24,64 @@ import com.facebook.accountkit.ui.AccountKitConfiguration;
 import com.facebook.accountkit.ui.LoginType;
 import com.facebook.accountkit.ui.SkinManager;
 import com.facebook.accountkit.ui.UIManager;
+import com.google.android.material.button.MaterialButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import dmax.dialog.SpotsDialog;
-import info.hoang8f.widget.FButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginSignUp extends AppCompatActivity {
 
+    private static final String TAG = "MapActivity";
+    private static final String mREAD_SMS = Manifest.permission.READ_SMS;
+    private static final String mRECEIVE_SMS = Manifest.permission.RECEIVE_SMS;
+    private static final int SMS_PERMISSION_REQUEST_CODE = 1234;
     public static int REQUEST_CODE = 1000;
-    FButton signin, signup;
     IEStoreAPI mServices;
     UIManager uiManager;
+    @BindView(R.id.ls_LL)
+    LinearLayout lsLL;
+    @BindView(R.id.btn_signin)
+    MaterialButton btnSignin;
+    @BindView(R.id.btn_signup)
+    MaterialButton btnSignup;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_sign_up);
+        ButterKnife.bind(this);
 
         mServices = Common.getAPI();
 
         uiManager = new SkinManager(
                 SkinManager.Skin.TRANSLUCENT, getResources().getColor(R.color.blue_adv), (R.drawable.intro_back), SkinManager.Tint.WHITE, 50.0);
 
-        signin = findViewById(R.id.btn_signin);
-        signup = findViewById(R.id.btn_signup);
-        signup.setOnClickListener(new View.OnClickListener() {
+
+        btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 StartLoginPage();
             }
         });
 
-        signin.setOnClickListener(new View.OnClickListener() {
+        btnSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginSignUp.this, SignIn.class));
+                Intent intent = new Intent(LoginSignUp.this, SignIn.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                // Add new Flag to start new Activity
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -77,8 +98,36 @@ public class LoginSignUp extends AppCompatActivity {
         // builder.setSMSWhitelist(new String[]{"IN"});
         intent.putExtra(AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION, builder.build());
         startActivityForResult(intent, REQUEST_CODE);
-
+        //Asks for Sms Permission
+        getSmsPermission();
+        //Enable to Detect SMS
+        builder.setReadPhoneStateEnabled(true);
+        builder.setReceiveSMS(true);
     }
+
+
+    private void getSmsPermission() {
+        Log.d(TAG, "getSmsPermission: getting sms permissions");
+        String[] permissions = {Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS};
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                mREAD_SMS) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                    mRECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
+                //onActivityResult();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        permissions,
+                        SMS_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    permissions,
+                    SMS_PERMISSION_REQUEST_CODE);
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -91,7 +140,7 @@ public class LoginSignUp extends AppCompatActivity {
             if (result.getError() != null) {
                 Toast.makeText(this, result.getError().getErrorType().getMessage(), Toast.LENGTH_SHORT).show();
             } else if (result.wasCancelled()) {
-               // Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show();
             } else {
                 if (result.getAccessToken() != null) {
                     final AlertDialog alertDialog = new SpotsDialog.Builder().setContext(this).build();
@@ -103,30 +152,37 @@ public class LoginSignUp extends AppCompatActivity {
                         @Override
                         public void onSuccess(final Account account) {
                             mServices.checkUserExists(account.getPhoneNumber().toString())
-                                    .enqueue(new Callback<User>() {
+                                    .enqueue(new Callback<Customer>() {
                                         @Override
-                                        public void onResponse(Call<User> call, @NonNull Response<User> response) {
-                                            User userResponse = response.body();
+                                        public void onResponse(Call<Customer> call, @NonNull Response<Customer> response) {
+                                            if (response.isSuccessful()) {
+                                                Customer customerResponse = response.body();
+                                                if (customerResponse != null) {
+                                                    String phone = null;
+                                                    for (int i = 0; i < customerResponse.getGenericAttributes().size(); i++) {
+                                                        if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("phone")) {
+                                                            phone = customerResponse.getGenericAttributes().get(i).getValue();
+                                                        }
+                                                    }
+                                                    if (phone.contains(account.getPhoneNumber().toString())) {
+                                                        alertDialog.dismiss();
+                                                        //User Already registered
+                                                        Toast.makeText(LoginSignUp.this, "Already registered on entered Phone !", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                else {
+                                                    //User not exists
+                                                    alertDialog.dismiss();
+                                                    StartRegister(account.getPhoneNumber().toString());
+                                                }
 
-                                            if (userResponse != null) {
-
-                                                Common.currentUser = response.body();
-                                                alertDialog.dismiss();
-                                                //User Already registered
-                                                Toast.makeText(LoginSignUp.this, "Phone number is already exist !", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                //User not exists
-                                                alertDialog.dismiss();
-                                                StartRegister(account.getPhoneNumber().toString());
                                             }
-
                                         }
 
-
                                         @Override
-                                        public void onFailure(Call<User> call, Throwable t) {
+                                        public void onFailure(Call<Customer> call, Throwable t) {
                                             alertDialog.dismiss();
-                                            Toast.makeText(LoginSignUp.this, "Something went wrong !", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(LoginSignUp.this, "Error :" + "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
                                             Log.d("checkUserExists :", t.getMessage() + "\n");
 
                                         }
@@ -154,8 +210,15 @@ public class LoginSignUp extends AppCompatActivity {
             PhoneNumberWithCC = PhoneNumberWithCC.append(phone);
         }
         String phoneNew = String.valueOf(PhoneNumberWithCC);
+
         Intent intent = new Intent(this, SignUp.class);
         intent.putExtra("phone", phoneNew);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // Add new Flag to start new Activity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         startActivity(intent);
+        finish();
     }
 }

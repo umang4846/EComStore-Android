@@ -116,7 +116,7 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
             new DiffUtil.ItemCallback<Content>() {
                 @Override
                 public boolean areItemsTheSame(@NonNull Content productDetails, @NonNull Content newproductDetails) {
-                    return productDetails.getId().equals(newproductDetails.getId());
+                    return productDetails.get_id().equals(newproductDetails.get_id());
                 }
 
                 @Override
@@ -143,25 +143,25 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                     @Override
                     public void onClick(View v) {
                         intent = new Intent(context, ProductDetailsActivity.class);
-                        intent.putExtra("productCode",content.getProductCode());
+                        intent.putExtra("productCode",content.get_id());
                         context.startActivity(intent);
                     }
                 });
-                product_name.setText(content.getProductName());
-                price.setAmount(Float.parseFloat(content.getPrice()));
-                mrp.setText(getIndianRupee(content.getMrp()));
+                product_name.setText(content.getName());
+                price.setAmount(content.getPrice());
+                mrp.setText(getIndianRupee(String.valueOf(content.getOldPrice())));
                 mrp.setPaintFlags(mrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                discount.setAmount((float) Common.DiscountInPercentage(content.getMrp(), content.getPrice()));
+                discount.setAmount((float) Common.DiscountInPercentage(content.getOldPrice(), content.getPrice()));
 
 
-                if (Common.DiscountInPercentage(content.getMrp(), content.getPrice()) <= 0) {
+                if (Common.DiscountInPercentage(content.getOldPrice(), content.getPrice()) <= 0) {
                     mrp.setVisibility(View.GONE);
                     discount.setVisibility(View.GONE);
                 } else {
                     mrp.setVisibility(View.VISIBLE);
                     discount.setVisibility(View.VISIBLE);
                 }
-                if (content.getPrice().equalsIgnoreCase(content.getMrp())) {
+                if (content.getPrice()==(content.getOldPrice())) {
                     mrp.setVisibility(View.GONE);
                     discount.setVisibility(View.GONE);
                 } else {
@@ -170,11 +170,16 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                 }
 
 
-                Picasso.get().load(content.getImageMain()).into(img);
+                String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
+                String imageID = content.getProductPictures().get(0).getPictureId();
+                String imageMimeType =content.getProductPictures().get(0).getMimeType().replace("image/","").trim();
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(baseUrl).append(imageID).append("_").append(content.getSeName()).append("_415.").append(imageMimeType);
+                Picasso.get().load(stringBuilder.toString()).into(img);
 
                 if (getItemViewType() == VIEW_TYPE_BIG) {
 
-                    if (Common.DiscountInPercentage(content.getMrp(), content.getPrice()) <= 0) {
+                    if (Common.DiscountInPercentage(content.getOldPrice(), content.getPrice()) <= 0) {
                         mrp.setVisibility(View.GONE);
                         discount.setVisibility(View.GONE);
                     } else {
@@ -187,10 +192,21 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                     imagePopup.setFullScreen(false);
                     imagePopup.setBackgroundColor(context.getResources().getColor(R.color.white_smoke));
                     imagePopup.setImageOnClickClose(true);
-                    product_color.setText(content.getSellerName());
-                    rating.setText(content.getProductAverageRating());
-                    rating.setVisibility(View.GONE);
-                    total_rating.setVisibility(View.GONE);
+                    product_color.setText(content.getProductTemplateId());
+                    if (content.getApprovedRatingSum()==0){
+                        rating.setVisibility(View.GONE);
+                    }else {
+                        rating.setText(String.valueOf(content.getApprovedRatingSum()/content.getApprovedTotalReviews()));
+                        rating.setVisibility(View.VISIBLE);
+                    }
+                    if (content.getApprovedTotalReviews()==0){
+                        total_rating.setVisibility(View.GONE);
+                    }
+                    else {
+                        total_rating.setText(String.valueOf(content.getApprovedTotalReviews()));
+                        total_rating.setVisibility(View.VISIBLE);
+                    }
+
                    /* imagePopup.initiatePopupWithPicasso(content.getImageMain());
                     img.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -201,7 +217,7 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
 
                 }
                 else {
-                    if (Common.DiscountInPercentage(content.getMrp(), content.getPrice()) <= 0) {
+                    if (Common.DiscountInPercentage(content.getOldPrice(), content.getPrice()) <= 0) {
                         mrp.setVisibility(View.GONE);
                         discount.setVisibility(View.GONE);
                     } else {

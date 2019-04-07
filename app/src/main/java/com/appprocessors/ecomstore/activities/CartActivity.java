@@ -2,10 +2,6 @@ package com.appprocessors.ecomstore.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -13,21 +9,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appprocessors.ecomstore.adapter.CartAdapter;
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.database.modeldb.Cart;
-import com.appprocessors.ecomstore.utils.Common;
 
 import org.fabiomsr.moneytextview.MoneyTextView;
 
-import java.util.List;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class CartActivity extends AppCompatActivity {
 
@@ -52,10 +43,10 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
         ButterKnife.bind(this);
         //Set Cart title when items > 0 or =0
-        if (Common.cartRepository.countCartItems() > 0)
+     /*   if (Common.cartRepository.countCartItems() > 0)
             setTitle("My Cart " + "(" + Common.cartRepository.countCartItems() + ")");
         else
-            setTitle("My Cart");
+            setTitle("My Cart");*/
 
         //Set Back Button to Toolbar
         if (getSupportActionBar() != null) {
@@ -73,12 +64,12 @@ public class CartActivity extends AppCompatActivity {
         cart_List.setLayoutManager(new LinearLayoutManager(this));
         cart_List.setHasFixedSize(true);
         //Load Cart Items
-        loadCartItems();
+      //  loadCartItems();
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (Common.cartRepository.countCartItems() == 0) {
+               /* if (Common.cartRepository.countCartItems() == 0) {
                     emptyCart.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
                     emptyCart.setVisibility(View.VISIBLE);
                     cart_List.setVisibility(View.GONE);
@@ -90,7 +81,7 @@ public class CartActivity extends AppCompatActivity {
                     cartTotalPriceContinue.setVisibility(View.VISIBLE);
                     viewDeividerMain.setVisibility(View.VISIBLE);
                     //badge.setText(String.valueOf(Common.cartRepository.countCartItems()));
-                }
+                }*/
             }
         });
 
@@ -114,27 +105,7 @@ public class CartActivity extends AppCompatActivity {
 
     }
 
-    private void loadCartItems() {
 
-        compositeDisposable.add(
-                Common.cartRepository.getCartItems()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(new Consumer<List<Cart>>() {
-                            @Override
-                            public void accept(List<Cart> carts) throws Exception {
-                                displayCartItems(carts);
-                            }
-                        })
-        );
-
-    }
-
-    private void displayCartItems(List<Cart> carts) {
-        CartAdapter cartAdapter = new CartAdapter(this, carts);
-        cart_List.setAdapter(cartAdapter);
-
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -5,21 +5,21 @@
 
     <item
         android:id="@+id/menu_search"
-        android:iconTint="@color/white"
+        android:iconTint="@color/black"
         android:icon="@drawable/ic_search_black_24dp"
         app:showAsAction="always"
         tools:ignore="MenuTitle" />
 
     <item
         android:id="@+id/menu_favourites"
-        android:iconTint="@color/white"
+        android:iconTint="@color/black"
         android:icon="@drawable/ic_favorite_black_24dp"
         app:showAsAction="always"
         tools:ignore="MenuTitle" />
 
     <item
         android:id="@+id/menu_cart"
-        android:iconTint="@color/white"
+        android:iconTint="@color/black"
         android:icon="@drawable/ic_shopping_cart_24dp"
         app:showAsAction="always"
         app:actionLayout="@layout/actionbar_notification_badge_icon"

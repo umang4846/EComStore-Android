@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
@@ -48,28 +49,33 @@
 
         <activity
             android:name=".activities.LoginSignUp"
-            android:theme="@style/IntroTheme" />
+            android:theme="@style/Theme.Shrine" />
         <activity
             android:name=".activities.SignIn"
-            android:theme="@style/IntroTheme"
-            android:windowSoftInputMode="stateHidden" />
+            android:theme="@style/Theme.Shrine"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activities.SignUp"
-            android:theme="@style/IntroTheme" />
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:theme="@style/Theme.Shrine" />
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.CategoryProductsActivity" />
-        <activity android:name=".activities.ProductListActivity" />
+        <activity android:name=".activities.CategoryProductsActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.ProductListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.CartActivity" />
         <activity android:name=".activities.NotificationActivity" />
-        <activity android:name=".activities.ProductDetailsActivity" />
-        <activity android:name=".utils.CommonOptionMenu" />
+        <activity android:name=".activities.ProductDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".utils.CommonOptionMenu"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.FavouritesActivity" />
         <activity
             android:name=".activities.AddAddressActivity"
-            android:theme="@style/Theme.MyApp"
+            android:theme="@style/Theme.Shrine"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activities.MyAccountActivity" />
         <activity
@@ -84,7 +90,7 @@
         <activity android:name=".activities.SubCategoryProductActivity" />
         <activity
             android:name=".activities.MyAddressActivity"
-            android:theme="@style/Theme.MyApp" />
+            android:theme="@style/Theme.Shrine" />
     </application>
 
 </manifest>

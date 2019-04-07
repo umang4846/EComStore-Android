@@ -6,27 +6,43 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.User;
+import com.appprocessors.ecomstore.model.customer.BillingAddress;
+import com.appprocessors.ecomstore.model.customer.Customer;
+import com.appprocessors.ecomstore.model.customer.CustomerRoles;
+import com.appprocessors.ecomstore.model.customer.GenericAttributes;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.UserSessionManager;
+import com.appprocessors.ecomstore.utils.Utils;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Formatter;
+import java.util.List;
+import java.util.UUID;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,21 +51,47 @@ import retrofit2.Response;
 public class SignUp extends AppCompatActivity {
 
 
-    Button register;
-    private AppCompatEditText inputName, inputEmail, inputPassword, inputConfirmPassword;
-    private TextInputLayout inputLayoutName, inputLayoutEmail, inputLayoutPassword, inputLayoutConfirmPassword;
-    RadioGroup gender;
     public static final String TAG = SignUp.class.getSimpleName();
     String phone;
     IEStoreAPI mServices;
     String encPass;
     // User Session Manager Class
     UserSessionManager session;
+    @BindView(R.id.input_first_name)
+    TextInputEditText inputFirstName;
+    @BindView(R.id.input_layout_first_name)
+    TextInputLayout inputLayoutFirstName;
+    @BindView(R.id.input_last_name)
+    TextInputEditText inputLastName;
+    @BindView(R.id.input_layout_last_name)
+    TextInputLayout inputLayoutLastName;
+    @BindView(R.id.input_email)
+    AppCompatEditText inputEmail;
+    @BindView(R.id.input_layout_email)
+    TextInputLayout inputLayoutEmail;
+    @BindView(R.id.input_password)
+    AppCompatEditText inputPassword;
+    @BindView(R.id.input_layout_password)
+    TextInputLayout inputLayoutPassword;
+    @BindView(R.id.tv_gender)
+    TextView tvGender;
+    @BindView(R.id.rb_male)
+    RadioButton rbMale;
+    @BindView(R.id.rb_female)
+    RadioButton rbFemale;
+    @BindView(R.id.rg_gender)
+    RadioGroup rgGender;
+    @BindView(R.id.btn_signup)
+    MaterialButton btnSignup;
+    @BindView(R.id.layout3)
+    LinearLayout layout3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        ButterKnife.bind(this);
 
         if (getIntent() != null) {
             phone = getIntent().getStringExtra("phone");
@@ -59,28 +101,22 @@ public class SignUp extends AppCompatActivity {
         // User Session Manager
         session = new UserSessionManager(getApplicationContext());
 
-        gender = (RadioGroup) findViewById(R.id.rg_gender);
-        inputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);
-        inputLayoutEmail = (TextInputLayout) findViewById(R.id.input_layout_email);
-        inputLayoutPassword = (TextInputLayout) findViewById(R.id.input_layout_password);
-        inputLayoutConfirmPassword = (TextInputLayout) findViewById(R.id.input_layout_confirm_password);
-        inputName = findViewById(R.id.input_name);
-        inputEmail = findViewById(R.id.input_email);
-        inputPassword = findViewById(R.id.input_password);
-        inputConfirmPassword = findViewById(R.id.input_confirm_password);
-        register = findViewById(R.id.btn_signup_register);
-        register.setOnClickListener(new View.OnClickListener() {
+        btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SubmitData();
             }
         });
 
+
     }
 
     private void SubmitData() {
 
-        if (!validateName()) {
+        if (!validateFirstName()) {
+            return;
+        }
+        if (!validateLastName()) {
             return;
         }
         if (!validateEmail()) {
@@ -89,38 +125,27 @@ public class SignUp extends AppCompatActivity {
         if (!validatePassword()) {
             return;
         }
-        if (!validateConfirmPassword()) {
-            return;
-        }
-        if (!matchpassword()) {
-            return;
-        }
         if (validateGender()) {
             return;
         }
-        inputLayoutName.setError(null);
-        inputLayoutName.setErrorEnabled(false);
+        inputFirstName.setError(null);
+        inputLastName.setError(null);
         inputLayoutEmail.setError(null);
-        inputLayoutEmail.setErrorEnabled(false);
         inputLayoutPassword.setError(null);
-        inputLayoutPassword.setErrorEnabled(false);
-        inputLayoutConfirmPassword.setError(null);
-        inputLayoutConfirmPassword.setErrorEnabled(false);
-        inputLayoutName.clearFocus();
+        inputLayoutLastName.clearFocus();
+        inputLayoutLastName.clearFocus();
         inputLayoutEmail.clearFocus();
         inputLayoutPassword.clearFocus();
-        inputLayoutConfirmPassword.clearFocus();
-        inputName.clearFocus();
+        inputFirstName.clearFocus();
+        inputLastName.clearFocus();
         inputEmail.clearFocus();
-        inputEmail.clearFocus();
-        inputConfirmPassword.clearFocus();
+        inputPassword.clearFocus();
         StartRegistering(phone);
 
     }
-
     private boolean validateGender() {
 
-        if (gender.getCheckedRadioButtonId() == -1) {
+        if (rgGender.getCheckedRadioButtonId() == -1) {
             Toast.makeText(SignUp.this, "Please Select Gender", Toast.LENGTH_SHORT).show();
             return true;
         } else {
@@ -128,25 +153,25 @@ public class SignUp extends AppCompatActivity {
         }
     }
 
-    private boolean matchpassword() {
-        if (!inputConfirmPassword.getText().toString().equals(inputPassword.getText().toString())) {
-            inputLayoutConfirmPassword.setError(getString(R.string.err_msg_match_password));
-            requestFocus(inputConfirmPassword);
+    private boolean validateFirstName() {
+        if (inputFirstName.getText().toString().trim().isEmpty()) {
+            inputLayoutFirstName.setError(getString(R.string.err_msg_first_name));
+            requestFocus(inputFirstName);
             return false;
         } else {
-            inputLayoutConfirmPassword.setErrorEnabled(false);
+            inputLayoutFirstName.setError(null);
         }
+
         return true;
     }
 
-    private boolean validateName() {
-        if (inputName.getText().toString().trim().isEmpty()) {
-            inputLayoutName.setError(getString(R.string.err_msg_name));
-            requestFocus(inputName);
+    private boolean validateLastName() {
+        if (inputLastName.getText().toString().trim().isEmpty()) {
+            inputLayoutLastName.setError(getString(R.string.err_msg_last_name));
+            requestFocus(inputLastName);
             return false;
         } else {
-            inputLayoutName.setErrorEnabled(false);
-            inputLayoutName.setError(null);
+            inputLayoutLastName.setError(null);
         }
 
         return true;
@@ -160,7 +185,6 @@ public class SignUp extends AppCompatActivity {
             requestFocus(inputEmail);
             return false;
         } else {
-            inputLayoutEmail.setErrorEnabled(false);
             inputLayoutEmail.setError(null);
         }
 
@@ -182,25 +206,7 @@ public class SignUp extends AppCompatActivity {
             return false;
 
         } else {
-            inputLayoutPassword.setErrorEnabled(false);
             inputLayoutPassword.setError(null);
-        }
-
-        return true;
-    }
-
-    private boolean validateConfirmPassword() {
-        if (inputConfirmPassword.getText().toString().trim().isEmpty()) {
-            inputLayoutConfirmPassword.setError(getString(R.string.err_msg_confirm_password));
-            requestFocus(inputConfirmPassword);
-            return false;
-        } else if (inputConfirmPassword.getText().length() < 6) {
-            inputLayoutConfirmPassword.setError(getString(R.string.err_msg_lenth_password));
-            requestFocus(inputConfirmPassword);
-            return false;
-        } else {
-            inputLayoutConfirmPassword.setErrorEnabled(false);
-            inputLayoutConfirmPassword.setError(null);
         }
 
         return true;
@@ -213,42 +219,8 @@ public class SignUp extends AppCompatActivity {
     }
 
     private static boolean isValidEmail(String email) {
-        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
-
-
-    //Password Encryption Decryption Start
-    String AES = "AES";
-
-    String encrypt(String data, String passKey) throws Exception {
-        SecretKeySpec key = generateKey(passKey);
-        Cipher c = Cipher.getInstance(AES);
-        c.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encVal = c.doFinal(data.getBytes());
-        String encryptedValue = Base64.encodeToString(encVal, Base64.DEFAULT);
-        return encryptedValue;
-    }
-
-
-    public SecretKeySpec generateKey(String password) throws Exception {
-        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] bytes = password.getBytes("UTF-8");
-        digest.update(bytes, 0, bytes.length);
-        byte[] key = digest.digest();
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-        return secretKeySpec;
-    }
-
-    public String decrypt(String data, String passKey) throws Exception {
-        SecretKeySpec key = generateKey(passKey);
-        Cipher c = Cipher.getInstance(AES);
-        c.init(Cipher.DECRYPT_MODE, key);
-        byte[] decodedValue = Base64.decode(data, Base64.DEFAULT);
-        byte[] encVal = c.doFinal(decodedValue);
-        String encryptedValue = new String(encVal);
-        return encryptedValue;
-    }
-
 
     //Start Registering
     private void StartRegistering(final String phone) {
@@ -257,55 +229,101 @@ public class SignUp extends AppCompatActivity {
         alertDialog.show();
         alertDialog.setTitle("Trying to being part of you !");
         alertDialog.setMessage("Please wait");
-
-        try {
-            encPass = encrypt(inputPassword.getText().toString(), "password");
-        } catch (Exception e) {
-            e.printStackTrace();
+        Customer customer = new Customer();
+        customer.set_id("");
+        customer.setActive(true);
+        customer.setCustomerRoles(new ArrayList<>());
+        customer.setDeleted(false);
+        customer.setSystemAccount(false);
+        customer.setEmail(inputEmail.getText().toString().trim());
+        customer.setHasContributions(true);
+        customer.setUrlReferrer("");
+        String ipAddress = Utils.getIpAddress(this);
+        customer.setLastIpAddress(ipAddress != null ? ipAddress : "");
+        //Password Hasing & Salt Creation
+        customer.setPasswordFormatId(1);
+        customer.setPasswordSalt("");
+        customer.setStoreId("");
+        List<GenericAttributes> genericAttributes = new ArrayList<>();
+        genericAttributes.add(new GenericAttributes("FirstName", inputFirstName.getText().toString().trim(), ""));
+        genericAttributes.add(new GenericAttributes("LastName", inputLastName.getText().toString().trim(), ""));
+        String gender = ((RadioButton) findViewById(rgGender.getCheckedRadioButtonId())).getText().toString().trim();
+        genericAttributes.add(new GenericAttributes("Gender", gender.equalsIgnoreCase("Male") ? "M" : "F", ""));
+        genericAttributes.add(new GenericAttributes("Phone", phone, ""));
+        customer.setGenericAttributes(genericAttributes);
+        customer.setPassword(inputPassword.getText().toString().trim());
+        customer.setUsername(inputEmail.getText().toString().trim());
+        customer.setCreatedOnUtc("");
+        customer.setShoppingCartItems(new ArrayList<>());
+        customer.setBillingAddress(null);
+        customer.setShippingAddress(null);
+        customer.setAddresses(new ArrayList<>());
+        customer.setCustomerTags(new ArrayList<>());
+        customer.setLastActivityDateUtc("");
+        customer.setLastLoginDateUtc("");
+        customer.setLastPurchaseDateUtc("");
+        customer.setPasswordChangeDateUtc("");
+        customer.setLastUpdateCartDateUtc("");
+        customer.setLastUpdateWishListDateUtc("");
+        StringBuilder PhoneNumberWithCC = new StringBuilder();
+        if (phone.length() == 10 && !phone.contains("+91")) {
+            PhoneNumberWithCC.append("+91").append(phone);
+        } else {
+            PhoneNumberWithCC.append(phone);
         }
 
-        User user = new User();
-        user.setPhone(phone);
-        user.setName(inputName.getText().toString());
-        user.setEmail(inputEmail.getText().toString());
-        user.setPassword(encPass);
-        user.setGender(((RadioButton) findViewById(gender.getCheckedRadioButtonId())).getText().toString());
-
-        mServices.registerUser(user)
-                .enqueue(new Callback<User>() {
+        mServices.createNewCustomer(PhoneNumberWithCC.toString(), customer)
+                .enqueue(new Callback<Customer>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        User userResponse = response.body();
-                        if (userResponse != null) {
-                            alertDialog.dismiss();
-                            //Add to current User Variable
-                            Common.currentUser = response.body();
+                    public void onResponse(Call<Customer> call, Response<Customer> response) {
+                        Customer customerResponse = response.body();
+                        if (customerResponse != null) {
                             //Save user Credentials in Shared Preference
-                            session.createUserLoginSession(
-                                    userResponse.getPhone(),
-                                    userResponse.getName(),
-                                    userResponse.getEmail(),
-                                    userResponse.getPassword(),
-                                    userResponse.getGender()
-                            );
-                            //Open next activity
-                            Intent intent = new Intent(SignUp.this, HomeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            String phone = null, firstName = null, lastName = null, gender = null;
+                            for (int i = 0; i < customerResponse.getGenericAttributes().size(); i++) {
+                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
+                                    firstName = customerResponse.getGenericAttributes().get(i).getValue();
+                                }
+                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("LastName")) {
+                                    lastName = customerResponse.getGenericAttributes().get(i).getValue();
+                                }
+                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("phone")) {
+                                    phone = customerResponse.getGenericAttributes().get(i).getValue();
+                                }
+                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("Gender")) {
+                                    gender = customerResponse.getGenericAttributes().get(i).getValue();
+                                }
+                            }
+                            if (phone != null && firstName != null && lastName != null && gender != null) {
+                                //Save user Credentials in Shared Preference
+                                session.createUserLoginSession(phone,
+                                        firstName,
+                                        lastName,
+                                        customerResponse.getEmail(),
+                                        customerResponse.getPassword(),
+                                        gender
+                                );
+                                alertDialog.dismiss();
+                                //Open next activity
+                                Intent intent = new Intent(SignUp.this, HomeActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                            // Add new Flag to start new Activity
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                                // Add new Flag to start new Activity
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
 
-                            finish();
+                                finish();
+                            }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(Call<Customer> call, Throwable t) {
                         alertDialog.dismiss();
-                        Toast.makeText(SignUp.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUp.this, "Error :" + t.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onFailure: SignUp Activity ::" + t.getMessage());
                     }
+
                 });
 
 

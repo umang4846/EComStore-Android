@@ -1,6 +1,7 @@
 package com.appprocessors.ecomstore.adapter;
 
 import com.appprocessors.ecomstore.model.CategoryBanner;
+import com.appprocessors.ecomstore.model.pictureslider.PictureSlider;
 
 import java.util.List;
 
@@ -9,9 +10,9 @@ import ss.com.bannerslider.viewholder.ImageSlideViewHolder;
 
 public class CategorySliderAdapter extends SliderAdapter {
 
-    List<CategoryBanner> categoryBannerList;
+    List<PictureSlider> categoryBannerList;
 
-    public CategorySliderAdapter(List<CategoryBanner> categoryBannerList) {
+    public CategorySliderAdapter(List<PictureSlider> categoryBannerList) {
         this.categoryBannerList = categoryBannerList;
     }
 

@@ -1,191 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.HomeActivity"
     tools:showIn="@layout/app_bar_home">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_view_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        app:duration="800">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include layout="@layout/home_placeholder_banner_item" />
-
-            <include layout="@layout/home_placeholder_category_item" />
-
-        </LinearLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/NS_Home"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical">
+        android:layout_height="wrap_content">
 
-
-        <LinearLayout
-            android:id="@+id/LL_Home_Content"
-            android:layout_width="match_parent"
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:duration="800">
 
-            <androidx.cardview.widget.CardView
-                app:cardCornerRadius="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
-
-            <ss.com.bannerslider.Slider
-                android:minHeight="150dp"
-                android:id="@+id/banner_slider"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:slider_indicatorSize="6dp"
-                app:slider_interval="0"
-                app:slider_loopSlides="true"
-                app:slider_emptyView="@layout/layout_slider_empty_view"
-                app:slider_animateIndicators="true"
-                 />
-            </androidx.cardview.widget.CardView>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#316da9"
                 android:orientation="vertical">
+
+                <include layout="@layout/home_placeholder_banner_item" />
+
+                <include layout="@layout/home_placeholder_category_item" />
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/NS_Home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/LL_Home_Content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:cardCornerRadius="5dp">
+
+                    <ss.com.bannerslider.Slider
+                        android:id="@+id/banner_slider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="150dp"
+                        app:slider_animateIndicators="true"
+                        app:slider_emptyView="@layout/layout_slider_empty_view"
+                        app:slider_indicatorSize="6dp"
+                        app:slider_interval="0"
+                        app:slider_loopSlides="true" />
+                </androidx.cardview.widget.CardView>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="wrap_content"
+                    android:background="#316da9"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            fontPath="fonts/Timeless-Bold.ttf"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/montserrat"
+                            android:padding="5dp"
+                            android:text="Shop by Category"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            tools:ignore="MissingPrefix" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            app:cardCornerRadius="5dp">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/lst_category"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:overScrollMode="never"
+                                android:scrollbars="none">
+
+                            </androidx.recyclerview.widget.RecyclerView>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="#f49a1d"
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_home_trendinnding"
                         fontPath="fonts/Timeless-Bold.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="8dp"
+                        android:fontFamily="@font/montserrat"
                         android:padding="5dp"
-                        android:text="Shop by Category"
+                        android:text="Trending Products"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         tools:ignore="MissingPrefix" />
 
-                    <androidx.cardview.widget.CardView
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/lst_trending"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        app:cardCornerRadius="5dp">
+                        android:layout_margin="5dp"
+                        android:background="#f49a1d"
+                        android:overScrollMode="never"
+                        android:scrollbars="none">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/lst_category"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
-                            android:overScrollMode="never"
-                            android:scrollbars="none">
-
-                        </androidx.recyclerview.widget.RecyclerView>
-                    </androidx.cardview.widget.CardView>
+                    </androidx.recyclerview.widget.RecyclerView>
                 </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#f49a1d"
-                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_home_trendinnding"
-                    fontPath="fonts/Timeless-Bold.ttf"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="8dp"
-                    android:padding="5dp"
-                    android:text="Trending Products"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    tools:ignore="MissingPrefix" />
+        </androidx.core.widget.NestedScrollView>
 
+        <ProgressBar
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/lst_trending"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="#f49a1d"
-                    android:overScrollMode="never"
-                    android:scrollbars="none">
-
-                </androidx.recyclerview.widget.RecyclerView>
-            </LinearLayout>
-
-        </LinearLayout>
-
-
-    </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/LL_Product_List_Error"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/ivErrorIcon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_alert_black_24dp"
-            android:tint="#695757" />
+            android:src="@drawable/no_internet" />
 
         <TextView
             android:id="@+id/tvError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="@font/montserrat"
             android:gravity="center"
+            android:textColor="@color/black"
             android:textSize="20sp"
             tools:text="@string/error_message_failed" />
 
         <Button
             android:id="@+id/btnTryAgain"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="25dp"
-            android:background="@drawable/click_effect"
+            android:background="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             android:text="Try Again"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
 
     </LinearLayout>
 
 
-    <ProgressBar
-        android:id="@+id/loadingIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-</FrameLayout>
+</LinearLayout>

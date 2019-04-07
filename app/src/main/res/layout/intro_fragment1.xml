@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:gravity="center">
 
     <LinearLayout
@@ -16,6 +16,7 @@
             android:id="@+id/intro_descs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
             android:gravity="center"
             android:padding="10dp"
             android:text="Life is succession of lessons which must be lived to be unberstood."
@@ -26,6 +27,7 @@
             android:id="@+id/intro_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             android:padding="10dp"
             app:srcCompat="@drawable/intro_item1" />
 
@@ -33,11 +35,14 @@
             android:id="@+id/intro_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/montserrat"
             android:gravity="center"
             android:padding="10dp"
-            android:text="TRY NEW !"
-            android:textColor="@android:color/holo_orange_dark"
-            android:textSize="24sp" />
+            android:text="EXPLORE NEW !"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
 
     </LinearLayout>

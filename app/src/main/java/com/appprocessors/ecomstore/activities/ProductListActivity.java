@@ -9,11 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.appprocessors.ecomstore.adapter.ProductListAdapter;
 import com.appprocessors.ecomstore.R;
+import com.appprocessors.ecomstore.adapter.ProductListAdapter;
 import com.appprocessors.ecomstore.model.CategoryProducts;
 import com.appprocessors.ecomstore.model.Content;
-import com.appprocessors.ecomstore.model.SubCategoryProducts;
+import com.appprocessors.ecomstore.model.categoryhome.CategoryHome;
 import com.appprocessors.ecomstore.paging.Injection;
 import com.appprocessors.ecomstore.paging.ProductListViewModel;
 import com.appprocessors.ecomstore.paging.Resource;
@@ -25,6 +25,7 @@ import com.appprocessors.ecomstore.utils.SimpleDividerItemDecoration;
 import com.omega_r.libs.OmegaCenterIconButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
@@ -63,10 +64,14 @@ public class ProductListActivity extends CommonOptionMenu {
         setContentView(R.layout.activity_product_list);
         ButterKnife.bind(this);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
 
         mService = Common.getAPI();
 
@@ -92,9 +97,9 @@ public class ProductListActivity extends CommonOptionMenu {
         });
 
         if (getIntent() != null) {
-            CategoryProducts subCategoryProducts = getIntent().getParcelableExtra("subcategory");
-            if (subCategoryProducts != null) {
-                setTitle(subCategoryProducts.name);
+            CategoryHome categoryHome = getIntent().getParcelableExtra("subcategory");
+            if (categoryHome != null) {
+                setTitle(categoryHome.getName());
                 viewModel = obtainViewModel(this);
 
                 ivProductListListToGrid.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +159,7 @@ public class ProductListActivity extends CommonOptionMenu {
                     }
                 });
                 //Load Category by Product0
-                LoadProductListByMenuid(subCategoryProducts.get_id());
+                LoadProductListByMenuid(categoryHome.get_id());
             }
 
         }

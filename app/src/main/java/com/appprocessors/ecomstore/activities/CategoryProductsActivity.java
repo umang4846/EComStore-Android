@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.CategoryProductAdapter;
 import com.appprocessors.ecomstore.adapter.CategorySliderAdapter;
-import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.Category;
-import com.appprocessors.ecomstore.model.CategoryBanner;
-import com.appprocessors.ecomstore.model.CategoryProducts;
+import com.appprocessors.ecomstore.model.categoryhome.CategoryHome;
+import com.appprocessors.ecomstore.model.pictureslider.PictureSlider;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.CommonOptionMenu;
@@ -21,6 +21,8 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,6 +55,9 @@ public class CategoryProductsActivity extends CommonOptionMenu {
         setContentView(R.layout.activity_category_products);
         ButterKnife.bind(this);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -60,13 +65,14 @@ public class CategoryProductsActivity extends CommonOptionMenu {
 
         Slider.init(new PicassoImageLoadingService(this));
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-        if (getIntent() != null) {
-            Category currentCategory = getIntent().getParcelableExtra("currentCategory");
-            if (currentCategory != null) {
+        if (getIntent().getExtras() != null) {
+            String currentCategoryId = getIntent().getExtras().getString("categoryId");
+            String currentCategoryName = getIntent().getExtras().getString("categoryName");
+            if (currentCategoryId != null && currentCategoryName != null) {
                 mShimmerViewContainer.startShimmer();
+                mShimmerViewContainer.setVisibility(View.VISIBLE);
                 NSCategoryProduct.setVisibility(View.GONE);
-
-                setTitle(currentCategory.getName());
+                setTitle(currentCategoryName);
                 mService = Common.getAPI();
 
                 //Category
@@ -80,10 +86,10 @@ public class CategoryProductsActivity extends CommonOptionMenu {
                 top_store_category.addItemDecoration(new SimpleDividerItemDecoration(1, 3));
 
                 //Fetch Banner Images
-                getCategoryBanner(currentCategory.get_id());
+                getCategoryBanner(currentCategoryId);
 
                 //Load Category by Product
-                LoadCategoryByProducts(currentCategory.get_id());
+                LoadCategoryByProducts(currentCategoryId);
             }
         }
     }
@@ -95,63 +101,72 @@ public class CategoryProductsActivity extends CommonOptionMenu {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getCategoryBanner(String menuid) {
-        compositeDisposable.add(mService.getCategoryBanner(menuid)
+    private void getCategoryBanner(String parentCategoryId) {
+        compositeDisposable.add(mService.getCategoryPictureSlider(parentCategoryId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<CategoryBanner>>() {
+                .subscribe(new Consumer<List<PictureSlider>>() {
                     @Override
-                    public void accept(List<CategoryBanner> categoryBanners) throws Exception {
-                        displaygetCategoryBanner(categoryBanners);
+                    public void accept(List<PictureSlider> pictureSliderList) throws Exception {
+                        displaygetCategoryBanner(pictureSliderList);
                     }
                 }));
 
     }
 
-    private void displaygetCategoryBanner(List<CategoryBanner> categoryBanners) {
+    private void displaygetCategoryBanner(List<PictureSlider> pictureSliderLists) {
 
-               categoryBannerSlider.setAdapter(new CategorySliderAdapter(categoryBanners));
-               categoryBannerSlider.setInterval(2500);
-               categoryBannerSlider.setOnSlideClickListener(new OnSlideClickListener() {
-                   @Override
-                   public void onSlideClick(int position) {
-                       CategoryBanner categoryBanner = categoryBanners.get(position);
-                       Log.d(TAG, "banner Clicked: at " + position + " for " + categoryBanner.getProductCode());
-                       Intent bannerIntent = new Intent(CategoryProductsActivity.this, ProductDetailsActivity.class);
-                       bannerIntent.putExtra("productCode", categoryBanners.get(position).getProductCode());
-                       startActivity(bannerIntent);
-                   }
-               });
+        categoryBannerSlider.setAdapter(new CategorySliderAdapter(pictureSliderLists));
+        categoryBannerSlider.setInterval(2500);
+        categoryBannerSlider.setOnSlideClickListener(new OnSlideClickListener() {
+            @Override
+            public void onSlideClick(int position) {
+
+                String productId = "";
+                PictureSlider pictureSlider = pictureSliderLists.get(position);
+                for (int i = 0; i < pictureSliderLists.size(); i++) {
+                    if (pictureSliderLists.get(position).getGenericAttributes().get(i).getKey().equals("ProductId")) {
+                        productId = pictureSliderLists.get(position).getGenericAttributes().get(i).getValue();
+                        break;
+                    }
+                }
+                if (productId != null) {
+                    Log.d(TAG, "banner Clicked: at " + position + " for " + productId);
+                    Intent bannerIntent = new Intent(CategoryProductsActivity.this, ProductDetailsActivity.class);
+                    bannerIntent.putExtra("productCode", productId);
+                    startActivity(bannerIntent);
+                }
+            }
+        });
 
 
+    }
+
+    private void LoadCategoryByProducts(String currentCategoryId) {
+
+        compositeDisposable.add(mService.getCategoryProductsByParentCategoryId(currentCategoryId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<CategoryHome>>() {
+                    @Override
+                    public void accept(List<CategoryHome> categoryHomeList) throws Exception {
+                        displayCategoryTopStore(categoryHomeList);
+                    }
+
+                }));
+
+
+    }
+
+    private void displayCategoryTopStore(List<CategoryHome> categoryHomeList) {
+
+        CategoryProductAdapter categoryProductAdapter = new CategoryProductAdapter(this, categoryHomeList);
+        top_store_category.setAdapter(categoryProductAdapter);
 
         //Set Visibility of Progressbar and Relative Layout
         mShimmerViewContainer.stopShimmer();
         mShimmerViewContainer.setVisibility(View.GONE);
         NSCategoryProduct.setVisibility(View.VISIBLE);
-    }
-
-    private void LoadCategoryByProducts(String menuid) {
-
-        compositeDisposable.add(mService.getCategoryProductsByMenuId(menuid)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<CategoryProducts>>() {
-                    @Override
-                    public void accept(List<CategoryProducts> categoryProducts) throws Exception {
-                        displayCategoryTopStore(categoryProducts);
-                    }
-
-                }));
-
-
-    }
-
-    private void displayCategoryTopStore(List<CategoryProducts> categoryProducts) {
-
-        CategoryProductAdapter categoryProductAdapter = new CategoryProductAdapter(this, categoryProducts);
-        top_store_category.setAdapter(categoryProductAdapter);
-
     }
 
 

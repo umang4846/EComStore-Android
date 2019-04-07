@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+
+    <color name="colorPrimary">@color/black</color>
+    <color name="colorPrimaryDark">#FBB8AC</color>
+    <color name="colorAccent">#FEDBD0</color>
+    <color name="textColorPrimary">#442C2E</color>
+    <color name="toolbarIconColor">@color/textColorPrimary</color>
+    <color name="loginPageBackgroundColor">#FFFFFF</color>
+    <color name="productGridBackgroundColor">#FFFBFA</color>
+    <color name="colorControlActivated">#FBB8AC</color>
+
+
+ <!--   <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#FF4081</color>-->
     <color name="white">#FFFFFF</color>
     <color name="ivory">#FFFFF0</color>
     <color name="light_yellow">#FFFFE0</color>
@@ -440,4 +451,11 @@
     <color name="md_blue_grey_700">#455A64</color>
     <color name="md_blue_grey_800">#37474F</color>
     <color name="md_blue_grey_900">#263238</color>
+
+    <color name="starColor">#45b9ad</color>
+    <color name="noteDescriptionTextColor">#45b9ad</color>
+    <color name="titleTextColor">#FFFFFF</color>
+    <color name="descriptionTextColor">#A6FFFFFF</color>
+    <color name="commentTextColor">#FFFFFF</color>
+    <color name="hintTextColor">#55000000</color>
 </resources>

@@ -8,7 +8,7 @@ public class Order {
 
     @SerializedName("_id")
     @Expose
-    private String _id;
+    private String id;
     @SerializedName("productName")
     @Expose
     private String productName;
@@ -39,19 +39,22 @@ public class Order {
     @SerializedName("orderedAccountMobileNo")
     @Expose
     private String orderedAccountMobileNo;
-    @SerializedName("orderDateTime")
+    @SerializedName("orderDate")
     @Expose
-    private String orderDateTime;
+    private String orderDate;
+    @SerializedName("orderTime")
+    @Expose
+    private String orderTime;
     @SerializedName("orderStatus")
     @Expose
     private String orderStatus;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getProductName() {
@@ -134,12 +137,20 @@ public class Order {
         this.orderedAccountMobileNo = orderedAccountMobileNo;
     }
 
-    public String getOrderDateTime() {
-        return orderDateTime;
+    public String getOrderDate() {
+        return orderDate;
     }
 
-    public void setOrderDateTime(String orderDateTime) {
-        this.orderDateTime = orderDateTime;
+    public void setOrderDate(String orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public String getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
     }
 
     public String getOrderStatus() {
@@ -149,4 +160,5 @@ public class Order {
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
+
 }

@@ -13,6 +13,7 @@ import com.appprocessors.ecomstore.activities.SubCategoryProductActivity;
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.interfaces.IItemClickListner;
 import com.appprocessors.ecomstore.model.CategoryProducts;
+import com.appprocessors.ecomstore.model.categoryhome.CategoryHome;
 import com.appprocessors.ecomstore.utils.Common;
 import com.squareup.picasso.Picasso;
 
@@ -21,11 +22,11 @@ import java.util.List;
 public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProductViewHolder> {
 
     Context context;
-    List<CategoryProducts> categoryProducts;
+    List<CategoryHome> categoryHomeList;
 
-    public CategoryProductAdapter(Context context, List<CategoryProducts> categoryProducts) {
+    public CategoryProductAdapter(Context context, List<CategoryHome> categoryHomeList) {
         this.context = context;
-        this.categoryProducts = categoryProducts;
+        this.categoryHomeList = categoryHomeList;
     }
     @NonNull
     @Override
@@ -35,10 +36,18 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
     }
     @Override
     public void onBindViewHolder(@NonNull final CategoryProductViewHolder holder, final int position) {
-        //Load Image with Picasso
-        Picasso.get().load(categoryProducts.get(position).getLink()).into(holder.img);
 
-        holder.txt.setText(categoryProducts.get(position).getName());
+        String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
+        String imageID = categoryHomeList.get(position).getPictureDetails().get(0).get_id();
+        String imageNmae =categoryHomeList.get(position).getPictureDetails().get(0).getSeoFilename();
+        String imageMimeType =categoryHomeList.get(position).getPictureDetails().get(0).getMimeType().replace("image/","").trim();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(baseUrl).append(imageID).append("_").append(imageNmae).append("_450.").append(imageMimeType);
+
+        //Load Image with Picasso
+        Picasso.get().load(stringBuilder.toString()).into(holder.img);
+
+        holder.txt.setText(categoryHomeList.get(position).getName());
 
         holder.setItemClickListner(new IItemClickListner() {
             @Override
@@ -47,10 +56,10 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
                 /*Intent intent = new Intent(context,SubCategoryProductActivity.class);
                 intent.putExtra("categoryProducts",categoryProducts.get(position));
                 context.startActivity(intent);*/
-                Common.currentSubcategoryProducts = categoryProducts.get(position);
+                Common.currentSubcategoryProducts = categoryHomeList.get(position);
 
                 Intent intent = new Intent(context, ProductListActivity.class);
-                intent.putExtra("subcategory",categoryProducts.get(position));
+                intent.putExtra("subcategory",categoryHomeList.get(position));
                 context.startActivity(intent);
 
             }
@@ -58,6 +67,6 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
     }
     @Override
     public int getItemCount() {
-        return categoryProducts.size();
+        return categoryHomeList.size();
     }
 }

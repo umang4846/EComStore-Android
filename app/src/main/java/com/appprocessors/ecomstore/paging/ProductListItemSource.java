@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.appprocessors.ecomstore.model.Content;
 import com.appprocessors.ecomstore.model.ProductDetails;
-import com.appprocessors.ecomstore.model.ProductList;
+import com.appprocessors.ecomstore.model.product.ProductList;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 
@@ -27,6 +27,7 @@ public class ProductListItemSource extends PageKeyedDataSource<Integer, Content>
     public static final int SIZE = 10;
     public static final int PAGE = 0;
     public static String SORT_BY = "productAverageRating";
+    public static String ORDER_BY = "asc";
 
     public MutableLiveData<Resource> networkState = new MutableLiveData<>();
     private final IEStoreAPI mService;
@@ -51,18 +52,22 @@ public class ProductListItemSource extends PageKeyedDataSource<Integer, Content>
         // load data from API
         Call<ProductList> request;
         if (sortBy == ProductListFilterType.POPULARITY) {
-            SORT_BY = "productAverageRating";
-            request = mService.getProductByMenuidDESC(Common.currentSubcategoryProducts._id, PAGE, SIZE, SORT_BY);
+            SORT_BY = "ApprovedTotalReviews";
+            ORDER_BY = "desc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(),ORDER_BY, PAGE, SIZE, SORT_BY);
 
         } else if (sortBy == ProductListFilterType.NEW_ARRIVAL) {
-            SORT_BY = "createdDate";
-            request = mService.getProductByMenuidDESC(Common.currentSubcategoryProducts._id, PAGE, SIZE, SORT_BY);
+            SORT_BY = "CreatedOnUtc";
+            ORDER_BY = "asc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(),ORDER_BY, PAGE, SIZE, SORT_BY);
         } else if (sortBy == ProductListFilterType.PRICE_LOW_TO_HIGH) {
-            SORT_BY = "price";
-            request = mService.getProductByMenuid(Common.currentSubcategoryProducts._id, PAGE, SIZE, SORT_BY);
+            SORT_BY = "Price";
+            ORDER_BY = "asc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(), ORDER_BY,PAGE, SIZE, SORT_BY);
         } else {
-            SORT_BY = "price";
-            request = mService.getProductByMenuidDESC(Common.currentSubcategoryProducts._id, PAGE, SIZE, SORT_BY);
+            SORT_BY = "Price";
+            ORDER_BY = "desc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(),ORDER_BY, PAGE, SIZE, SORT_BY);
         }
 
         // we execute sync since this is triggered by refresh
@@ -99,7 +104,7 @@ public class ProductListItemSource extends PageKeyedDataSource<Integer, Content>
         // ignored, since we only ever append to our initial load
 /*
         if (ORDER_BY.equalsIgnoreCase("DESC")) {
-            mService.getProductByMenuidDESC(Common.currentcategoryProducts._id, params.key, SIZE, SORT_BY)
+            mService.getProductByMenuidDESC(Common.currentcategoryProducts.get_id(), params.key, SIZE, SORT_BY)
                     .enqueue(new Callback<ProductDetails>() {
                         @Override
                         public void onResponse(Call<ProductDetails> call, Response<ProductDetails> response) {
@@ -120,7 +125,7 @@ public class ProductListItemSource extends PageKeyedDataSource<Integer, Content>
                     });
         }
         else if (ORDER_BY.equalsIgnoreCase("ASC")){
-            mService.getProductByMenuid(Common.currentcategoryProducts._id, params.key, SIZE, SORT_BY)
+            mService.getProductByMenuid(Common.currentcategoryProducts.get_id(), params.key, SIZE, SORT_BY)
                     .enqueue(new Callback<ProductDetails>() {
                         @Override
                         public void onResponse(Call<ProductDetails> call, Response<ProductDetails> response) {
@@ -148,17 +153,22 @@ public class ProductListItemSource extends PageKeyedDataSource<Integer, Content>
         // load data from API
         Call<ProductList> request;
         if (sortBy == ProductListFilterType.POPULARITY) {
-            SORT_BY = "productAverageRating";
-            request = mService.getProductByMenuidDESC(Common.currentSubcategoryProducts._id, params.key, SIZE, SORT_BY);
+            SORT_BY = "ApprovedTotalReviews";
+            ORDER_BY = "desc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(),ORDER_BY, PAGE, SIZE, SORT_BY);
+
         } else if (sortBy == ProductListFilterType.NEW_ARRIVAL) {
-            SORT_BY = "productAverageRating";
-            request = mService.getProductByMenuidDESC(Common.currentSubcategoryProducts._id, params.key, SIZE, SORT_BY);
+            SORT_BY = "CreatedOnUtc";
+            ORDER_BY = "asc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(),ORDER_BY, PAGE, SIZE, SORT_BY);
         } else if (sortBy == ProductListFilterType.PRICE_LOW_TO_HIGH) {
-            SORT_BY = "price";
-            request = mService.getProductByMenuid(Common.currentSubcategoryProducts._id, params.key, SIZE, SORT_BY);
+            SORT_BY = "Price";
+            ORDER_BY = "asc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(), ORDER_BY,PAGE, SIZE, SORT_BY);
         } else {
-            SORT_BY = "price";
-            request = mService.getProductByMenuidDESC(Common.currentSubcategoryProducts._id, params.key, SIZE, SORT_BY);
+            SORT_BY = "Price";
+            ORDER_BY = "desc";
+            request = mService.getProductsListByCategoryId(Common.currentSubcategoryProducts.get_id(),ORDER_BY, PAGE, SIZE, SORT_BY);
         }
 
         request.enqueue(new Callback<ProductList>() {

@@ -5,4 +5,25 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorControlHighlight">@color/green</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="colorPrimaryVariant">#32c239</item>
+        <item name="colorOnBackground">#ffca28</item>
+
+        <item name="colorSecondaryVariant">@color/orange_red</item>
+        <item name="colorSurface">@color/orange</item>
+        <item name="colorOnPrimary">@color/blue</item>
+        <item name="colorOnSecondary">@color/dark_green</item>
+        <item name="colorOnError">@color/md_yellow_400</item>
+        <item name="colorOnSurface">@color/md_brown_700</item>
+        <item name="scrimBackground">@color/dark_cyan</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/white</item>
+
+    </style>
 </resources>

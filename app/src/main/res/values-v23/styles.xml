@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+
+
+
+    </style>
+
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/black</item>
+    </style>
+
+
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorControlHighlight">@color/green</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="colorPrimaryVariant">@color/greenYellow</item>
+        <item name="android:textColorPrimary">@color/black</item>
+
+        <item name="colorSecondaryVariant">@color/orange_red</item>
+        <item name="colorSurface">@color/orange</item>
+        <item name="colorOnPrimary">@color/md_grey_600</item>
+        <item name="colorOnSecondary">@color/dark_green</item>
+        <item name="colorOnError">@color/md_yellow_400</item>
+        <item name="colorOnSurface">@color/md_brown_700</item>
+        <item name="scrimBackground">@color/dark_cyan</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="Theme.Shrine" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="colorControlActivated">@color/black</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+    </style>
+
+
+    <style name="Widget.Shrine.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextAppearance">@style/TextAppearance.Shrine.TextInputLayout.HintText</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="TextAppearance.Shrine.TextInputLayout.HintText" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="Widget.Shrine.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="backgroundTint">?attr/colorPrimaryDark</item>
+    </style>
+
+    <style name="Widget.Shrine.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">?attr/colorAccent</item>
+        <item name="android:theme">@style/Theme.Shrine</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="titleTextAppearance">@style/TextAppearance.Shrine.Toolbar</item>
+    </style>
+
+    <style name="TextAppearance.Shrine.Toolbar" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.Shrine.Title" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="Widget.Shrine.Backdrop" parent="">
+        <item name="android:background">?attr/colorAccent</item>
+    </style>
+
+</resources>

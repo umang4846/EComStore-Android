@@ -1,10 +1,16 @@
 package com.appprocessors.ecomstore.utils;
 
 import android.content.Intent;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.appprocessors.ecomstore.activities.CartActivity;
 import com.appprocessors.ecomstore.activities.FavouritesActivity;
@@ -13,7 +19,6 @@ import com.nex3z.notificationbadge.NotificationBadge;
 
 public class CommonOptionMenu extends AppCompatActivity {
     NotificationBadge badge;
-
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.common_option_menu, menu);
@@ -55,7 +60,7 @@ public class CommonOptionMenu extends AppCompatActivity {
     private void updateCartCount() {
 
         if (badge==null) return;
-        runOnUiThread(new Runnable() {
+     /*   runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (Common.cartRepository.countCartItems()==0){
@@ -68,7 +73,7 @@ public class CommonOptionMenu extends AppCompatActivity {
                     //badge.setText(String.valueOf(Common.cartRepository.countCartItems()));
                 }
             }
-        });
+        });*/
 
     }
     @Override

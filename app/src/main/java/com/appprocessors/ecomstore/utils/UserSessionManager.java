@@ -33,7 +33,8 @@ public class UserSessionManager {
     public static final String KEY_PHONE = "phone";
 
     // Email address (make variable public to access from outside)
-    public static final String KEY_NAME = "name";
+    public static final String KEY_FIRST_NAME = "fname";
+    public static final String KEY_LAST_NAME = "lname";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_GENDER = "gender";
@@ -47,15 +48,18 @@ public class UserSessionManager {
     }
 
     //Create login session
-    public void createUserLoginSession(String phone,String name,String email,String pass, String gender){
+    public void createUserLoginSession(String phone,String firstName,String lastName,String email,String pass, String gender){
         // Storing login value as TRUE
         editor.putBoolean(IS_USER_LOGIN, true);
 
         // Storing phone in pref
         editor.putString(KEY_PHONE, phone);
 
-        // Storing name in pref
-        editor.putString(KEY_NAME, name);
+        // Storing first name in pref
+        editor.putString(KEY_FIRST_NAME, firstName);
+
+        // Storing last name in pref
+        editor.putString(KEY_LAST_NAME, lastName);
 
         // Storing email in pref
         editor.putString(KEY_EMAIL, email);
@@ -109,8 +113,9 @@ public class UserSessionManager {
         // user name
         user.put(KEY_PHONE, pref.getString(KEY_PHONE, null));
 
-        // user name
-        user.put(KEY_NAME, pref.getString(KEY_NAME, null));
+        // user first and last name
+        user.put(KEY_FIRST_NAME, pref.getString(KEY_FIRST_NAME, null));
+        user.put(KEY_LAST_NAME, pref.getString(KEY_LAST_NAME, null));
 
         // user email id
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));

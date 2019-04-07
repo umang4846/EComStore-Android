@@ -3,9 +3,35 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="toolbarStyle">@style/CustomToolBarStyle</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+
+
+
+        <!-- Assign dialog style here. -->
+        <item name="alertDialogTheme">@style/MyAlertDialogStyle</item>
+        <item name="alertDialogStyle">@style/MyAlertDialogStyle</item>
+
+
+    </style>
+
+
+    <style name="CustomToolBarStyle" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="titleTextColor">@color/black</item>
+        <item name="colorControlNormal">@color/black</item>
+
+    </style>
+
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/black</item>
+    </style>
+
+    <style name="montserrat" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/montserrat</item>
     </style>
 
     <style name="AppLoginTheme" parent="Theme.AccountKit" />
@@ -42,17 +68,66 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- This configures the styles for the title within the Toolbar  -->
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+
+    </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!-- android:textColorPrimary is the color of the title text in the Toolbar  -->
+        <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
+        <!-- actionMenuTextColor is the color of the text of action (menu) items  -->
+        <item name="actionMenuTextColor">@android:color/holo_green_light</item>
+        <!-- Tints the input fields like checkboxes and text fields -->
+        <item name="colorAccent">@color/md_pink_600</item>
+        <!-- Applies to views in their normal state. -->
+        <item name="colorControlNormal">@color/md_red_400</item>
+        <!-- Applies to views in their activated state (i.e checked or switches) -->
+        <item name="colorControlActivated">@color/dark_green</item>
+        <!-- Applied to framework control highlights (i.e ripples or list selectors) -->
+        <item name="colorControlHighlight">@color/md_yellow_500</item>
+
+        <!-- Enable these below if you want clicking icons to trigger a ripple effect -->
+        <!--
+        <item name="selectableItemBackground">?android:selectableItemBackground</item>
+        <item name="selectableItemBackgroundBorderless">?android:selectableItemBackground</item>
+        -->
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorControlHighlight">@color/green</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorAccent">@color/black</item>
         <item name="android:textColor">?android:textColorPrimary</item>
         <item name="colorPrimaryVariant">#32c239</item>
         <item name="colorOnBackground">#ffca28</item>
+
+        <item name="colorSecondaryVariant">@color/orange_red</item>
+        <item name="colorSurface">@color/orange</item>
+        <item name="colorOnPrimary">@color/blue</item>
+        <item name="colorOnSecondary">@color/dark_green</item>
+        <item name="colorOnError">@color/md_yellow_400</item>
+        <item name="colorOnSurface">@color/md_brown_700</item>
+        <item name="scrimBackground">@color/dark_cyan</item>
+
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="Theme.Shrine" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="colorControlActivated">@color/black</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
     </style>
 
 
@@ -64,4 +139,24 @@
         <item name="android:paddingLeft">1dp</item>
         <item name="android:paddingRight">1dp</item>
     </style>
+
+
+    <!-- Dialog -->
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/green</item>
+        <item name="buttonBarPositiveButtonStyle">@style/MyAlertDialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/MyAlertDialogButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/MyAlertDialogButtonStyle</item>
+    </style>
+
+    <style name="MyAlertDialogButtonStyle" parent="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="MyDialogFadeAnimation">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
 </resources>

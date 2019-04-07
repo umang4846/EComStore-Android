@@ -4,15 +4,14 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.appprocessors.ecomstore.database.datasource.CartRepository;
-import com.appprocessors.ecomstore.database.local.CartDatabase;
-import com.appprocessors.ecomstore.model.CategoryProducts;
-import com.appprocessors.ecomstore.model.User;
+import com.appprocessors.ecomstore.model.categoryhome.CategoryHome;
+import com.appprocessors.ecomstore.model.customer.Customer;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.retrofit.RetrofitClient;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 public class Common {
@@ -21,15 +20,12 @@ public class Common {
     // For Tempoary Server link  is :  https://estorecom.000webhostapp.com/estore/
     //"http://10.0.3.2:8080/";
 
-    public static final String BASE_URL = "http://192.168.43.51:8080";
+    public static final String BASE_URL = "http://192.168.20.46:1999";
     // private static final String BASE_URL = "http://10.0.3.2:8080/";
-    //  public static final String BASE_URL = "https://estoreapp.herokuapp.com";
-
-    //Current user
-    public static User currentUser = null;
+    //public static final String BASE_URL = "https://estoreapp.herokuapp.com";
 
     //Current Sub Category Products
-    public static CategoryProducts currentSubcategoryProducts = null;
+    public static CategoryHome currentSubcategoryProducts = null;
 
     public static final int tagAddAddress = 20;
     public static final int tagUpdateAddress = 30;
@@ -49,13 +45,13 @@ public class Common {
             "$");
 
     //Cart Room Database
-    public static CartDatabase cartDatabase;
-    public static CartRepository cartRepository;
+  //  public static CartDatabase cartDatabase;
+ //   public static CartRepository cartRepository;
 
     // To Calculate Discount in Percentages
-    public static double DiscountInPercentage(String mrp, String price) {
+    public static double DiscountInPercentage(double mrp, double price) {
 
-        Double dis = (Double.parseDouble(mrp) - Double.parseDouble(price)) / Double.parseDouble(mrp) * 100;
+        Double dis = (mrp - price) / mrp * 100;
         System.out.print(dis.intValue());
         return (dis.intValue());
     }
@@ -67,7 +63,25 @@ public class Common {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+    public static String getFormattedDate(Date date){
+        Calendar cal=Calendar.getInstance();
+        cal.setTime(date);
+        //2nd of march 2015
+        int day=cal.get(Calendar.DATE);
 
+        if(!((day>10) && (day<19)))
+            switch (day % 10) {
+                case 1:
+                    return new SimpleDateFormat("EEE, d'st' MMM yyyy").format(date);
+                case 2:
+                    return new SimpleDateFormat("EEE, d'nd' MMM yyyy").format(date);
+                case 3:
+                    return new SimpleDateFormat("EEE, d'rd' MMM yyyy").format(date);
+                default:
+                    return new SimpleDateFormat("EEE, d'th' MMM yyyy").format(date);
+            }
+        return new SimpleDateFormat("EEE, d'th' MMM yyyy").format(date);
+    }
 
 
 

@@ -13,10 +13,10 @@
         android:orientation="vertical">
 
         <TextView
+            android:fontFamily="@font/montserrat"
             android:id="@+id/intro_descs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:gravity="center"
             android:padding="10dp"
             android:text="Life is what happens while you are busy making other plans."
@@ -24,6 +24,7 @@
             android:textSize="20sp" />
 
         <ImageView
+            android:layout_marginTop="30dp"
             android:id="@+id/intro_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,8 +37,11 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginTop="30dp"
+            android:textStyle="bold"
             android:text="DELIVER NEW !"
-            android:textColor="@android:color/holo_orange_dark"
+            android:fontFamily="@font/montserrat"
+            android:textColor="@color/black"
             android:textSize="24sp" />
 
 

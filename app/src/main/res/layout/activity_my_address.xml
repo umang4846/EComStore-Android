@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_edit_location_black_24dp" />
+            android:src="@drawable/no_address" />
 
         <TextView
 
@@ -80,9 +80,10 @@
             app:iconGravity="start"
             app:iconPadding="8dp"
             app:iconSize="20dp"
-            app:iconTintMode="src_in"
-            app:rippleColor="@color/md_grey_300"
-            app:strokeColor="@color/colorPrimary" />
+            app:iconTint="@color/black"
+            android:textColor="@color/black"
+            app:rippleColor="@color/md_grey_600"
+            app:strokeColor="@color/black" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_addresses"
@@ -94,6 +95,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_deliver_here"
+            app:useMaterialThemeColors="false"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

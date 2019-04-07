@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.database.modeldb.Cart;
 import com.appprocessors.ecomstore.utils.Common;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.omega_r.libs.OmegaCenterIconButton;
@@ -30,9 +29,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
-
-    Context context;
+public class CartAdapter{} /*extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
+*/
+  /*  Context context;
     List<Cart> carts;
 
 
@@ -59,7 +58,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         cartViewHolder.tvMrpProductList.setText(carts.get(position).mrp);
         cartViewHolder.tvMrpProductList.setPaintFlags(cartViewHolder.tvMrpProductList.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         cartViewHolder.tvPriceProductList.setAmount(Float.parseFloat(carts.get(position).price));
-        cartViewHolder.tvDiscountProductList.setAmount((float) Common.DiscountInPercentage(carts.get(position).price, carts.get(position).mrp));
+        cartViewHolder.tvDiscountProductList.setAmount((float) Common.DiscountInPercentage(Double.parseDouble(carts.get(position).price), Double.parseDouble(carts.get(position).mrp)));
         cartViewHolder.tvSellerName.setText(carts.get(position).soldBy);
         cartViewHolder.tvColorProductList.setText(carts.get(position).idealFor);
         cartViewHolder.cartProductQuantity.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
@@ -141,6 +140,5 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             super(view);
             ButterKnife.bind(this, view);
         }
-    }
+    }*/
 
-}

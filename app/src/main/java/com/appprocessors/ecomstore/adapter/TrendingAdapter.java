@@ -14,6 +14,7 @@ import com.appprocessors.ecomstore.activities.ProductDetailsActivity;
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.interfaces.IItemClickListner;
 import com.appprocessors.ecomstore.model.Trending;
+import com.appprocessors.ecomstore.model.product.ProductList;
 import com.appprocessors.ecomstore.utils.Common;
 import com.squareup.picasso.Picasso;
 
@@ -32,10 +33,10 @@ import butterknife.ButterKnife;
 
 public class TrendingAdapter extends RecyclerView.Adapter<TrendingAdapter.TrendingViewHolder> {
 
-    Context context;
-    List<Trending> trendings;
+    private Context context;
+    private List<ProductList> trendings;
 
-    public TrendingAdapter(Context context, List<Trending> trendings) {
+    public TrendingAdapter(Context context, List<ProductList> trendings) {
         this.context = context;
         this.trendings = trendings;
     }
@@ -59,21 +60,29 @@ public class TrendingAdapter extends RecyclerView.Adapter<TrendingAdapter.Trendi
     public void onBindViewHolder(@NonNull TrendingViewHolder holder, int position) {
 
         if(trendings!=null) {
+
+            String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
+            String imageID = trendings.get(position).getPictureDetails().get(0).get_id();
+            String imageNmae =trendings.get(position).getPictureDetails().get(0).getSeoFilename();
+            String imageMimeType =trendings.get(position).getPictureDetails().get(0).getMimeType().replace("image/","").trim();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(baseUrl).append(imageID).append("_").append(imageNmae).append("_415.").append(imageMimeType);
+
             //Load Image with Picasso
-            Picasso.get().load(trendings.get(position).getImageMain()).into(holder.ivTrendingProduct);
-            holder.tvTrendingProductName.setText(trendings.get(position).getProductName());
-            holder.tvTrendingProductPrice.setAmount(Float.parseFloat(trendings.get(position).getPrice()));
-            holder.tvTrendingProductMrp.setText(getIndianRupee(trendings.get(position).getMrp()));
+            Picasso.get().load(stringBuilder.toString()).into(holder.ivTrendingProduct);
+            holder.tvTrendingProductName.setText(trendings.get(position).getName());
+            holder.tvTrendingProductPrice.setAmount(Float.parseFloat(String.valueOf(trendings.get(position).getPrice())));
+            holder.tvTrendingProductMrp.setText(getIndianRupee(String.valueOf(trendings.get(position).getOldPrice())));
             holder.tvTrendingProductMrp.setPaintFlags(holder.tvTrendingProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.tvTrendingProductDiscount.setAmount((float) Common.DiscountInPercentage(trendings.get(position).getMrp(), trendings.get(position).getPrice()));
-            if (Common.DiscountInPercentage(trendings.get(position).getMrp(), trendings.get(position).getPrice()) <= 0) {
+            holder.tvTrendingProductDiscount.setAmount((float) Common.DiscountInPercentage(trendings.get(position).getOldPrice(), trendings.get(position).getPrice()));
+            if (Common.DiscountInPercentage(trendings.get(position).getOldPrice(),trendings.get(position).getPrice()) <= 0) {
                 holder.tvTrendingProductMrp.setVisibility(View.GONE);
                 holder.LLTrendingDiscounts.setVisibility(View.GONE);
             } else {
                 holder.tvTrendingProductMrp.setVisibility(View.VISIBLE);
                 holder.LLTrendingDiscounts.setVisibility(View.VISIBLE);
             }
-            if (trendings.get(position).getPrice().equalsIgnoreCase(trendings.get(position).getMrp())) {
+            if (trendings.get(position).getPrice()==(trendings.get(position).getOldPrice())) {
                 holder.tvTrendingProductMrp.setVisibility(View.GONE);
                 holder.LLTrendingDiscounts.setVisibility(View.GONE);
             } else {
@@ -84,7 +93,7 @@ public class TrendingAdapter extends RecyclerView.Adapter<TrendingAdapter.Trendi
                 @Override
                 public void onClick(View v) {
                     Intent bannerIntent = new Intent(context, ProductDetailsActivity.class);
-                    bannerIntent.putExtra("productCode", trendings.get(position).getProductCode());
+                    bannerIntent.putExtra("productCode", trendings.get(position).get_id());
                     context.startActivity(bannerIntent);
                 }
             });

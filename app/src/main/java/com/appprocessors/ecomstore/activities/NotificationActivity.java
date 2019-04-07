@@ -33,6 +33,7 @@ public class NotificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
         ButterKnife.bind(this);
+        setTitle("Notifications");
 
         //Set Back Button to Toolbar
         if (getSupportActionBar() != null) {

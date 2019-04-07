@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.appprocessors.ecomstore.activities.ProductDetailsActivity;
 import com.appprocessors.ecomstore.R;
+import com.appprocessors.ecomstore.activities.ProductDetailsActivity;
 import com.appprocessors.ecomstore.interfaces.IItemClickListner;
 import com.appprocessors.ecomstore.model.TrendingSubCategory;
 import com.appprocessors.ecomstore.utils.Common;
@@ -64,8 +64,8 @@ public class TrendingSubCategoryAdapter extends RecyclerView.Adapter<TrendingSub
         holder.tvTrendingProductPrice.setAmount(Float.parseFloat(trendings.get(position).getPrice()));
         holder.tvTrendingProductMrp.setText(getIndianRupee(trendings.get(position).getMrp()));
         holder.tvTrendingProductMrp.setPaintFlags(holder.tvTrendingProductMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        holder.tvTrendingProductDiscount.setAmount((float) Common.DiscountInPercentage(trendings.get(position).getMrp(), trendings.get(position).getPrice()));
-        if (Common.DiscountInPercentage(trendings.get(position).getMrp(), trendings.get(position).getPrice()) <= 0) {
+        holder.tvTrendingProductDiscount.setAmount((float) Common.DiscountInPercentage(Double.parseDouble(trendings.get(position).getMrp()), Double.parseDouble(trendings.get(position).getPrice())));
+        if (Common.DiscountInPercentage(Double.parseDouble(trendings.get(position).getMrp()), Double.parseDouble(trendings.get(position).getPrice())) <= 0) {
             holder.tvTrendingProductMrp.setVisibility(View.GONE);
             holder.LLTrendingDiscounts.setVisibility(View.GONE);
         } else {
