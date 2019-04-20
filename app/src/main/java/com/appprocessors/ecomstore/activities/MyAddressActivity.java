@@ -2,9 +2,8 @@ package com.appprocessors.ecomstore.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,9 +18,12 @@ import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.MyAddressesAdapter;
 import com.appprocessors.ecomstore.model.Address;
 import com.appprocessors.ecomstore.model.customer.Addresses;
+import com.appprocessors.ecomstore.model.customer.ShoppingCartItems;
 import com.appprocessors.ecomstore.model.order.OrderItem;
+import com.appprocessors.ecomstore.model.product.Product;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
+import com.appprocessors.ecomstore.utils.CommonOptionMenu;
 import com.appprocessors.ecomstore.utils.UserSessionManager;
 import com.google.android.material.button.MaterialButton;
 
@@ -30,6 +32,7 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +44,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class MyAddressActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class MyAddressActivity extends CommonOptionMenu implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     ProgressDialog loadingAddressdialog;
 
@@ -59,6 +62,7 @@ public class MyAddressActivity extends AppCompatActivity implements AdapterView.
 
     //Current Product Details
     List<OrderItem> currentProductDetails;
+    List<ShoppingCartItems> shoppingCartItemsList = new ArrayList<>();
 
     Address selectedItems;
 
@@ -91,7 +95,10 @@ public class MyAddressActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_address);
         ButterKnife.bind(this);
-        setTitle("Select Delivery");
+        setTitle("My Addresses");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.notes_toolbar);
+        setSupportActionBar(toolbar);
 
         //Set Back Button to Toolbar
         if (getSupportActionBar() != null) {
@@ -99,19 +106,7 @@ public class MyAddressActivity extends AppCompatActivity implements AdapterView.
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        //get Product Details From Intent
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            if (extras.containsKey("OrderItems")) {
-                ArrayList<OrderItem> orderItemArrayList = this.getIntent().getParcelableArrayListExtra("OrderItems");
-
-                if (orderItemArrayList.size() != 0) {
-                    currentProductDetails = orderItemArrayList;
-                }
-            }
-        }
-        mService = Common.getAPI();
+        mService = Common.getAPI(this);
         // User Session Manager
         session = new UserSessionManager(getApplicationContext());
 
@@ -120,6 +115,23 @@ public class MyAddressActivity extends AppCompatActivity implements AdapterView.
         rvAddresses.setHasFixedSize(true);
         rvAddresses.setNestedScrollingEnabled(false);
 
+        btnDeliverHere.setVisibility(View.GONE);
+
+        //get Product Details From Intent
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey("OrderItems")) {
+                ArrayList<OrderItem> orderItemArrayList = this.getIntent().getParcelableArrayListExtra("OrderItems");
+                ArrayList<ShoppingCartItems> productArrayList = this.getIntent().getParcelableArrayListExtra("ShoppingCartItems");
+                if (orderItemArrayList.size() != 0) {
+                    currentProductDetails = orderItemArrayList;
+                    shoppingCartItemsList = productArrayList;
+                    btnDeliverHere.setVisibility(View.VISIBLE);
+                    setTitle("Select Delivery");
+                }
+            }
+        }
         //Load All Addreses of user
         loadUserAddresses();
 
@@ -224,8 +236,11 @@ public class MyAddressActivity extends AppCompatActivity implements AdapterView.
             case R.id.btn_deliver_here:
 
                 Intent intentDeliverHere = new Intent(MyAddressActivity.this, ActivityPayment.class);
-                intentDeliverHere.putParcelableArrayListExtra("OrderItems", (ArrayList) currentProductDetails );
                 intentDeliverHere.putExtra("deliveryAddress", addressesList.get(selectedAddressPosition));
+                intentDeliverHere.putParcelableArrayListExtra("OrderItems", (ArrayList<? extends Parcelable>) currentProductDetails);
+                intentDeliverHere.putParcelableArrayListExtra("ShoppingCartItems", (ArrayList<? extends Parcelable>) shoppingCartItemsList);
+                startActivity(intentDeliverHere);
+
                 // intentDeliverHere.putExtra("deliveryAddress",)
                 if (currentProductDetails != null && addressesList.get(selectedAddressPosition) != null) {
                     startActivity(intentDeliverHere);

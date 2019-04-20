@@ -73,7 +73,7 @@ public class CategoryProductsActivity extends CommonOptionMenu {
                 mShimmerViewContainer.setVisibility(View.VISIBLE);
                 NSCategoryProduct.setVisibility(View.GONE);
                 setTitle(currentCategoryName);
-                mService = Common.getAPI();
+                mService = Common.getAPI(this);
 
                 //Category
                 top_store_category = findViewById(R.id.lst_top_store);
@@ -123,7 +123,6 @@ public class CategoryProductsActivity extends CommonOptionMenu {
             public void onSlideClick(int position) {
 
                 String productId = "";
-                PictureSlider pictureSlider = pictureSliderLists.get(position);
                 for (int i = 0; i < pictureSliderLists.size(); i++) {
                     if (pictureSliderLists.get(position).getGenericAttributes().get(i).getKey().equals("ProductId")) {
                         productId = pictureSliderLists.get(position).getGenericAttributes().get(i).getValue();

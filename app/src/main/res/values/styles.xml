@@ -10,7 +10,6 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
 
-
         <!-- Assign dialog style here. -->
         <item name="alertDialogTheme">@style/MyAlertDialogStyle</item>
         <item name="alertDialogStyle">@style/MyAlertDialogStyle</item>
@@ -97,9 +96,17 @@
         -->
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">@color/black</item>
+        <item name="android:fontFamily">@font/montserrat</item>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+
+        <item name="android:fontFamily">@font/montserrat</item>
+
+    </style>
 
     <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorControlHighlight">@color/green</item>
@@ -132,14 +139,14 @@
 
 
     <style name="EditText_Flat_Grey" parent="Base.TextAppearance.AppCompat.Subhead">
-        <item name="android:textSize" tools:override="true" >16sp</item>
+        <item name="android:textSize" tools:override="true">16sp</item>
         <item name="android:textColor">?android:textColorPrimary</item>
     </style>
+
     <style name="Theme.OutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:paddingLeft">1dp</item>
         <item name="android:paddingRight">1dp</item>
     </style>
-
 
     <!-- Dialog -->
     <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -157,6 +164,20 @@
     <style name="MyDialogFadeAnimation">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+    <style name="full_screen_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="dialog_animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_left</item>
     </style>
 
 </resources>

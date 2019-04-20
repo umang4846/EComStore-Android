@@ -169,12 +169,13 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                     discount.setVisibility(View.VISIBLE);
                 }
 
+                //Set Visibility of wishlist GONE
 
-                String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
+
                 String imageID = content.getProductPictures().get(0).getPictureId();
                 String imageMimeType =content.getProductPictures().get(0).getMimeType().replace("image/","").trim();
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(baseUrl).append(imageID).append("_").append(content.getSeName()).append("_415.").append(imageMimeType);
+                stringBuilder.append(Common.IMAGE_BASE_URL).append(imageID).append("_").append(content.getSeName()).append("_415.").append(imageMimeType);
                 Picasso.get().load(stringBuilder.toString()).into(img);
 
                 if (getItemViewType() == VIEW_TYPE_BIG) {
@@ -193,6 +194,7 @@ public class ProductListAdapter extends PagedListAdapter<Content, RecyclerView.V
                     imagePopup.setBackgroundColor(context.getResources().getColor(R.color.white_smoke));
                     imagePopup.setImageOnClickClose(true);
                     product_color.setText(content.getProductTemplateId());
+                    product_color.setVisibility(View.GONE);
                     if (content.getApprovedRatingSum()==0){
                         rating.setVisibility(View.GONE);
                     }else {

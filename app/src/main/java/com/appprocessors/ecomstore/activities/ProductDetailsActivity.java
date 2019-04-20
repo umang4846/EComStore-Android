@@ -1,7 +1,9 @@
 package com.appprocessors.ecomstore.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,12 +21,15 @@ import android.widget.Toast;
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.ProductDetailsSliderAdapter;
 import com.appprocessors.ecomstore.helper.NonScrollListView;
+import com.appprocessors.ecomstore.model.customer.ShoppingCartItems;
 import com.appprocessors.ecomstore.model.order.OrderItem;
+import com.appprocessors.ecomstore.model.picture.Picture;
 import com.appprocessors.ecomstore.model.product.Product;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.appprocessors.ecomstore.utils.CommonOptionMenu;
 import com.appprocessors.ecomstore.utils.PicassoImageLoadingService;
+import com.appprocessors.ecomstore.utils.UserSessionManager;
 import com.like.LikeButton;
 import com.nex3z.notificationbadge.NotificationBadge;
 
@@ -44,6 +49,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ss.com.bannerslider.Slider;
 
 
@@ -56,8 +64,8 @@ public class ProductDetailsActivity extends CommonOptionMenu {
     CompositeDisposable compositeDisposable;
     @BindView(R.id.product_details_slider)
     Slider productDetailsSlider;
-    @BindView(R.id.star_button)
-    LikeButton starButton;
+    @BindView(R.id.product_details_wishlist)
+    LikeButton productDetailsWishlist;
     @BindView(R.id.productName)
     TextView productName;
     @BindView(R.id.tv_rating_product_list)
@@ -115,6 +123,10 @@ public class ProductDetailsActivity extends CommonOptionMenu {
 
     Product currentProductDetails;
 
+    ProgressDialog placingCartDialog;
+
+    // User Session Manager Class
+    UserSessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +139,12 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        // User Session Manager
+        session = new UserSessionManager(getApplicationContext());
+
         compositeDisposable = new CompositeDisposable();
         //API Service
-        mServices = Common.getAPI();
+        mServices = Common.getAPI(this);
         Slider.init(new PicassoImageLoadingService(this));
         //get product code from Intent
         if (getIntent() != null) {
@@ -154,6 +169,53 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             });
         }*/
 
+        //add to Wishlist
+        productDetailsWishlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShoppingCartItems shoppingCartItems = new ShoppingCartItems();
+                shoppingCartItems.set_id("");
+                shoppingCartItems.setProductId(currentProductDetails.get_id());
+                shoppingCartItems.setQuantity(1);
+                shoppingCartItems.setCreatedOnUtc("");
+                shoppingCartItems.setUpdatedOnUtc("");
+                //Add Product to cart
+                placingCartDialog = new ProgressDialog(ProductDetailsActivity.this);
+                placingCartDialog.setMessage("Please wait");
+                placingCartDialog.setCancelable(false);
+                placingCartDialog.show();
+                mServices.addToWishlist(session.getUserDetails().get(UserSessionManager.KEY_PHONE).replace("+", ""), shoppingCartItems).enqueue(new Callback<List<ShoppingCartItems>>() {
+                    @Override
+                    public void onResponse(Call<List<ShoppingCartItems>> call, Response<List<ShoppingCartItems>> response) {
+                        if (response.isSuccessful()) {
+                            productDetailsWishlist.setLiked(true);
+                            List<ShoppingCartItems> shoppingCartItemsList = response.body();
+                            if (shoppingCartItemsList != null && shoppingCartItemsList.size() != 0) {
+                                placingCartDialog.dismiss();
+                                Toast.makeText(ProductDetailsActivity.this, "Added to Wishlist !", Toast.LENGTH_SHORT).show();
+                                productDetailsWishlist.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intentCart = new Intent(ProductDetailsActivity.this, WishlistActivity.class);
+                                        startActivity(intentCart);
+                                    }
+
+                                });
+                            }
+
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<List<ShoppingCartItems>> call, Throwable t) {
+                        placingCartDialog.dismiss();
+                        Log.e(TAG, "onFailure: Adding Item to Wishlist Failed " + t.getMessage());
+                        Toast.makeText(ProductDetailsActivity.this, "Failed to add item to Wishlist ! " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        });
+
 
         //Add to cart
         if (btnAddToCart.getText().equals("ADD TO CART")) {
@@ -161,43 +223,50 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                 @Override
                 public void onClick(View v) {
 
-                    //Add Item to Room Database(SQLite)
-                    //Create new Cart Item
-                    try {
-                      /*  Cart cart = new Cart();
-                        cart.productId = currentProductDetails.getId();
-                        cart.productName = currentProductDetails.getProductName();
-                        cart.brand = currentProductDetails.getBrand();
-                        cart.brandCertifiedSeller = currentProductDetails.getBrandCertifiedSeller();
-                        cart.capacity = currentProductDetails.getQuantity();
-                        cart.estoreAssured = currentProductDetails.getEstoreAssured();
-                        cart.genuineProduct = currentProductDetails.getGenuineProduct();
-                        cart.idealFor = currentProductDetails.getIdealFor();
-                        cart.imageMain = currentProductDetails.getImageMain();
-                        cart.menuid = currentProductDetails.getMenuid();
-                        cart.mrp = currentProductDetails.getMrp();
-                        cart.price = currentProductDetails.getPrice();
-                        cart.productCode = currentProductDetails.getProductName();
-                        cart.shippingFee = currentProductDetails.getShippingFee();
-                        cart.soldBy = currentProductDetails.getSoldBy();
-                        cart.type = currentProductDetails.getType();
+                    ShoppingCartItems shoppingCartItems = new ShoppingCartItems();
+                    shoppingCartItems.set_id("");
+                    shoppingCartItems.setProductId(currentProductDetails.get_id());
+                    shoppingCartItems.setQuantity(1);
+                    shoppingCartItems.setCreatedOnUtc("");
+                    shoppingCartItems.setUpdatedOnUtc("");
 
-                        Common.cartRepository.insertToCart(cart);
-                        Log.d(TAG, new Gson().toJson(cart));*/
-                        Toast.makeText(ProductDetailsActivity.this, "Item Added to Cart", Toast.LENGTH_SHORT).show();
-                        btnAddToCart.setText("GO TO CART");
-                        btnAddToCart.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (btnAddToCart.getText().equals("GO TO CART")) {
-                                    Intent intentCart = new Intent(ProductDetailsActivity.this, CartActivity.class);
-                                    startActivity(intentCart);
+                    //Add Product to cart
+                    placingCartDialog = new ProgressDialog(ProductDetailsActivity.this);
+                    placingCartDialog.setMessage("Please wait");
+                    placingCartDialog.setCancelable(false);
+                    placingCartDialog.show();
+
+                    mServices.addToCart(session.getUserDetails().get(UserSessionManager.KEY_PHONE).replace("+", ""), shoppingCartItems).enqueue(new Callback<List<ShoppingCartItems>>() {
+                        @Override
+                        public void onResponse(Call<List<ShoppingCartItems>> call, Response<List<ShoppingCartItems>> response) {
+                            if (response.isSuccessful()) {
+                                List<ShoppingCartItems> shoppingCartItemsList = response.body();
+                                if (shoppingCartItemsList != null && shoppingCartItemsList.size() != 0) {
+                                    placingCartDialog.dismiss();
+                                    Toast.makeText(ProductDetailsActivity.this, "Added to Cart !", Toast.LENGTH_SHORT).show();
+                                    btnAddToCart.setText("GO TO CART");
+                                    btnAddToCart.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            if (btnAddToCart.getText().equals("GO TO CART")) {
+                                                Intent intentCart = new Intent(ProductDetailsActivity.this, CartActivity.class);
+                                                startActivity(intentCart);
+                                            }
+                                        }
+                                    });
                                 }
+
                             }
-                        });
-                    } catch (Exception e) {
-                        Toast.makeText(ProductDetailsActivity.this, "ERROR :" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<ShoppingCartItems>> call, Throwable t) {
+                            placingCartDialog.dismiss();
+                            Log.e(TAG, "onFailure: Adding Item to cart Failed " + t.getMessage());
+                            Toast.makeText(ProductDetailsActivity.this, "Failed to add item to cart ! " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                 }
             });
         }
@@ -205,7 +274,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         btnBuyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<OrderItem> orderItemArrayList = new ArrayList<OrderItem>();
+                List<OrderItem> orderItemArrayList = new ArrayList<OrderItem>();
                 OrderItem orderItem = new OrderItem();
                 orderItem.setProductId(currentProductDetails.get_id());
                 orderItem.setPriceExclTax(currentProductDetails.getPrice());
@@ -216,8 +285,25 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                 orderItem.setUnitPriceWithoutDiscInclTax(currentProductDetails.getPrice());
                 orderItem.setQuantity(1);
                 orderItemArrayList.add(orderItem);
+
+                // Shopping Cart Items Model Class
+                List<ShoppingCartItems> shoppingCartItemsList = new ArrayList<>();
+                ShoppingCartItems shoppingCartItems = new ShoppingCartItems();
+                shoppingCartItems.setProductDetails(currentProductDetails);
+                List<Picture> pictureList = new ArrayList<>();
+                for (int i = 0; i<currentProductDetails.getPictureDetails().size();i++){
+                    Picture picture = new Picture();
+                    picture.set_id(currentProductDetails.getPictureDetails().get(i).getId());
+                    picture.setSeoFilename(currentProductDetails.getPictureDetails().get(i).getSeoFilename());
+                    picture.setMimeType(currentProductDetails.getPictureDetails().get(i).getMimeType());
+                    pictureList.add(picture);
+                }
+
+                shoppingCartItems.setPictureDetails(pictureList);
+                shoppingCartItemsList.add(shoppingCartItems);
                 Intent addressIntent = new Intent(ProductDetailsActivity.this, MyAddressActivity.class);
-                addressIntent.putParcelableArrayListExtra("OrderItems",orderItemArrayList );
+                addressIntent.putParcelableArrayListExtra("OrderItems", (ArrayList<? extends Parcelable>) orderItemArrayList);
+                addressIntent.putParcelableArrayListExtra("ShoppingCartItems", (ArrayList<? extends Parcelable>) shoppingCartItemsList);
                 startActivity(addressIntent);
             }
         });
@@ -275,12 +361,12 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         }
 
         if (id == R.id.menu_search) {
-            Intent cart = new Intent(ProductDetailsActivity.this, FavouritesActivity.class);
+            Intent cart = new Intent(ProductDetailsActivity.this, WishlistActivity.class);
             startActivity(cart);
             return true;
         }
         if (id == R.id.menu_favourites) {
-            Intent cart = new Intent(ProductDetailsActivity.this, FavouritesActivity.class);
+            Intent cart = new Intent(ProductDetailsActivity.this, WishlistActivity.class);
             startActivity(cart);
             return true;
         }
@@ -316,7 +402,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         } else {
             ivCertifiedSeller.setVisibility(View.GONE);
         }*/
-     //   tvRatingProductList.setText(String.valueOf(Integer.parseInt(String.valueOf(product.getApprovedRatingSum() / product.getApprovedTotalReviews()))));
+        //   tvRatingProductList.setText(String.valueOf(Integer.parseInt(String.valueOf(product.getApprovedRatingSum() / product.getApprovedTotalReviews()))));
         String totalRatings = String.valueOf(new StringBuilder("(").append(product.getApprovedTotalReviews()).append(")"));
         tvTotalRatingProductList.setText(totalRatings);
         tvRatingProductList.setVisibility(View.GONE);
@@ -410,7 +496,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
             });
             ivReplace.setImageDrawable(getResources().getDrawable(R.drawable.cod));
             tvReturn.setText("COD");
-            if (currentProductDetails.isFreeShipping()) {
+            if (currentOrderItems.isFreeShipping()) {
                 tvReturnInDays.setText("Available");
             } else {
                 tvReturnInDays.setText("N/A");
@@ -423,13 +509,12 @@ public class ProductDetailsActivity extends CommonOptionMenu {
     private void SetImageSliderAndHighlights(Product product) {
         //set Product Images in Slider
         List<String> imagesList = new ArrayList<String>();
-        for (int i=0;i<product.getPictureDetails().size();i++){
-            String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
-            String imageID = product.getPictureDetails().get(i).get_id();
-            String imageNmae =product.getPictureDetails().get(i).getSeoFilename();
-            String imageMimeType =product.getPictureDetails().get(i).getMimeType().replace("image/","").trim();
+        for (int i = 0; i < product.getPictureDetails().size(); i++) {
+            String imageID = product.getPictureDetails().get(i).getId();
+            String imageNmae = product.getPictureDetails().get(i).getSeoFilename();
+            String imageMimeType = product.getPictureDetails().get(i).getMimeType().replace("image/", "").trim();
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(baseUrl).append(imageID).append("_").append(imageNmae).append(".").append(imageMimeType);
+            stringBuilder.append(Common.IMAGE_BASE_URL).append(imageID).append("_").append(imageNmae).append(".").append(imageMimeType);
             imagesList.add(stringBuilder.toString());
         }
 
@@ -437,7 +522,7 @@ public class ProductDetailsActivity extends CommonOptionMenu {
         productDetailsSlider.setAdapter(new ProductDetailsSliderAdapter(imagesList));
         productDetailsSlider.setInterval(0);
         //Product Highligh in Listview
-        listProductDesc.addAll(Collections.singleton(product.getFullDescription()));
+        listProductDesc.addAll(Collections.singleton(product.getShortDescription()));
         NonScrollListView listView = findViewById(R.id.listView_highlights);
         listView.setAdapter(new ArrayAdapter<String>(this, R.layout.item_list_bullet, listProductDesc));
         //Set Visibility of Progressbar and Relative Layout
@@ -497,22 +582,22 @@ public class ProductDetailsActivity extends CommonOptionMenu {
                     if (btnAddToCart.getText().equals("ADD TO CART")) {
                         try {
                            *//* Cart cart = new Cart();
-                            cart.productId = currentProductDetails.get();
-                            cart.productName = currentProductDetails.getProductName();
-                            cart.brand = currentProductDetails.getBrand();
-                            cart.brandCertifiedSeller = currentProductDetails.getBrandCertifiedSeller();
-                            cart.capacity = currentProductDetails.getQuantity();
-                            cart.estoreAssured = currentProductDetails.getEstoreAssured();
-                            cart.genuineProduct = currentProductDetails.getGenuineProduct();
-                            cart.idealFor = currentProductDetails.getIdealFor();
-                            cart.imageMain = currentProductDetails.getImageMain();
-                            cart.menuid = currentProductDetails.getMenuid();
-                            cart.mrp = currentProductDetails.getMrp();
-                            cart.price = currentProductDetails.getPrice();
-                            cart.productCode = currentProductDetails.getProductCode();
-                            cart.shippingFee = currentProductDetails.getShippingFee();
-                            cart.soldBy = currentProductDetails.getSoldBy();
-                            cart.type = currentProductDetails.getType();*//*
+                            cart.productId = currentOrderItems.get();
+                            cart.productName = currentOrderItems.getProductName();
+                            cart.brand = currentOrderItems.getBrand();
+                            cart.brandCertifiedSeller = currentOrderItems.getBrandCertifiedSeller();
+                            cart.capacity = currentOrderItems.getQuantity();
+                            cart.estoreAssured = currentOrderItems.getEstoreAssured();
+                            cart.genuineProduct = currentOrderItems.getGenuineProduct();
+                            cart.idealFor = currentOrderItems.getIdealFor();
+                            cart.imageMain = currentOrderItems.getImageMain();
+                            cart.menuid = currentOrderItems.getMenuid();
+                            cart.mrp = currentOrderItems.getMrp();
+                            cart.price = currentOrderItems.getPrice();
+                            cart.productCode = currentOrderItems.getProductCode();
+                            cart.shippingFee = currentOrderItems.getShippingFee();
+                            cart.soldBy = currentOrderItems.getSoldBy();
+                            cart.type = currentOrderItems.getType();*//*
 
                             // Common.cartRepository.insertToCart(cart);
                             //   Log.d(TAG, new Gson().toJson(cart));

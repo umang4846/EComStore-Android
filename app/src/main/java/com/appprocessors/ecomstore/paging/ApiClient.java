@@ -12,7 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 
-   private static final String BASE_URL = "http://192.168.20.46:1999";
+   private static final String BASE_URL = "http://202.131.126.203:1999";
+//   private static final String BASE_URL = "http://192.168.20.46:1999";
    // private static final String BASE_URL = "http://10.0.3.2:8080/";
 
 //  private static final String BASE_URL = "https://estoreapp.herokuapp.com";

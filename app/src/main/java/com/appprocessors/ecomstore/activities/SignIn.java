@@ -1,7 +1,7 @@
 package com.appprocessors.ecomstore.activities;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -40,7 +40,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,7 +47,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,16 +80,18 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
     @BindView(R.id.btn_login)
     MaterialButton btnLogin;
 
+    ProgressDialog loadingdialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         ButterKnife.bind(this);
 
-        mServices = Common.getAPI();
+        mServices = Common.getAPI(this);
 
-        // User Session Manager
-        session = new UserSessionManager(getApplicationContext());
+
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.CREDENTIALS_API)
                 .addConnectionCallbacks(this)
@@ -186,18 +186,19 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
     private void StartLogin(String phone) {
         StringBuilder PhoneNumberWithCC = new StringBuilder();
-        if (phone.length() == 10) {
-            PhoneNumberWithCC = PhoneNumberWithCC.append("+91").append(phone);
+        if (phone.length() == 10 && !phone.contains("+91")) {
+            PhoneNumberWithCC.append("+91").append(phone);
         } else {
-            PhoneNumberWithCC = PhoneNumberWithCC.append(phone);
+            PhoneNumberWithCC.append(phone);
         }
-        final AlertDialog alertDialog = new SpotsDialog.Builder().setContext(SignIn.this).build();
-        alertDialog.show();
-        alertDialog.setTitle("Trying to being part of you !");
-        alertDialog.setMessage("Please wait");
+
+        loadingdialog = new ProgressDialog(SignIn.this);
+        loadingdialog.setMessage("Please wait");
+        loadingdialog.setCancelable(true);
+        loadingdialog.show();
 
 
-        mServices.checkUserExists(String.valueOf(PhoneNumberWithCC))
+        mServices.checkUserExists(PhoneNumberWithCC.toString())
                 .enqueue(new Callback<Customer>() {
                     @Override
                     public void onResponse(Call<Customer> call, @NonNull Response<Customer> response) {
@@ -208,8 +209,8 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
                             if (customerResponse != null) {
                                 if (inputPassword != null && !TextUtils.isEmpty(inputPassword.getText())) {
                                     //Perform Password matching
-                                    if (customerResponse.getPassword().equals(CreatePasswordHash(Objects.requireNonNull(inputPassword.getText()).toString().trim(), customerResponse.getPasswordSalt().trim(), "SHA1"))) {
-                                        alertDialog.dismiss();
+                                    if (customerResponse.getPassword().equals(CreatePasswordHash(inputPassword.getText().toString().trim(), customerResponse.getPasswordSalt().trim(), "SHA1"))) {
+                                        loadingdialog.dismiss();
                                         String phone = null, firstName = null, lastName = null, gender = null;
                                         for (int i = 0; i < customerResponse.getGenericAttributes().size(); i++) {
                                             if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
@@ -219,15 +220,19 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
                                                 lastName = customerResponse.getGenericAttributes().get(i).getValue();
                                             }
                                             if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("phone")) {
-                                                phone = customerResponse.getGenericAttributes().get(i).getValue();
+                                                phone = customerResponse.getGenericAttributes().get(i).getValue() != null ? customerResponse.getGenericAttributes().get(i).getValue() : PhoneNumberWithCC.toString();
                                             }
                                             if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("Gender")) {
                                                 gender = customerResponse.getGenericAttributes().get(i).getValue();
                                             }
                                         }
                                         if (phone != null && firstName != null && lastName != null && gender != null) {
+
+                                            // User Session Manager
+                                            session = new UserSessionManager(getApplicationContext());
                                             //Save user Credentials in Shared Preference
-                                            session.createUserLoginSession(phone,
+                                            session.createUserLoginSession(
+                                                    !phone.contains("+91") && phone.length() == 10 ? "+91" + phone.trim() : phone,
                                                     firstName,
                                                     lastName,
                                                     customerResponse.getEmail(),
@@ -236,26 +241,32 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
                                             );
                                             Toast.makeText(SignIn.this, "Successfully Logged in", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(SignIn.this, HomeActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                             // Add new Flag to start new Activity
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             startActivity(intent);
                                             finish();
                                         } else {
+                                            loadingdialog.dismiss();
                                             Toast.makeText(SignIn.this, "Unable to store Customer Details", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (!customerResponse.getPassword().equals(CreatePasswordHash(inputPassword.getText().toString().trim(), customerResponse.getPasswordSalt().trim(), "SHA1"))) {
-                                        alertDialog.dismiss();
+                                        loadingdialog.dismiss();
                                         Toast.makeText(SignIn.this, "Incorrect Password !", Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                            }
-                        } else {
-                            //User not exists
-                            alertDialog.dismiss();
-                            Toast.makeText(SignIn.this, "Phone number is not registered !", Toast.LENGTH_SHORT).show();
+                            } else {
+                                //User not exists
+                                loadingdialog.dismiss();
+                                Toast.makeText(SignIn.this, "Phone number is not registered !", Toast.LENGTH_SHORT).show();
 
+
+                            }
+                        }
+
+                        if (!response.isSuccessful()) {
+                            loadingdialog.dismiss();
+                            Toast.makeText(SignIn.this, "Response Failed !" + response.errorBody(), Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -263,7 +274,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
                     @Override
                     public void onFailure(Call<Customer> call, Throwable t) {
-                        alertDialog.dismiss();
+                        loadingdialog.dismiss();
                         Toast.makeText(SignIn.this, "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d("checkUserExists :", t.getMessage() + "\n");
 
@@ -299,9 +310,10 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
                 Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show();
             } else {
                 if (result.getAccessToken() != null) {
-                    final AlertDialog alertDialog = new SpotsDialog.Builder().setContext(this).build();
-                    alertDialog.show();
-                    alertDialog.setMessage("Please Wait...");
+                    loadingdialog = new ProgressDialog(SignIn.this);
+                    loadingdialog.setMessage("Please wait");
+                    loadingdialog.setCancelable(true);
+                    loadingdialog.show();
 
                     //Get User phone and check exists on server
                     AccountKit.getCurrentAccount(new AccountKitCallback<Account>() {
@@ -327,12 +339,22 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
                                                     }
                                                 }
                                                 if (phone != null) {
-                                                    alertDialog.dismiss();
+                                                    loadingdialog.dismiss();
                                                     //User Already registered
                                                     Toast.makeText(SignIn.this, "Already registered on entered Phone !", Toast.LENGTH_SHORT).show();
+
+                                                    //Open next activity
+                                                    Intent intent = new Intent(SignIn.this, SignIn.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                                                    // Add new Flag to start new Activity
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+
+                                                    finish();
                                                 } else {
                                                     //User not exists
-                                                    alertDialog.dismiss();
+                                                    loadingdialog.dismiss();
                                                     StartRegister(account.getPhoneNumber().toString());
                                                 }
 
@@ -343,7 +365,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
                                         @Override
                                         public void onFailure(Call<Customer> call, Throwable t) {
-                                            alertDialog.dismiss();
+                                            loadingdialog.dismiss();
                                             Toast.makeText(SignIn.this, "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
                                             Log.d("checkUserExists :", t.getMessage() + "\n");
 
@@ -368,14 +390,13 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.Connect
 
     public void StartRegister(final String phone) {
         StringBuilder PhoneNumberWithCC = new StringBuilder();
-        if (phone.length() == 10) {
-            PhoneNumberWithCC = PhoneNumberWithCC.append("+91").append(phone);
+        if (phone.length() == 10 && !phone.contains("+91")) {
+            PhoneNumberWithCC.append("+91").append(phone);
         } else {
-            PhoneNumberWithCC = PhoneNumberWithCC.append(phone);
+            PhoneNumberWithCC.append(phone);
         }
-        String phoneNew = String.valueOf(PhoneNumberWithCC);
         Intent intent = new Intent(this, SignUp.class);
-        intent.putExtra("phone", phoneNew);
+        intent.putExtra("phone", String.valueOf(PhoneNumberWithCC));
         startActivity(intent);
     }
 

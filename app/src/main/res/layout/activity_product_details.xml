@@ -7,7 +7,7 @@
     tools:context=".activities.ProductDetailsActivity">
 
     <RelativeLayout
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/RL_ProductDetaiContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
 
 
                     <com.like.LikeButton
-                        android:id="@+id/star_button"
+                        android:id="@+id/product_details_wishlist"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"

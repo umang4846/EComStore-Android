@@ -97,10 +97,8 @@ public class WelcomeActivity extends AppIntro {
     }
     private void loadMainActivity(){
         Intent intent = new Intent(this, LoginSignUp.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         // Add new Flag to start new Activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

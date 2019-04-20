@@ -2,10 +2,8 @@ package com.appprocessors.ecomstore.model.product;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.appprocessors.ecomstore.model.customer.CustomerRoles;
 import com.appprocessors.ecomstore.model.customer.GenericAttributes;
-import com.appprocessors.ecomstore.model.picture.Picture;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -285,7 +283,7 @@ public class Product implements Parcelable {
     @SerializedName("bundleProducts")
     private List<String> bundleProducts = null;
     @SerializedName("pictureDetails")
-    private List<Picture> PictureDetails = null;
+    private List<ProductPictures> pictureDetails = null;
 
     @Override
     public int describeContents() {

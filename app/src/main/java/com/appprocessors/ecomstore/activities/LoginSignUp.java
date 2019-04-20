@@ -1,7 +1,7 @@
 package com.appprocessors.ecomstore.activities;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -26,13 +26,14 @@ import com.facebook.accountkit.ui.SkinManager;
 import com.facebook.accountkit.ui.UIManager;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,6 +54,7 @@ public class LoginSignUp extends AppCompatActivity {
     @BindView(R.id.btn_signup)
     MaterialButton btnSignup;
 
+    ProgressDialog loadingdialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,7 @@ public class LoginSignUp extends AppCompatActivity {
         setContentView(R.layout.activity_login_sign_up);
         ButterKnife.bind(this);
 
-        mServices = Common.getAPI();
+        mServices = Common.getAPI(this);
 
         uiManager = new SkinManager(
                 SkinManager.Skin.TRANSLUCENT, getResources().getColor(R.color.blue_adv), (R.drawable.intro_back), SkinManager.Tint.WHITE, 50.0);
@@ -143,9 +145,10 @@ public class LoginSignUp extends AppCompatActivity {
                 // Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show();
             } else {
                 if (result.getAccessToken() != null) {
-                    final AlertDialog alertDialog = new SpotsDialog.Builder().setContext(this).build();
-                    alertDialog.show();
-                    alertDialog.setMessage("Please Wait...");
+                    loadingdialog = new ProgressDialog(LoginSignUp.this);
+                    loadingdialog.setMessage("Please wait");
+                    loadingdialog.setCancelable(true);
+                    loadingdialog.show();
 
                     //Get User phone and check exists on server
                     AccountKit.getCurrentAccount(new AccountKitCallback<Account>() {
@@ -164,33 +167,51 @@ public class LoginSignUp extends AppCompatActivity {
                                                             phone = customerResponse.getGenericAttributes().get(i).getValue();
                                                         }
                                                     }
-                                                    if (phone.contains(account.getPhoneNumber().toString())) {
-                                                        alertDialog.dismiss();
+                                                    if (Objects.requireNonNull(phone).contains(account.getPhoneNumber().toString())) {
+                                                        loadingdialog.dismiss();
                                                         //User Already registered
                                                         Toast.makeText(LoginSignUp.this, "Already registered on entered Phone !", Toast.LENGTH_SHORT).show();
+
+                                                        //Open next activity
+                                                        Intent intent = new Intent(LoginSignUp.this, SignIn.class);
+                                                        // Add new Flag to start new Activity
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                        startActivity(intent);
+
+                                                        finish();
+                                                    }
+                                                    else {
+                                                        loadingdialog.dismiss();
+                                                        Toast.makeText(LoginSignUp.this, "Error : LoginSignUp : Null Phone Number", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
                                                 else {
                                                     //User not exists
-                                                    alertDialog.dismiss();
+                                                    loadingdialog.dismiss();
                                                     StartRegister(account.getPhoneNumber().toString());
                                                 }
 
+                                            }
+
+                                            if (!response.isSuccessful()){
+                                                loadingdialog.dismiss();
+                                                Toast.makeText(LoginSignUp.this, "Response Failed !"+response.errorBody(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
 
                                         @Override
                                         public void onFailure(Call<Customer> call, Throwable t) {
-                                            alertDialog.dismiss();
-                                            Toast.makeText(LoginSignUp.this, "Error :" + "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                            loadingdialog.dismiss();
+                                            Toast.makeText(LoginSignUp.this, "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
                                             Log.d("checkUserExists :", t.getMessage() + "\n");
-
                                         }
                                     });
                         }
 
                         @Override
                         public void onError(AccountKitError accountKitError) {
+                            Toast.makeText(LoginSignUp.this, "Error Customer:"+accountKitError.getUserFacingMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginSignUp.this, "Error Developer:"+accountKitError.getErrorType().getMessage(), Toast.LENGTH_SHORT).show();
                             Log.d("ERROR :", accountKitError.getErrorType().getMessage());
                         }
                     });
@@ -204,15 +225,14 @@ public class LoginSignUp extends AppCompatActivity {
 
     public void StartRegister(final String phone) {
         StringBuilder PhoneNumberWithCC = new StringBuilder();
-        if (phone.length() == 10) {
-            PhoneNumberWithCC = PhoneNumberWithCC.append("+91").append(phone);
+        if (phone.length() == 10 && !phone.contains("+91")) {
+            PhoneNumberWithCC.append("+91").append(phone);
         } else {
-            PhoneNumberWithCC = PhoneNumberWithCC.append(phone);
+            PhoneNumberWithCC.append(phone);
         }
-        String phoneNew = String.valueOf(PhoneNumberWithCC);
 
         Intent intent = new Intent(this, SignUp.class);
-        intent.putExtra("phone", phoneNew);
+        intent.putExtra("phone", String.valueOf(PhoneNumberWithCC));
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         // Add new Flag to start new Activity

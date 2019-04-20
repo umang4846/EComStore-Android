@@ -61,12 +61,11 @@ public class TrendingAdapter extends RecyclerView.Adapter<TrendingAdapter.Trendi
 
         if(trendings!=null) {
 
-            String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
             String imageID = trendings.get(position).getPictureDetails().get(0).get_id();
             String imageNmae =trendings.get(position).getPictureDetails().get(0).getSeoFilename();
             String imageMimeType =trendings.get(position).getPictureDetails().get(0).getMimeType().replace("image/","").trim();
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(baseUrl).append(imageID).append("_").append(imageNmae).append("_415.").append(imageMimeType);
+            stringBuilder.append(Common.IMAGE_BASE_URL).append(imageID).append("_").append(imageNmae).append("_415.").append(imageMimeType);
 
             //Load Image with Picasso
             Picasso.get().load(stringBuilder.toString()).into(holder.ivTrendingProduct);

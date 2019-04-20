@@ -1,10 +1,9 @@
 package com.appprocessors.ecomstore.activities;
 
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -16,9 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.customer.BillingAddress;
 import com.appprocessors.ecomstore.model.customer.Customer;
-import com.appprocessors.ecomstore.model.customer.CustomerRoles;
 import com.appprocessors.ecomstore.model.customer.GenericAttributes;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
@@ -28,22 +25,13 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Formatter;
 import java.util.List;
-import java.util.UUID;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,9 +42,9 @@ public class SignUp extends AppCompatActivity {
     public static final String TAG = SignUp.class.getSimpleName();
     String phone;
     IEStoreAPI mServices;
-    String encPass;
     // User Session Manager Class
     UserSessionManager session;
+
     @BindView(R.id.input_first_name)
     TextInputEditText inputFirstName;
     @BindView(R.id.input_layout_first_name)
@@ -86,6 +74,8 @@ public class SignUp extends AppCompatActivity {
     @BindView(R.id.layout3)
     LinearLayout layout3;
 
+    ProgressDialog loadingdialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +86,7 @@ public class SignUp extends AppCompatActivity {
         if (getIntent() != null) {
             phone = getIntent().getStringExtra("phone");
         }
-        mServices = Common.getAPI();
-
-        // User Session Manager
-        session = new UserSessionManager(getApplicationContext());
+        mServices = Common.getAPI(this);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +130,7 @@ public class SignUp extends AppCompatActivity {
         StartRegistering(phone);
 
     }
+
     private boolean validateGender() {
 
         if (rgGender.getCheckedRadioButtonId() == -1) {
@@ -225,10 +213,18 @@ public class SignUp extends AppCompatActivity {
     //Start Registering
     private void StartRegistering(final String phone) {
 
-        final AlertDialog alertDialog = new SpotsDialog.Builder().setContext(SignUp.this).build();
-        alertDialog.show();
-        alertDialog.setTitle("Trying to being part of you !");
-        alertDialog.setMessage("Please wait");
+        StringBuilder PhoneNumberWithCC = new StringBuilder();
+        if (phone.length() == 10 && !phone.contains("+91")) {
+            PhoneNumberWithCC.append("+91").append(phone);
+        } else {
+            PhoneNumberWithCC.append(phone);
+        }
+
+        loadingdialog = new ProgressDialog(SignUp.this);
+        loadingdialog.setMessage("Please wait");
+        loadingdialog.setCancelable(true);
+        loadingdialog.show();
+
         Customer customer = new Customer();
         customer.set_id("");
         customer.setActive(true);
@@ -265,62 +261,65 @@ public class SignUp extends AppCompatActivity {
         customer.setPasswordChangeDateUtc("");
         customer.setLastUpdateCartDateUtc("");
         customer.setLastUpdateWishListDateUtc("");
-        StringBuilder PhoneNumberWithCC = new StringBuilder();
-        if (phone.length() == 10 && !phone.contains("+91")) {
-            PhoneNumberWithCC.append("+91").append(phone);
-        } else {
-            PhoneNumberWithCC.append(phone);
-        }
 
-        mServices.createNewCustomer(PhoneNumberWithCC.toString(), customer)
+        mServices.createNewCustomer(String.valueOf(PhoneNumberWithCC), customer)
                 .enqueue(new Callback<Customer>() {
                     @Override
                     public void onResponse(Call<Customer> call, Response<Customer> response) {
-                        Customer customerResponse = response.body();
-                        if (customerResponse != null) {
-                            //Save user Credentials in Shared Preference
-                            String phone = null, firstName = null, lastName = null, gender = null;
-                            for (int i = 0; i < customerResponse.getGenericAttributes().size(); i++) {
-                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
-                                    firstName = customerResponse.getGenericAttributes().get(i).getValue();
-                                }
-                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("LastName")) {
-                                    lastName = customerResponse.getGenericAttributes().get(i).getValue();
-                                }
-                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("phone")) {
-                                    phone = customerResponse.getGenericAttributes().get(i).getValue();
-                                }
-                                if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("Gender")) {
-                                    gender = customerResponse.getGenericAttributes().get(i).getValue();
-                                }
-                            }
-                            if (phone != null && firstName != null && lastName != null && gender != null) {
+                        if (response.isSuccessful()) {
+                            Customer customerResponse = response.body();
+                            if (customerResponse != null) {
                                 //Save user Credentials in Shared Preference
-                                session.createUserLoginSession(phone,
-                                        firstName,
-                                        lastName,
-                                        customerResponse.getEmail(),
-                                        customerResponse.getPassword(),
-                                        gender
-                                );
-                                alertDialog.dismiss();
-                                //Open next activity
-                                Intent intent = new Intent(SignUp.this, HomeActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                String phone = null, firstName = null, lastName = null, gender = null;
+                                for (int i = 0; i < customerResponse.getGenericAttributes().size(); i++) {
+                                    if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
+                                        firstName = customerResponse.getGenericAttributes().get(i).getValue();
+                                    }
+                                    if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("LastName")) {
+                                        lastName = customerResponse.getGenericAttributes().get(i).getValue();
+                                    }
+                                    if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("Phone")) {
+                                        phone = customerResponse.getGenericAttributes().get(i).getValue();
+                                    }
+                                    if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("Gender")) {
+                                        gender = customerResponse.getGenericAttributes().get(i).getValue();
+                                    }
+                                }
+                                if (phone != null && firstName != null && lastName != null && gender != null) {
+                                    // User Session Manager
+                                    session = new UserSessionManager(getApplicationContext());
+                                    //Save user Credentials in Shared Preference
+                                    session.createUserLoginSession(
+                                            !phone.contains("+91") && phone.length() == 10 ? "+91" + phone.trim() : phone,
+                                            firstName,
+                                            lastName,
+                                            customerResponse.getEmail(),
+                                            customerResponse.getPassword(),
+                                            gender
+                                    );
+                                    loadingdialog.dismiss();
+                                    //Open next activity
+                                    Intent intent = new Intent(SignUp.this, HomeActivity.class);
+                                    // Add new Flag to start new Activity
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
 
-                                // Add new Flag to start new Activity
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                                    finish();
 
-                                finish();
+                                }
                             }
+                        }
+
+                        if (!response.isSuccessful()){
+                            loadingdialog.dismiss();
+                            Toast.makeText(SignUp.this, "Response Failed !"+response.errorBody(), Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Customer> call, Throwable t) {
-                        alertDialog.dismiss();
-                        Toast.makeText(SignUp.this, "Error :" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        loadingdialog.dismiss();
+                        Toast.makeText(SignUp.this, "Error SignUp:" + t.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onFailure: SignUp Activity ::" + t.getMessage());
                     }
 

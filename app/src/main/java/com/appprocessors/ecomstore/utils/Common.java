@@ -20,7 +20,10 @@ public class Common {
     // For Tempoary Server link  is :  https://estorecom.000webhostapp.com/estore/
     //"http://10.0.3.2:8080/";
 
-    public static final String BASE_URL = "http://192.168.20.46:1999";
+    public static final String BASE_URL = "http://202.131.126.203:1999";
+   // public static final String BASE_URL = "http://192.168.20.46:1999";
+   public static final String IMAGE_BASE_URL = "http://202.131.126.203:1997/content/images/thumbs/";
+  //  public static final String IMAGE_BASE_URL = "http://192.168.20.46:1997/content/images/thumbs/";
     // private static final String BASE_URL = "http://10.0.3.2:8080/";
     //public static final String BASE_URL = "https://estoreapp.herokuapp.com";
 
@@ -32,8 +35,8 @@ public class Common {
     public static final String addUpdatedAddress = "addUpdatedAddress";
     public static final String addNewAddress = "addNewAddress";
 
-    public static IEStoreAPI getAPI() {
-        return RetrofitClient.getClient(BASE_URL).create(IEStoreAPI.class);
+    public static IEStoreAPI getAPI(Context context) {
+        return RetrofitClient.getClient(context).create(IEStoreAPI.class);
     }
 
     //Password Pattern REG EX

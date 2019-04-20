@@ -104,7 +104,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-        mService = Common.getAPI();
+        mService = Common.getAPI(this);
 
         // Session class instance
         session = new UserSessionManager(getApplicationContext());
@@ -426,7 +426,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intentMyAccount);
 
         } else if (id == R.id.nav_wishlist) {
-            Intent intentMyAccount = new Intent(HomeActivity.this, FavouritesActivity.class);
+            Intent intentMyAccount = new Intent(HomeActivity.this, WishlistActivity.class);
             startActivity(intentMyAccount);
 
         } else if (id == R.id.nav_settings) {
@@ -437,7 +437,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Intent intentMyAccount = new Intent(HomeActivity.this, NotificationActivity.class);
             startActivity(intentMyAccount);
         } else if (id == R.id.nav_helpfaq) {
-
+            Toast.makeText(this, "On the way !", Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

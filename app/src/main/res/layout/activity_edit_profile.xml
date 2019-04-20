@@ -8,159 +8,198 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_edit_profile_save"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_above="@+id/btn_save_profile"
         android:layout_alignParentTop="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
             android:orientation="vertical">
 
-            <me.fahmisdk6.avatarview.AvatarView
-                android:id="@+id/avatar_user5"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:layout_marginTop="5dp"
-                app:avBgTextColor="@color/colorPrimary"
-                app:avCornerRadius="100dp"
-                app:avTextColor="@color/white"
-                app:avTextSize="20sp" />
-
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="5dp"
-                android:text="Change Photo"
-                android:textColor="@color/colorPrimary" />
-
-            <TextView
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="#c99e9e9e"
+                android:background="@color/black"
                 android:gravity="center"
-                android:padding="5dp"
+                android:fontFamily="@font/montserrat"
+                android:padding="10dp"
                 android:text="Personal Information"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_name"
+                android:id="@+id/input_layout_first_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:textColorHint="@color/black"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeWidth="0.5dp"
+                app:errorEnabled="true"
+                app:hintAnimationEnabled="true"
+                app:hintTextColor="@color/colorPrimary">
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/input_name"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_first_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    android:drawablePadding="5dp"
-                    android:drawableTint="@color/black"
-                    android:hint="Full Name"
+                    android:hint="First Name"
                     android:inputType="textPersonName"
-                    android:padding="10dp"
+                    android:fontFamily="@font/montserrat"
+                    android:maxLines="1"
+                    android:padding="8dp"
                     android:singleLine="true"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="20sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_password"
+                android:id="@+id/input_layout_last_name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:textColorHint="@color/black"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeWidth="0.5dp"
+                app:errorEnabled="true"
+                app:hintAnimationEnabled="true"
+                app:hintTextColor="@color/colorPrimary">
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/input_password"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_last_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:drawableTint="@color/black"
-                    android:hint="Phone Number"
-                    android:inputType="phone"
-                    android:padding="10dp"
-                    android:textColor="@color/black" />
+                    android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:hint="Last Name"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="20sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_email"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:textColorHint="@color/black"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeWidth="0.5dp"
+                app:errorEnabled="true"
+                app:hintAnimationEnabled="true"
+                app:hintTextColor="@color/colorPrimary">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/input_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:drawableTint="@color/black"
                     android:hint="Email Address"
                     android:inputType="textEmailAddress"
-                    android:padding="10dp"
-                    android:textColor="@color/black" />
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:fontFamily="@font/montserrat"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="20sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
+
+
+            <TextView
+                android:id="@+id/tv_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:text="Gender"
+                android:textAllCaps="false"
+                android:textColor="@color/md_grey_600"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/rg_gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:gravity="start"
                 android:orientation="horizontal"
+                android:paddingBottom="8dp"
                 android:weightSum="10">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_confirm_password"
-                android:layout_width="0dp"
-                android:layout_weight="5"
-                android:layout_height="wrap_content">
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/input_confirm_password"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/rb_male"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:drawableTint="@color/black"
-                    android:hint="Gender"
-                    android:layout_marginEnd="5dp"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_gravity="center"
+                    android:layout_weight="3"
+                    android:background="@drawable/radiobuttonbackground"
+                    android:button="@android:color/transparent"
+                    android:gravity="center"
+                    android:fontFamily="@font/montserrat"
+                    android:text="Male"
+                    android:textSize="16sp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_confirm_password"
-                android:layout_width="0dp"
-                android:layout_weight="5"
-                android:layout_height="wrap_content">
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/input_confirm_password"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/rb_female"
+                    android:layout_width="0dp"
+                    android:fontFamily="@font/montserrat"
                     android:layout_height="wrap_content"
-                    android:drawableTint="@color/black"
-                    android:hint="Birthdate"
-                    android:inputType="date"
-                    android:padding="10dp"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/radiobuttonbackground"
+                    android:button="@android:color/transparent"
+                    android:gravity="center"
+                    android:text="Female"
+                    android:textSize="16sp" />
 
-            </LinearLayout>
+            </RadioGroup>
+
         </LinearLayout>
     </ScrollView>
 
-    <Button
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save_profile"
         android:layout_centerHorizontal="true"
-        android:id="@+id/btn_edit_profile_save"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentBottom="true"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/save_details_without_radius"
+        android:layout_gravity="center"
+        android:background="@color/black"
+        android:padding="10dp"
         android:text="SAVE DETAILS"
+        android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:textSize="18sp"
+        app:cornerRadius="3dp" />
 </RelativeLayout>

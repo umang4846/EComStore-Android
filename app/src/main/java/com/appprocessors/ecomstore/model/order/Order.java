@@ -5,10 +5,12 @@ import com.appprocessors.ecomstore.model.customer.BillingAddress;
 import com.appprocessors.ecomstore.model.customer.GenericAttributes;
 import com.appprocessors.ecomstore.model.customer.ShippingAddress;
 import com.appprocessors.ecomstore.model.picture.Picture;
+import com.appprocessors.ecomstore.model.product.Product;
 import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -160,6 +162,8 @@ public class Order {
     private List<OrderItem> orderItems;
     @SerializedName("pictureDetails")
     private List<Picture> pictureDetails = null;
+    @SerializedName("productDetails")
+    private List<Product>productDetails = new ArrayList<>();
 
     public String get_id() {
         return _id;

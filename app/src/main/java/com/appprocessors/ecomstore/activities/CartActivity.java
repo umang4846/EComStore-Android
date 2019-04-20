@@ -1,41 +1,76 @@
 package com.appprocessors.ecomstore.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
+import com.appprocessors.ecomstore.adapter.CartAdapter;
+import com.appprocessors.ecomstore.model.customer.ShoppingCartItems;
+import com.appprocessors.ecomstore.model.order.OrderItem;
+import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
+import com.appprocessors.ecomstore.utils.Common;
+import com.appprocessors.ecomstore.utils.CommonOptionMenu;
+import com.appprocessors.ecomstore.utils.UserSessionManager;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.button.MaterialButton;
 
-import org.fabiomsr.moneytextview.MoneyTextView;
+import java.util.ArrayList;
+import java.util.List;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
-public class CartActivity extends AppCompatActivity {
+public class CartActivity extends CommonOptionMenu {
 
-    CompositeDisposable compositeDisposable;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    RecyclerView cart_List;
-    LinearLayout emptyCart, cartTotalPriceContinue;
-    View viewDeividerMain;
+    ProgressDialog loadingOrdersdialog;
 
-    Button shopnow;
+    IEStoreAPI mServices;
 
-    @BindView(R.id.tv_cart_total_price)
-    MoneyTextView tvCartTotalPrice;
-    @BindView(R.id.tv_view_price_details)
-    TextView tvViewPriceDetails;
+    // User Session Manager Class
+    UserSessionManager session;
+
+    //Cart List Items
+   public List<ShoppingCartItems> shoppingCartItemsList = new ArrayList<>();
+
+    private static final String TAG = "CartActivity";
+    @BindView(R.id.notes_toolbar)
+    Toolbar notesToolbar;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.iv_cart)
+    ImageView ivCart;
+    @BindView(R.id.tv_cart_main)
+    TextView tvCartMain;
+    @BindView(R.id.tv_cart_small)
+    TextView tvCartSmall;
+    @BindView(R.id.btn_shopnow)
+    Button btnShopnow;
+    @BindView(R.id.LL_empty_cart)
+    public LinearLayout LLEmptyCart;
+    @BindView(R.id.rv_cart_list)
+    public RecyclerView rvCartList;
     @BindView(R.id.btn_cart_continue)
-    Button btnCartContinue;
+    public MaterialButton btnCartContinue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,23 +83,30 @@ public class CartActivity extends AppCompatActivity {
         else
             setTitle("My Cart");*/
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.notes_toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("My Cart");
+
         //Set Back Button to Toolbar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        //Linear Layout for Empty Cart view
-        emptyCart = findViewById(R.id.LL_empty_cart);
 
-        cart_List = findViewById(R.id.rv_cart_list);
-        cartTotalPriceContinue = findViewById(R.id.LL_cart_total_price_continue);
-        viewDeividerMain = findViewById(R.id.cart_main_devider);
 
-        compositeDisposable = new CompositeDisposable();
-        cart_List.setLayoutManager(new LinearLayoutManager(this));
-        cart_List.setHasFixedSize(true);
-        //Load Cart Items
-      //  loadCartItems();
+        // User Session Manager
+        session = new UserSessionManager(getApplicationContext());
+
+        mServices = Common.getAPI(this);
+
+        rvCartList.setVisibility(View.GONE);
+        LLEmptyCart.setVisibility(View.GONE);
+        btnCartContinue.setVisibility(View.GONE);
+
+        rvCartList.setLayoutManager(new LinearLayoutManager(this));
+        rvCartList.setHasFixedSize(true);
+        // Load Cart Items
+        getAllCartItems();
 
         runOnUiThread(new Runnable() {
             @Override
@@ -85,13 +127,14 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
-
         //Shop now Button when no items in cart
-        shopnow = findViewById(R.id.btn_shopnow);
-        shopnow.setOnClickListener(new View.OnClickListener() {
+        btnShopnow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CartActivity.this, HomeActivity.class));
+                Intent intent = new Intent(CartActivity.this, HomeActivity.class);
+                // Add new Flag to start new Activity
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 finish();
             }
         });
@@ -99,12 +142,79 @@ public class CartActivity extends AppCompatActivity {
         btnCartContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CartActivity.this, "Continue Clicked", Toast.LENGTH_SHORT).show();
+                if (shoppingCartItemsList.size() != 0) {
+
+                    List<OrderItem> orderItemArrayList = new ArrayList<>();
+                    for (int i = 0; i < shoppingCartItemsList.size(); i++) {
+                        OrderItem orderItem = new OrderItem();
+                        orderItem.setProductId(shoppingCartItemsList.get(i).getProductDetails().get_id());
+                        orderItem.setPriceExclTax(shoppingCartItemsList.get(i).getProductDetails().getPrice());
+                        orderItem.setPriceInclTax(shoppingCartItemsList.get(i).getProductDetails().getPrice());
+                        orderItem.setUnitPriceExclTax(shoppingCartItemsList.get(i).getProductDetails().getPrice());
+                        orderItem.setUnitPriceInclTax(shoppingCartItemsList.get(i).getProductDetails().getPrice());
+                        orderItem.setUnitPriceWithoutDiscExclTax(shoppingCartItemsList.get(i).getProductDetails().getPrice());
+                        orderItem.setUnitPriceWithoutDiscInclTax(shoppingCartItemsList.get(i).getProductDetails().getPrice());
+                        orderItem.setQuantity(shoppingCartItemsList.get(i).getQuantity());
+                        orderItemArrayList.add(orderItem);
+
+                    }
+                    Intent addressIntent = new Intent(CartActivity.this, MyAddressActivity.class);
+                    addressIntent.putParcelableArrayListExtra("OrderItems", (ArrayList<? extends Parcelable>) orderItemArrayList);
+                    addressIntent.putParcelableArrayListExtra("ShoppingCartItems", (ArrayList<? extends Parcelable>) shoppingCartItemsList);
+                    startActivity(addressIntent);
+
+                } else {
+                    Toast.makeText(CartActivity.this, "No Cart Items Found !", Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
 
     }
 
+    private void getAllCartItems() {
+
+        loadingOrdersdialog = new ProgressDialog(this);
+        loadingOrdersdialog.setMessage("Please wait");
+        loadingOrdersdialog.setCancelable(false);
+        loadingOrdersdialog.show();
+
+
+        compositeDisposable.add(mServices.getAllCartItemsByPhone(session.getUserDetails().get(UserSessionManager.KEY_PHONE).replace("+", ""))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<ShoppingCartItems>>() {
+                    @Override
+                    public void accept(List<ShoppingCartItems> orders) throws Exception {
+
+                        if (orders.size() != 0) {
+                            rvCartList.setVisibility(View.VISIBLE);
+                            btnCartContinue.setVisibility(View.VISIBLE);
+                            LLEmptyCart.setVisibility(View.GONE);
+                            Log.e(TAG, "accept: ");
+                            displayCartList(orders);
+                        } else {
+                            loadingOrdersdialog.dismiss();
+                            LLEmptyCart.setVisibility(View.VISIBLE);
+                            btnShopnow.setVisibility(View.VISIBLE);
+                            btnCartContinue.setVisibility(View.GONE);
+                            rvCartList.setVisibility(View.GONE);
+                        }
+
+
+                    }
+                }));
+    }
+
+    private void displayCartList(List<ShoppingCartItems> shoppingCartItemsList) {
+
+        CartAdapter cartAdapter = new CartAdapter(CartActivity.this, shoppingCartItemsList);
+        rvCartList.setAdapter(cartAdapter);
+        cartAdapter.notifyDataSetChanged();
+        this.shoppingCartItemsList = shoppingCartItemsList;
+        loadingOrdersdialog.dismiss();
+
+    }
 
 
     @Override

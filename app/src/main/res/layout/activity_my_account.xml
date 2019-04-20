@@ -21,61 +21,63 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:background="@color/colorPrimary"
-                    android:gravity="left"
-                    android:orientation="horizontal"
-                    android:paddingBottom="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp">
 
-                    <me.fahmisdk6.avatarview.AvatarView
-                        android:id="@+id/avatar_user5"
+                    <ImageView
+                        android:id="@+id/iv_profile_pic"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
+                        android:src="@drawable/male"
                         android:layout_gravity="center"
-                        android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
-                        android:padding="2dp"
-                        app:avBgTextColor="@color/white"
-                        app:avCornerRadius="100dp"
-                        app:avTextColor="@color/blue_adv"
-                        app:avTextSize="20sp" />
+                        android:padding="2dp" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center|bottom"
-                        android:layout_marginStart="15dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
                         android:orientation="vertical"
                         android:padding="5dp">
 
                         <TextView
+                            android:id="@+id/tv_customer_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="5dp"
                             android:ellipsize="end"
+                            android:fontFamily="@font/montserrat"
                             android:gravity="center_horizontal|center_vertical|center"
                             android:maxLines="1"
                             android:text="User Name"
                             android:textColor="@color/white"
-                            android:textSize="20sp"
+                            android:textSize="18sp"
                             android:textStyle="normal" />
 
-
                         <TextView
+                            android:id="@+id/tv_customer_phone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal|center_vertical|center"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="3dp"
                             android:ellipsize="end"
+                            android:fontFamily="@font/montserrat"
                             android:gravity="center|center_vertical"
                             android:maxLines="1"
                             android:text="+919824794773"
                             android:textColor="@color/white"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="normal" />
                     </LinearLayout>
 
@@ -93,6 +95,7 @@
                     android:padding="10dp"
                     android:src="@drawable/ic_mode_edit_black_24dp"
                     android:textColor="@color/white"
+                    android:tint="@color/white"
                     tools:ignore="ContentDescription" />
 
             </FrameLayout>
@@ -108,290 +111,367 @@
                     android:orientation="vertical"
                     android:padding="5dp">
 
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/CV_orders"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@color/white"
-                        android:orientation="horizontal"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center|center_vertical|center_horizontal"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:src="@drawable/ic_assignment_black_24dp"
-                            android:tint="@color/gray" />
+                        android:orientation="vertical"
+                        app:cardCornerRadius="3dp"
+                        app:cardElevation="1dp"
+                        app:cardMaxElevation="1dp"
+                        app:cardPreventCornerOverlap="true"
+                        app:cardUseCompatPadding="true">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="15dp"
-                            android:layout_weight="7"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                            android:layout_margin="3dp"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="5dp"
-                                android:text="My Orders"
-                                android:textColor="@color/black"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center|center_vertical|center_horizontal"
+                                android:layout_weight="1"
                                 android:padding="2dp"
-                                android:text="Check your all orders"
-                                android:textColor="@color/gray"
-                                android:textSize="14sp" />
+                                android:src="@drawable/ic_assignment_black_24dp"
+                                android:tint="@color/black" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_weight="7"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="5dp"
+                                    android:text="My Orders"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="2dp"
+                                    android:text="Check your all orders"
+                                    android:textColor="@color/md_grey_600"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center|center_vertical"
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_navigate_next_white_24dp"
+                                android:tint="@color/black" />
 
                         </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center|center_vertical"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_navigate_next_white_24dp"
-                            android:tint="@color/black" />
+                    </androidx.cardview.widget.CardView>
 
-                    </LinearLayout>
-
-
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/CV_wishlist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@color/white"
-                        android:orientation="horizontal"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center|center_vertical|center_horizontal"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:src="@drawable/ic_favorite_black_24dp"
-                            android:tint="@color/gray" />
+                        android:orientation="vertical"
+                        app:cardCornerRadius="3dp"
+                        app:cardElevation="1dp"
+                        app:cardMaxElevation="1dp"
+                        app:cardPreventCornerOverlap="true"
+                        app:cardUseCompatPadding="true">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="15dp"
-                            android:layout_weight="7"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                            android:layout_margin="3dp"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="5dp"
-                                android:text="My Wishlist"
-                                android:textColor="@color/black"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center|center_vertical|center_horizontal"
+                                android:layout_weight="1"
                                 android:padding="2dp"
-                                android:text="Check your all wished products"
-                                android:textColor="@color/gray"
-                                android:textSize="14sp" />
+                                android:src="@drawable/ic_favorite_black_24dp"
+                                android:tint="@color/black" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_weight="7"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="5dp"
+                                    android:text="My Wishlist"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="2dp"
+                                    android:text="Check your all wished products"
+                                    android:textColor="@color/md_grey_600"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center|center_vertical"
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_navigate_next_white_24dp"
+                                android:tint="@color/black" />
 
                         </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center|center_vertical"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_navigate_next_white_24dp"
-                            android:tint="@color/black" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/CV_my_addressess"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@color/white"
-                        android:orientation="horizontal"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center|center_vertical|center_horizontal"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:src="@drawable/ic_edit_location_black_24dp"
-                            android:tint="@color/gray" />
+                        android:orientation="vertical"
+                        app:cardCornerRadius="3dp"
+                        app:cardElevation="1dp"
+                        app:cardMaxElevation="1dp"
+                        app:cardPreventCornerOverlap="true"
+                        app:cardUseCompatPadding="true">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="15dp"
-                            android:layout_weight="7"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                            android:layout_margin="3dp"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="5dp"
-                                android:text="My Addresses"
-                                android:textColor="@color/black"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center|center_vertical|center_horizontal"
+                                android:layout_weight="1"
                                 android:padding="2dp"
-                                android:text="Add or Edit your all addresses"
-                                android:textColor="@color/gray"
-                                android:textSize="14sp" />
+                                android:src="@drawable/ic_edit_location_black_24dp"
+                                android:tint="@color/black" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_weight="7"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="5dp"
+                                    android:text="My Addresses"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="2dp"
+                                    android:text="Add or Edit your all addresses"
+                                    android:textColor="@color/md_grey_600"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center|center_vertical"
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_navigate_next_white_24dp"
+                                android:tint="@color/black" />
 
                         </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center|center_vertical"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_navigate_next_white_24dp"
-                            android:tint="@color/black" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/CV_notifications"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@color/white"
-                        android:orientation="horizontal"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center|center_vertical|center_horizontal"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:src="@drawable/ic_shopping_cart_24dp"
-                            android:tint="@color/gray" />
+                        android:orientation="vertical"
+                        app:cardCornerRadius="3dp"
+                        app:cardElevation="1dp"
+                        app:cardMaxElevation="1dp"
+                        app:cardPreventCornerOverlap="true"
+                        app:cardUseCompatPadding="true">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="15dp"
-                            android:layout_weight="7"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                            android:layout_margin="3dp"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="5dp"
-                                android:text="Notification Settings"
-                                android:textColor="@color/black"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center|center_vertical|center_horizontal"
+                                android:layout_weight="1"
                                 android:padding="2dp"
-                                android:text="Change your app notifications"
-                                android:textColor="@color/gray"
-                                android:textSize="14sp" />
+                                android:src="@drawable/ic_shopping_cart_24dp"
+                                android:tint="@color/black" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_weight="7"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="5dp"
+                                    android:text="Notification Settings"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="2dp"
+                                    android:text="Change your app notifications"
+                                    android:textColor="@color/md_grey_600"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center|center_vertical"
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_navigate_next_white_24dp"
+                                android:tint="@color/black" />
 
                         </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center|center_vertical"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_navigate_next_white_24dp"
-                            android:tint="@color/black" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/CV_app_language"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@color/white"
-                        android:orientation="horizontal"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center|center_vertical|center_horizontal"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:src="@drawable/ic_language_black_24dp"
-                            android:tint="@color/gray" />
+                        android:orientation="vertical"
+                        app:cardCornerRadius="3dp"
+                        app:cardElevation="1dp"
+                        app:cardMaxElevation="1dp"
+                        app:cardPreventCornerOverlap="true"
+                        app:cardUseCompatPadding="true">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="15dp"
-                            android:layout_weight="7"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                            android:layout_margin="3dp"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="5dp"
-                                android:text="App Language"
-                                android:textColor="@color/black"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center|center_vertical|center_horizontal"
+                                android:layout_weight="1"
                                 android:padding="2dp"
-                                android:text="Change your app language "
-                                android:textColor="@color/gray"
-                                android:textSize="14sp" />
+                                android:src="@drawable/ic_language_black_24dp"
+                                android:tint="@color/black" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_weight="7"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="5dp"
+                                    android:text="App Language"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat"
+                                    android:padding="2dp"
+                                    android:text="Change your app language "
+                                    android:textColor="@color/md_grey_600"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center|center_vertical"
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_navigate_next_white_24dp"
+                                android:tint="@color/black" />
 
                         </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center|center_vertical"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_navigate_next_white_24dp"
-                            android:tint="@color/black" />
-
-                    </LinearLayout>
-
-                    <Button
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_logout"
+                        style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/logout_button"
-                        android:text="Logout"
-                        android:textAllCaps="false"
-                        android:textColor="@color/blue_adv"
-                        android:textSize="20sp" />
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/black"
+                        android:padding="10dp"
+                        android:text="LOGOUT"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:cornerRadius="3dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|center|center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="App Version 1.0.0"
-                        android:textColor="@color/gray"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="App Version 1.0"
+                        android:textColor="@color/md_grey_600"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -403,11 +483,11 @@
     </ScrollView>
 
     <LinearLayout
-        android:gravity="center"
         android:id="@+id/LL_Product_List_Error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
 

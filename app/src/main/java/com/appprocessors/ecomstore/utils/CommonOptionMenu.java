@@ -1,24 +1,26 @@
 package com.appprocessors.ecomstore.utils;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appprocessors.ecomstore.activities.CartActivity;
-import com.appprocessors.ecomstore.activities.FavouritesActivity;
+import com.appprocessors.ecomstore.activities.LoginSignUp;
+import com.appprocessors.ecomstore.activities.WishlistActivity;
 import com.appprocessors.ecomstore.R;
+import com.appprocessors.ecomstore.retrofit.NetworkEvent;
 import com.nex3z.notificationbadge.NotificationBadge;
 
 public class CommonOptionMenu extends AppCompatActivity {
     NotificationBadge badge;
+
+
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.common_option_menu, menu);
@@ -39,12 +41,12 @@ public class CommonOptionMenu extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_search:
-                Intent search = new Intent(CommonOptionMenu.this,FavouritesActivity.class);
+                Intent search = new Intent(CommonOptionMenu.this, WishlistActivity.class);
                 startActivity(search);
                 return true;
 
             case R.id.menu_favourites:
-                Intent favourites = new Intent(CommonOptionMenu.this,FavouritesActivity.class);
+                Intent favourites = new Intent(CommonOptionMenu.this, WishlistActivity.class);
                 startActivity(favourites);
                 return true;
 
@@ -76,9 +78,54 @@ public class CommonOptionMenu extends AppCompatActivity {
         });*/
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
+
         updateCartCount();
+
+        NetworkEvent.getInstance().register(this,
+                networkState -> {
+                    switch (networkState) {
+                        case NO_INTERNET:
+                            displayErrorDialog(getString(R.string.generic_no_internet_title),
+                                    getString(R.string.generic_no_internet_desc));
+                            break;
+
+                        case NO_RESPONSE:
+                            displayErrorDialog(getString(R.string.generic_http_error_title),
+                                    getString(R.string.generic_http_error_desc));
+                            break;
+
+                        case UNAUTHORISED:
+                            //redirect to login screen - if session expired
+                            Toast.makeText(getApplicationContext(), R.string.error_login_expired, Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(this, LoginSignUp.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            break;
+                    }
+                });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        NetworkEvent.getInstance().unregister(this);
+    }
+
+
+    public void displayErrorDialog(String title,
+                                   String desc) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(desc)
+                .setCancelable(false)
+                .setPositiveButton("Ok",
+                        (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        })
+                .show();
     }
 }

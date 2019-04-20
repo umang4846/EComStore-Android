@@ -1,7 +1,6 @@
 package com.appprocessors.ecomstore.adapter;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,18 +9,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appprocessors.ecomstore.R;
-import com.appprocessors.ecomstore.model.ProductDetails;
 import com.appprocessors.ecomstore.model.order.Order;
-import com.appprocessors.ecomstore.model.product.Product;
-import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
 import com.squareup.picasso.Picasso;
 import com.stepstone.apprating.AppRatingDialog;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -29,22 +22,16 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.CartViewHolder> {
 
     Activity context;
     List<Order> orders;
-    List<Product> productDetailsList;
 
 
-    public OrderAdapter(Activity context, List<Order> orders, List<Product> productDetailsList) {
+    public OrderAdapter(Activity context, List<Order> orders) {
         this.context = context;
         this.orders = orders;
-        this.productDetailsList = productDetailsList;
     }
 
     @NonNull
@@ -57,21 +44,44 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.CartViewHold
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder cartViewHolder, final int position) {
         cartViewHolder.RLItemOrder.setVisibility(View.GONE);
-        ProgressDialog loadingOrdersDialog = new ProgressDialog(context);
-        loadingOrdersDialog.setMessage("Please wait");
-        loadingOrdersDialog.setCancelable(false);
-        loadingOrdersDialog.show();
 
+        String imageID = orders.get(position).getPictureDetails().get(0).get_id();
+        String imageNmae = orders.get(position).getPictureDetails().get(0).getSeoFilename();
+        String imageMimeType = orders.get(position).getPictureDetails().get(0).getMimeType().replace("image/", "").trim();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(Common.IMAGE_BASE_URL).append(imageID).append("_").append(imageNmae).append("_415.").append(imageMimeType);
+        //Load Image with Picasso
+        Picasso.get().load(stringBuilder.toString()).placeholder(R.color.md_grey_300).into(cartViewHolder.ivOrder);
 
-       // Picasso.get().load(productDetailsList.get(position).get()).into(cartViewHolder.ivOrderItem);
-    //    cartViewHolder.tvNameOrderItem.setText(productDetailsList.get(position).getProductName());
+        cartViewHolder.tvNameOrderItem.setText(orders.get(position).getProductDetails().get(0).getName());
         cartViewHolder.RLItemOrder.setVisibility(View.VISIBLE);
-        loadingOrdersDialog.dismiss();
-        Date date = null;
-        SimpleDateFormat format = new SimpleDateFormat("EEEE,dd-MM-yyyy");
 
-        cartViewHolder.tvDeliveryProductList.setText(orders.get(position).getVatNumberStatusId() + " On " + Common.getFormattedDate(date));
-        cartViewHolder.tvRateReviewOrderItem.setOnClickListener(new View.OnClickListener() {
+        cartViewHolder.tvOrderTotalAmount.setText("TOTAL AMOUNT : " + context.getResources().getString(R.string.rupee) + " " + orders.get(position).getOrderTotal());
+
+        if (orders.get(position).getOrderStatusId() == 10) {
+            cartViewHolder.tvOrderStatus.setText("Pending");
+            cartViewHolder.tvOrderStatus.setTextColor(context.getResources().getColor(R.color.orange));
+        }
+        if (orders.get(position).getOrderStatusId() == 20) {
+            cartViewHolder.tvOrderStatus.setText("Shipped");
+            cartViewHolder.tvOrderStatus.setTextColor(context.getResources().getColor(R.color.blue));
+        }
+
+        if (orders.get(position).getOrderStatusId() == 30) {
+            cartViewHolder.tvOrderStatus.setText("Delivered");
+            cartViewHolder.tvOrderStatus.setTextColor(context.getResources().getColor(R.color.forest_green));
+
+        }
+
+        if (orders.get(position).getOrderStatusId() == 40) {
+            cartViewHolder.tvOrderStatus.setText("Cancelled");
+            cartViewHolder.tvOrderStatus.setTextColor(context.getResources().getColor(R.color.red));
+        }
+
+        cartViewHolder.tvDeliveryProductList.setText("Ordered on " + orders.get(position).getCreatedOnUtc());
+
+
+    /*    cartViewHolder.tvRateReviewOrderItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -98,7 +108,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.CartViewHold
                         .show();
 
             }
-        });
+        });*/
 
     }
 
@@ -108,14 +118,19 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.CartViewHold
     }
 
     class CartViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.iv_order_item)
-        ImageView ivOrderItem;
+
+        @BindView(R.id.iv_order)
+        ImageView ivOrder;
         @BindView(R.id.tv_name_order_item)
         TextView tvNameOrderItem;
+        @BindView(R.id.tv_order_total_amount)
+        TextView tvOrderTotalAmount;
+        @BindView(R.id.tv_delivery_bullet_product_list)
+        TextView tvDeliveryBulletProductList;
         @BindView(R.id.tv_delivery_product_list)
         TextView tvDeliveryProductList;
-        @BindView(R.id.tv_rate_review_order_item)
-        TextView tvRateReviewOrderItem;
+        @BindView(R.id.tv_order_status)
+        TextView tvOrderStatus;
         @BindView(R.id.RL_item_order)
         RelativeLayout RLItemOrder;
 

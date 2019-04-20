@@ -9,23 +9,31 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
+import com.appprocessors.ecomstore.adapter.ProductOrderItemAdapter;
 import com.appprocessors.ecomstore.model.customer.Addresses;
 import com.appprocessors.ecomstore.model.customer.BillingAddress;
 import com.appprocessors.ecomstore.model.customer.Customer;
 import com.appprocessors.ecomstore.model.customer.ShippingAddress;
+import com.appprocessors.ecomstore.model.customer.ShoppingCartItems;
 import com.appprocessors.ecomstore.model.order.Order;
 import com.appprocessors.ecomstore.model.order.OrderItem;
 import com.appprocessors.ecomstore.retrofit.IEStoreAPI;
 import com.appprocessors.ecomstore.utils.Common;
+import com.appprocessors.ecomstore.utils.CommonOptionMenu;
 import com.appprocessors.ecomstore.utils.UserSessionManager;
 import com.appprocessors.ecomstore.utils.Utils;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.button.MaterialButton;
 
 import org.fabiomsr.moneytextview.MoneyTextView;
+import org.joda.time.LocalTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,41 +45,22 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ActivityPayment extends AppCompatActivity {
-
+public class ActivityPayment extends CommonOptionMenu {
 
     ProgressDialog placingOrderDialog;
 
-    @BindView(R.id.tv_payment_options)
-    TextView tvPaymentOptions;
-    @BindView(R.id.rb_COD)
-    RadioButton rbCOD;
-    @BindView(R.id.tv_total_price_details)
-    TextView tvTotalPriceDetails;
-    @BindView(R.id.tv_price)
-    TextView tvPrice;
-    @BindView(R.id.tv_price_rs)
-    MoneyTextView tvPriceRs;
-    @BindView(R.id.tv_shipping)
-    TextView tvShipping;
-    @BindView(R.id.tv_shipping_fee)
-    TextView tvShippingFee;
-    @BindView(R.id.tv_total_amount)
-    TextView tvTotalAmount;
-    @BindView(R.id.tv_total_amount_price)
-    MoneyTextView tvTotalAmountPrice;
-    @BindView(R.id.btn_place_order)
-    Button btnPlaceOrder;
-
     //Current Product Details
-    List<OrderItem> currentProductDetails;
+    public List<OrderItem> currentOrderItems;
+    public List<ShoppingCartItems> shoppingCartItemsList = new ArrayList<>();
 
     //Selected Address
     Addresses deliveryAddress = new Addresses();
@@ -89,7 +78,33 @@ public class ActivityPayment extends AppCompatActivity {
 
     Customer currentCustomer = new Customer();
 
-    Order order = new Order();
+    public Order order = new Order();
+    @BindView(R.id.notes_toolbar)
+    Toolbar notesToolbar;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.tv_payment_options)
+    TextView tvPaymentOptions;
+    @BindView(R.id.rb_COD)
+    RadioButton rbCOD;
+    @BindView(R.id.AP_rv_OrderItems)
+    RecyclerView APRvOrderItems;
+    @BindView(R.id.tv_total_price_details)
+    TextView tvTotalPriceDetails;
+    @BindView(R.id.tv_price)
+    TextView tvPrice;
+    @BindView(R.id.tv_price_rs)
+    public MoneyTextView tvPriceRs;
+    @BindView(R.id.tv_shipping)
+    TextView tvShipping;
+    @BindView(R.id.tv_shipping_fee)
+    TextView tvShippingFee;
+    @BindView(R.id.tv_total_amount)
+    TextView tvTotalAmount;
+    @BindView(R.id.tv_total_amount_price)
+    public MoneyTextView tvTotalAmountPrice;
+    @BindView(R.id.btn_place_order)
+    MaterialButton btnPlaceOrder;
     @BindView(R.id.LL_payment_price)
     LinearLayout LLPaymentPrice;
     @BindView(R.id.tv_thankyou)
@@ -116,6 +131,10 @@ public class ActivityPayment extends AppCompatActivity {
     Button btnContinueShopping;
     @BindView(R.id.FL_ordered)
     FrameLayout FLOrdered;
+    @BindView(R.id.RL_Activity_Payment)
+    RelativeLayout RLActivityPayment;
+    @BindView(R.id.PB_Activity_Payment)
+    ProgressBar PBActivityPayment;
 
 
     @Override
@@ -123,6 +142,10 @@ public class ActivityPayment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
         ButterKnife.bind(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.notes_toolbar);
+        setSupportActionBar(toolbar);
+
         setTitle("Select Payment");
 
         //Set Back Button to Toolbar
@@ -131,11 +154,13 @@ public class ActivityPayment extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         //API
-        mService = Common.getAPI();
+        mService = Common.getAPI(this);
         // User Session Manager
         session = new UserSessionManager(getApplicationContext());
 
         //Set Visibility
+        PBActivityPayment.setVisibility(View.VISIBLE);
+        RLActivityPayment.setVisibility(View.GONE);
         LLPaymentPrice.setVisibility(View.VISIBLE);
         btnPlaceOrder.setVisibility(View.VISIBLE);
         FLOrdered.setVisibility(View.GONE);
@@ -156,7 +181,14 @@ public class ActivityPayment extends AppCompatActivity {
             if (extras.containsKey("OrderItems")) {
                 ArrayList<OrderItem> orderItemArrayList = this.getIntent().getParcelableArrayListExtra("OrderItems");
                 if (orderItemArrayList.size() != 0) {
-                    currentProductDetails = orderItemArrayList;
+                    currentOrderItems = orderItemArrayList;
+
+                }
+            }
+            if (extras.containsKey("ShoppingCartItems")) {
+                ArrayList<ShoppingCartItems> shoppingCartItems = this.getIntent().getParcelableArrayListExtra("ShoppingCartItems");
+                if (shoppingCartItems.size() != 0) {
+                    shoppingCartItemsList = shoppingCartItems;
 
                 }
             }
@@ -202,66 +234,31 @@ public class ActivityPayment extends AppCompatActivity {
 
                 }
                 if (billingAddress != null && shippingAddress != null) {
+                    setProductItemsList(shoppingCartItemsList);
                     getCustomerDetails(billingAddress, shippingAddress);
-                    setProductDetais(currentProductDetails);
+                    setProductDetais(currentOrderItems);
                 }
             }
 
         }
     }
 
-    private void setAllOrderDetailes(Customer currentCustomer, BillingAddress billingAddress, ShippingAddress shippingAddress) {
+    private void setProductItemsList(List<ShoppingCartItems> currentShoppingCartItems) {
 
-        if (currentCustomer.get_id() != null && currentProductDetails != null) {
-            order.setGenericAttributes(new ArrayList<>());
-            order.setCustomerId(currentCustomer.get_id());
-            order.setPaymentMethodSystemName("Payments.CashOnDelivery");
-            order.setCustomerEmail(currentCustomer.getEmail() != null ? currentCustomer.getEmail() : "NoEmail@Email.com");
-
-            String phone = null, firstName = null, lastName = null, gender = null;
-            for (int i = 0; i < currentCustomer.getGenericAttributes().size(); i++) {
-                if (currentCustomer.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
-                    firstName = currentCustomer.getGenericAttributes().get(i).getValue();
-                }
-                if (currentCustomer.getGenericAttributes().get(i).getKey().equalsIgnoreCase("LastName")) {
-                    lastName = currentCustomer.getGenericAttributes().get(i).getValue();
-                }
-
-            }
-
-            order.setFirstName(firstName);
-            order.setLastName(lastName);
-            order.setOrderSubtotalInclTax(totalOrderPrice());
-            order.setOrderSubtotalExclTax(totalOrderPrice());
-            order.setOrderSubTotalDiscountInclTax(0);
-            order.setOrderSubTotalDiscountExclTax(0);
-            order.setOrderShippingInclTax(0);
-            order.setOrderShippingExclTax(0);
-            order.setPaymentMethodAdditionalFeeInclTax(0);
-            order.setPaymentMethodAdditionalFeeExclTax(0);
-            order.setOrderShippingInclTax(0);
-            order.setOrderShippingExclTax(0);
-            order.setTaxRates("0:0;");
-            order.setOrderTax(0);
-            order.setOrderDiscount(0);
-            order.setOrderTotal(totalOrderPrice());
-            order.setRefundedAmount(0);
-            order.setCustomerIp(Utils.getIpAddress(this));
-            order.setShippingMethod("Ground");
-            order.setShippingRateComputationMethodSystemName("Shipping.ByWeight");
-            order.setBillingAddress(billingAddress);
-            order.setShippingAddress(shippingAddress);
-            order.setOrderItems(currentProductDetails);
+        if (currentShoppingCartItems.size() != 0) {
+            ProductOrderItemAdapter orderItemAdapter = new ProductOrderItemAdapter(this, currentShoppingCartItems);
+            APRvOrderItems.setLayoutManager(new LinearLayoutManager(this));
+            APRvOrderItems.setHasFixedSize(true);
+            APRvOrderItems.setNestedScrollingEnabled(false);
+            APRvOrderItems.setAdapter(orderItemAdapter);
+            orderItemAdapter.notifyDataSetChanged();
         } else {
-            Toast.makeText(this, "Details Are Null !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No Item To Display Product List", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void getCustomerDetails(BillingAddress billingAddress, ShippingAddress shippingAddress) {
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Please wait");
-        dialog.setCancelable(false);
-        dialog.show();
 
         mService.checkUserExists(session.getUserDetails().get(UserSessionManager.KEY_PHONE).replace("+", ""))
                 .enqueue(new Callback<Customer>() {
@@ -274,7 +271,6 @@ public class ActivityPayment extends AppCompatActivity {
                             if (customerResponse != null) {
                                 //Perform Password matching
                                 currentCustomer = customerResponse;
-                                dialog.dismiss();
                                 String phone = null, firstName = null, lastName = null, gender = null;
                                 for (int i = 0; i < customerResponse.getGenericAttributes().size(); i++) {
                                     if (customerResponse.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
@@ -299,7 +295,6 @@ public class ActivityPayment extends AppCompatActivity {
                                             customerResponse.getPassword(),
                                             gender
                                     );
-                                    setAllOrderDetailes(customerResponse, billingAddress, shippingAddress);
                                     Toast.makeText(ActivityPayment.this, "Successfully Got Customer Details", Toast.LENGTH_SHORT).show();
 
 
@@ -317,7 +312,6 @@ public class ActivityPayment extends AppCompatActivity {
                             }
                         } else {
                             //User not exists
-                            dialog.dismiss();
                             Intent intent = new Intent(ActivityPayment.this, LoginSignUp.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             // Add new Flag to start new Activity
@@ -334,7 +328,6 @@ public class ActivityPayment extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Customer> call, Throwable t) {
-                        dialog.dismiss();
                         Toast.makeText(ActivityPayment.this, "Something went wrong !" + t.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d("checkUserExists :", t.getMessage() + "\n");
 
@@ -347,23 +340,33 @@ public class ActivityPayment extends AppCompatActivity {
 
     private void setProductDetais(List<OrderItem> orderItemList) {
         tvPrice.setText(new StringBuilder().append("Price (").append(+orderItemList.size()).append(" Items)"));
-        tvPriceRs.setAmount((float) totalOrderPrice());
+
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvPriceRs.setAmount((float) totalOrderPrice());
+                tvTotalAmountPrice.setAmount((float) totalOrderPrice());
+            }
+        });
+
+
         //Shipping Fee
         tvShippingFee.setText("FREE");
         tvShippingFee.setTextColor(getResources().getColor(R.color.green));
-        tvTotalAmountPrice.setAmount((float) totalOrderPrice());
 
         btnPlaceOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentProductDetails != null) {
+                if (currentOrderItems != null) {
                     placeOrderToServer();
 
                 }
             }
         });
 
-
+      RLActivityPayment.setVisibility(View.VISIBLE);
+      PBActivityPayment.setVisibility(View.GONE);
+      btnPlaceOrder.setVisibility(View.VISIBLE);
     }
 
     private void placeOrderToServer() {
@@ -372,6 +375,55 @@ public class ActivityPayment extends AppCompatActivity {
         placingOrderDialog.setMessage("Please wait");
         placingOrderDialog.setCancelable(false);
         placingOrderDialog.show();
+
+        if (currentCustomer.get_id() != null && currentOrderItems != null) {
+            order.setGenericAttributes(new ArrayList<>());
+            order.setCustomerId(currentCustomer.get_id());
+            order.setPaymentMethodSystemName("Payments.CashOnDelivery");
+            order.setCustomerEmail(currentCustomer.getEmail() != null ? currentCustomer.getEmail() : "NoEmail@Email.com");
+
+            String phone = null, firstName = null, lastName = null, gender = null;
+            for (int i = 0; i < currentCustomer.getGenericAttributes().size(); i++) {
+                if (currentCustomer.getGenericAttributes().get(i).getKey().equalsIgnoreCase("FirstName")) {
+                    firstName = currentCustomer.getGenericAttributes().get(i).getValue();
+                }
+                if (currentCustomer.getGenericAttributes().get(i).getKey().equalsIgnoreCase("LastName")) {
+                    lastName = currentCustomer.getGenericAttributes().get(i).getValue();
+                }
+
+            }
+
+            for (int i = 0; i < currentOrderItems.size(); i++) {
+                currentOrderItems.get(i).setPriceExclTax(currentOrderItems.get(i).getUnitPriceExclTax() * currentOrderItems.get(i).getQuantity());
+                currentOrderItems.get(i).setPriceInclTax(currentOrderItems.get(i).getUnitPriceExclTax() * currentOrderItems.get(i).getQuantity());
+            }
+
+            order.setFirstName(firstName);
+            order.setLastName(lastName);
+            order.setOrderSubtotalInclTax(totalOrderPrice());
+            order.setOrderSubtotalExclTax(totalOrderPrice());
+            order.setOrderSubTotalDiscountInclTax(0);
+            order.setOrderSubTotalDiscountExclTax(0);
+            order.setOrderShippingInclTax(0);
+            order.setOrderShippingExclTax(0);
+            order.setPaymentMethodAdditionalFeeInclTax(0);
+            order.setPaymentMethodAdditionalFeeExclTax(0);
+            order.setOrderShippingInclTax(0);
+            order.setOrderShippingExclTax(0);
+            order.setTaxRates("0:0;");
+            order.setOrderTax(0);
+            order.setOrderDiscount(0);
+            order.setOrderTotal(totalOrderPrice());
+            order.setRefundedAmount(0);
+            order.setCustomerIp(Utils.getIpAddress(this));
+            order.setShippingMethod("Ground");
+            order.setShippingRateComputationMethodSystemName("Shipping.ByWeight");
+            order.setBillingAddress(billingAddress);
+            order.setShippingAddress(shippingAddress);
+            order.setOrderItems(currentOrderItems);
+        } else {
+            Toast.makeText(this, "Details Are Null !", Toast.LENGTH_SHORT).show();
+        }
 
         mService.addNewOrder(order).enqueue(new Callback<Order>() {
             @Override
@@ -390,6 +442,7 @@ public class ActivityPayment extends AppCompatActivity {
                     final String ISO8601DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSZ";
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat(ISO8601DATEFORMAT, Locale.US);
+                    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
                     Date convertedDate = new Date();
                     try {
                         convertedDate = dateFormat.parse(orderedDetails.getCreatedOnUtc());
@@ -404,7 +457,9 @@ public class ActivityPayment extends AppCompatActivity {
                     try {
                         Date date = dateformat.parse(orderedDetails.getCreatedOnUtc());
                         calendar.setTime(date);
+                        LocalTime.fromCalendarFields(calendar);
                         tvOrderDateValue.setText(calendar.toString());
+                        tvOrderDateValue.setText(output.format(convertedDate));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -441,9 +496,10 @@ public class ActivityPayment extends AppCompatActivity {
     }
 
     public long totalOrderPrice() {
+
         double totalPrice = 0;
-        for (int i = 0; i < currentProductDetails.size(); i++) {
-            totalPrice += currentProductDetails.get(i).getUnitPriceExclTax() * currentProductDetails.get(i).getQuantity();
+        for (int i = 0; i < currentOrderItems.size(); i++) {
+            totalPrice += currentOrderItems.get(i).getUnitPriceExclTax() * currentOrderItems.get(i).getQuantity();
         }
         return Math.round(totalPrice);
     }

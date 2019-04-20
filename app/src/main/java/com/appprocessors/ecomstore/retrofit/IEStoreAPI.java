@@ -12,6 +12,7 @@ import com.appprocessors.ecomstore.model.User;
 import com.appprocessors.ecomstore.model.categoryhome.CategoryHome;
 import com.appprocessors.ecomstore.model.customer.Addresses;
 import com.appprocessors.ecomstore.model.customer.Customer;
+import com.appprocessors.ecomstore.model.customer.ShoppingCartItems;
 import com.appprocessors.ecomstore.model.order.Order;
 import com.appprocessors.ecomstore.model.pictureslider.PictureSlider;
 import com.appprocessors.ecomstore.model.product.Product;
@@ -23,6 +24,7 @@ import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -75,7 +77,6 @@ public interface IEStoreAPI {
     @POST("/customer/{phone}/addAddress")
     Call<Addresses> addNewAddress(@Path("phone") String phone, @Body Addresses addresses);
 
-
     //Get User's  List of saved Address
     @GET("/customer/{phone}/allAddresses")
     Observable<List<Addresses>> findAllAddressesByPhone(@Path("phone") String phone);
@@ -86,6 +87,32 @@ public interface IEStoreAPI {
 
     @GET("/order/{CustomerId}")
     Observable<List<Order>> getAllOrdersByCustomerId(@Path("CustomerId") String CustomerId);
+
+    @GET("/customer/{phone}/allCartItems")
+    Observable<List<ShoppingCartItems>> getAllCartItemsByPhone(@Path("phone") String phone);
+
+    @GET("/customer/{phone}/allWishListItems")
+    Observable<List<ShoppingCartItems>> getAllWishlistItemsByPhone(@Path("phone") String phone);
+
+    @Headers("Content-Type: application/json")
+    @DELETE("/customer/{phone}/deleteAllWishListItemsByPhone")
+    Call<Void> deleteAllWishListItemsByPhone(@Path("phone") String phone);
+
+    @Headers("Content-Type: application/json")
+    @DELETE("/customer/{phone}/DeleteCartItemItemsByProductId/{productId}")
+    Call<List<ShoppingCartItems>> deleteCartItemByProductId(@Path("phone") String phone , @Path("productId") String ProductId);
+
+    @Headers("Content-Type: application/json")
+    @DELETE("/customer/{phone}/DeleteWishListItemsByProductId/{productId}")
+    Call<List<ShoppingCartItems>> deleteWishListItemByProductId(@Path("phone") String phone , @Path("productId") String ProductId);
+
+    @Headers("Content-Type: application/json")
+    @POST("customer/{phone}/addToCart")
+    Call<List<ShoppingCartItems>> addToCart(@Path("phone") String phone ,@Body ShoppingCartItems shoppingCartItems);
+
+    @Headers("Content-Type: application/json")
+    @POST("customer/{phone}/addToWishlist")
+    Call<List<ShoppingCartItems>> addToWishlist(@Path("phone") String phone ,@Body ShoppingCartItems shoppingCartItems);
 
     //Get Product list  from  CategoryId
     @GET(value = "productList/{CategoryId}")

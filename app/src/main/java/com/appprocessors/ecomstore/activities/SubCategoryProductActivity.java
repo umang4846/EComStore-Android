@@ -49,7 +49,7 @@ public class SubCategoryProductActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        mService = Common.getAPI();
+        mService = Common.getAPI(this);
         //Sub Category Trending Recyclerview Stuff
         rvSubCategoryTrending.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvSubCategoryTrending.setHasFixedSize(true);

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.appprocessors.ecomstore.R;
 import com.appprocessors.ecomstore.adapter.ProductListAdapter;
@@ -64,7 +65,7 @@ public class ProductListActivity extends CommonOptionMenu {
         setContentView(R.layout.activity_product_list);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.notes_toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
@@ -73,7 +74,7 @@ public class ProductListActivity extends CommonOptionMenu {
         }
 
 
-        mService = Common.getAPI();
+        mService = Common.getAPI(this);
 
         rv_product_list = findViewById(R.id.rv_product_list);
         ivProductListListToGrid.setImageDrawable(AnimatedVectorDrawableCompat.create(ProductListActivity.this, R.drawable.avd_grid_to_list));
@@ -93,6 +94,13 @@ public class ProductListActivity extends CommonOptionMenu {
                     default:
                         return 1;
                 }
+            }
+        });
+
+        btnProductListFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ProductListActivity.this, "Coming Soon !", Toast.LENGTH_SHORT).show();
             }
         });
 

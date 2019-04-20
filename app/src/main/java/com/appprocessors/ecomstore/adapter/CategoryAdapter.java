@@ -12,6 +12,7 @@ import com.appprocessors.ecomstore.activities.HomeActivity;
 import com.appprocessors.ecomstore.activities.ProductDetailsActivity;
 import com.appprocessors.ecomstore.interfaces.IItemClickListner;
 import com.appprocessors.ecomstore.model.categoryhome.CategoryHome;
+import com.appprocessors.ecomstore.utils.Common;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -39,12 +40,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, final int position) {
-        String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
         String imageID = categories.get(position).getPictureDetails().get(0).get_id();
         String imageNmae =categories.get(position).getPictureDetails().get(0).getSeoFilename();
         String imageMimeType =categories.get(position).getPictureDetails().get(0).getMimeType().replace("image/","").trim();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(baseUrl).append(imageID).append("_").append(imageNmae).append("_450.").append(imageMimeType);
+        stringBuilder.append(Common.IMAGE_BASE_URL).append(imageID).append("_").append(imageNmae).append("_450.").append(imageMimeType);
         //Load Image with Picasso
        Picasso.get().load(stringBuilder.toString()).placeholder(R.color.md_grey_300).into(holder.img);
 

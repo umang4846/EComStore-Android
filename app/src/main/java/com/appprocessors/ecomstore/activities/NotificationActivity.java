@@ -10,12 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appprocessors.ecomstore.R;
+import com.appprocessors.ecomstore.utils.CommonOptionMenu;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NotificationActivity extends AppCompatActivity {
+public class NotificationActivity extends CommonOptionMenu {
 
     @BindView(R.id.tv_no_notification)
     TextView tvNoNotification;
@@ -33,6 +34,9 @@ public class NotificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
         ButterKnife.bind(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.notes_toolbar);
+        setSupportActionBar(toolbar);
         setTitle("Notifications");
 
         //Set Back Button to Toolbar
@@ -45,7 +49,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent startShopping = new Intent(NotificationActivity.this, HomeActivity.class);
-                startShopping.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startShopping.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(startShopping);
                 finish();
             }

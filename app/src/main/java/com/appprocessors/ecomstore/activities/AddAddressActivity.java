@@ -121,7 +121,7 @@ public class AddAddressActivity extends CommonOptionMenu {
         }
 
 
-        mService = Common.getAPI();
+        mService = Common.getAPI(this);
         // User Session Manager
         session = new UserSessionManager(getApplicationContext());
 
@@ -369,7 +369,7 @@ public class AddAddressActivity extends CommonOptionMenu {
         address.setStateProvinceId("");
         String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
 
-        Call<Addresses> call = RetrofitClient.getRestClient().addNewAddress(phone.replace("+", ""), address);
+        Call<Addresses> call = RetrofitClient.getRestClient(this).addNewAddress(phone.replace("+", ""), address);
         call.enqueue(new Callback<Addresses>() {
             @Override
             public void onResponse(Call<Addresses> call, Response<Addresses> response) {
@@ -421,7 +421,7 @@ public class AddAddressActivity extends CommonOptionMenu {
         address.setStateProvinceId("");
         String phone = session.getUserDetails().get(UserSessionManager.KEY_PHONE);
 
-        Call<Addresses> call = RetrofitClient.getRestClient().addNewAddress(phone.replace("+", ""), address);
+        Call<Addresses> call = RetrofitClient.getRestClient(this).addNewAddress(phone.replace("+", ""), address);
         call.enqueue(new Callback<Addresses>() {
             @Override
             public void onResponse(Call<Addresses> call, Response<Addresses> response) {

@@ -37,12 +37,11 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
     @Override
     public void onBindViewHolder(@NonNull final CategoryProductViewHolder holder, final int position) {
 
-        String baseUrl = "http://192.168.20.46:1997/content/images/thumbs/";
         String imageID = categoryHomeList.get(position).getPictureDetails().get(0).get_id();
         String imageNmae =categoryHomeList.get(position).getPictureDetails().get(0).getSeoFilename();
         String imageMimeType =categoryHomeList.get(position).getPictureDetails().get(0).getMimeType().replace("image/","").trim();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(baseUrl).append(imageID).append("_").append(imageNmae).append("_450.").append(imageMimeType);
+        stringBuilder.append(Common.IMAGE_BASE_URL).append(imageID).append("_").append(imageNmae).append("_450.").append(imageMimeType);
 
         //Load Image with Picasso
         Picasso.get().load(stringBuilder.toString()).into(holder.img);
